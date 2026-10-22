@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/party.json",
+  "title": "A person who is not a customer contact: creator, talent, journalist, partner, affiliate, expert, vendor",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "client_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "kind": {
+      "enum": [
+        "creator",
+        "talent",
+        "journalist",
+        "partner",
+        "affiliate",
+        "expert",
+        "vendor"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2"
+    },
+    "handles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "licences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "uae_media_council | mawthooq | other"
+          },
+          "number": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "description": "ISO 3166-1 alpha-2"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "type",
+          "number"
+        ]
+      }
+    },
+    "attributes": {
+      "type": "object"
+    },
+    "do_not_contact": {
+      "type": "boolean",
+      "description": "Global opt-out across all Pith clients when client_id is null (journalist 'do not pitch')"
+    },
+    "consent_basis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "name"
+  ],
+  "additionalProperties": false
+}

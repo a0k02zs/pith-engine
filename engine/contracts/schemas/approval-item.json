@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/approval-item.json",
+  "title": "Approval inbox item",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "step_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "service": {
+      "type": "string",
+      "description": "service code from enums.json services"
+    },
+    "kind": {
+      "type": "string",
+      "description": "enums.approval_kinds"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "artifact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "preview_url": {
+      "type": "string",
+      "description": "Rendered draft for the reviewer"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Kind-specific. budget/budget_change: {platform, currency, current, proposed, change_pct}. contract: {party_id, fee, currency, usage_rights, disclosure_terms, template_id}. payout: {party_id, amount, currency, proof_url}. claim: {claim_text, category, markets, evidence_url}. payout batch: {lines:[{party_id, amount, currency, period, proof_url}], totals_by_currency:{CUR: amount}}."
+    },
+    "brand_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "compliance": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "outcome": {
+          "enum": [
+            "pass",
+            "warn",
+            "block"
+          ]
+        },
+        "findings_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "required_roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "required_count": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "assignee_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "priority": {
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ]
+    },
+    "sla_due_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "open",
+        "approved",
+        "rejected",
+        "changes_requested",
+        "expired",
+        "cancelled"
+      ]
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decided_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approved",
+              "rejected",
+              "changes_requested"
+            ]
+          },
+          "comment": {
+            "type": "string"
+          },
+          "edits": {
+            "type": "object"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "decided_by",
+          "role",
+          "decision",
+          "at"
+        ]
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "closed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "client_id",
+    "service",
+    "kind",
+    "title",
+    "required_roles",
+    "sla_due_at",
+    "status",
+    "created_at"
+  ],
+  "additionalProperties": false
+}

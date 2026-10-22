@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/compliance-check-request.json",
+  "title": "Input to POST /compliance/check",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "artifact_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "service": {
+      "type": "string",
+      "description": "service code from enums.json services"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "purpose": {
+      "enum": [
+        "marketing",
+        "transactional",
+        "service"
+      ]
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "ISO country codes, or ISO 3166-2 like CA-QC"
+    },
+    "segment": {
+      "enum": [
+        "b2b",
+        "b2c"
+      ]
+    },
+    "content": {
+      "type": "object",
+      "description": "What will go out",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "preheader": {
+          "type": "string"
+        },
+        "body_text": {
+          "type": "string"
+        },
+        "body_html": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "transcript": {
+          "type": "string"
+        },
+        "cta_url": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string",
+          "description": "BCP 47, e.g. en-GB, fr-CA, ar-AE"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Disclosure labels present, e.g. Ad, #ad, <ADV>, AI-generated, Paid partnership"
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "price_mentions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sender": {
+      "type": "object",
+      "properties": {
+        "from_email": {
+          "type": "string"
+        },
+        "sender_id": {
+          "type": "string"
+        },
+        "postal_address": {
+          "type": "string"
+        },
+        "unsubscribe_url": {
+          "type": "string"
+        },
+        "list_unsubscribe_header": {
+          "type": "boolean"
+        }
+      }
+    },
+    "audience": {
+      "type": "object",
+      "description": "Either a resolved audience id or a contact list. The gate re-checks consent.",
+      "properties": {
+        "audience_id": {
+          "type": "string"
+        },
+        "contact_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "party_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Journalists, partners or creators as recipients"
+        }
+      }
+    },
+    "media": {
+      "type": "object",
+      "properties": {
+        "ai_generated": {
+          "type": "boolean"
+        },
+        "ai_manipulated_real_person": {
+          "type": "boolean"
+        },
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "party_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "contact_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "uses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "music_licence_ref": {
+          "type": "string"
+        },
+        "stock_licence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "paid": {
+      "type": "object",
+      "description": "Paid placement or creator deal",
+      "properties": {
+        "is_paid_partnership": {
+          "type": "boolean"
+        },
+        "creator_party_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "special_ad_category": {
+          "enum": [
+            "none",
+            "housing",
+            "employment",
+            "credit",
+            "financial_products",
+            "social_issues_politics"
+          ]
+        },
+        "political": {
+          "type": "boolean"
+        },
+        "targeting": {
+          "type": "object",
+          "properties": {
+            "uses_sensitive_categories": {
+              "type": "boolean",
+              "description": "health, religion, ethnicity, sexual orientation, political views, ..."
+            },
+            "min_age": {
+              "type": "integer"
+            },
+            "custom_list_audience_id": {
+              "type": "string"
+            }
+          }
+        },
+        "product_category": {
+          "type": "string",
+          "description": "general | alcohol | gambling | less_healthy_food | financial | health | adult | other_restricted"
+        }
+      }
+    },
+    "send_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client_id",
+    "service",
+    "channel",
+    "markets",
+    "content"
+  ],
+  "additionalProperties": false
+}

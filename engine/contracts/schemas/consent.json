@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/consent.json",
+  "title": "Consent for one contact, channel and purpose",
+  "type": "object",
+  "properties": {
+    "channel": {
+      "type": "string"
+    },
+    "purpose": {
+      "enum": [
+        "marketing",
+        "transactional",
+        "service",
+        "profiling",
+        "tracking"
+      ]
+    },
+    "status": {
+      "enum": [
+        "granted",
+        "withdrawn",
+        "expired",
+        "unknown"
+      ]
+    },
+    "basis": {
+      "enum": [
+        "consent",
+        "double_opt_in",
+        "soft_opt_in",
+        "legitimate_interest",
+        "corporate_subscriber",
+        "express_casl",
+        "implied_casl",
+        "casl_business_exemption",
+        "prior_express_written",
+        "opt_out_regime",
+        "none"
+      ]
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "string"
+    },
+    "evidence_ref": {
+      "type": "string"
+    },
+    "wording": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "channel",
+    "purpose",
+    "status",
+    "basis"
+  ],
+  "additionalProperties": false
+}

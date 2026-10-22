@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/compliance-check-result.json",
+  "title": "Output of POST /compliance/check",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "outcome": {
+      "enum": [
+        "pass",
+        "warn",
+        "block"
+      ],
+      "description": "pass = go; warn = a person must review and may override with a reason; block = cannot go out until fixed"
+    },
+    "rules_version": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warn",
+              "block"
+            ]
+          },
+          "market": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "description": "field or text span"
+          }
+        },
+        "required": [
+          "rule_id",
+          "severity",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "audience": {
+      "type": "object",
+      "description": "Present when an audience was sent",
+      "properties": {
+        "eligible": {
+          "type": "integer"
+        },
+        "excluded": {
+          "type": "integer"
+        },
+        "excluded_by_reason": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "send_window": {
+      "type": "object",
+      "description": "Allowed local send hours per market",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "outcome",
+    "rules_version",
+    "findings",
+    "checked_at"
+  ],
+  "additionalProperties": false
+}

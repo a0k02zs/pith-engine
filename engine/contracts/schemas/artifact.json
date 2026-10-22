@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/artifact.json",
+  "title": "A draft or asset produced by a workflow step",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "service": {
+      "type": "string",
+      "description": "service code from enums.json services"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$",
+        "description": "ISO 3166-1 alpha-2"
+      }
+    },
+    "locale": {
+      "type": "string",
+      "description": "BCP 47, e.g. en-GB, fr-CA, ar-AE"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "in_review",
+        "approved",
+        "rejected",
+        "live",
+        "retired"
+      ]
+    },
+    "content": {
+      "type": "object"
+    },
+    "file_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claims_used": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "brand_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "compliance_check_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "client_id",
+    "service",
+    "kind",
+    "status",
+    "content"
+  ],
+  "additionalProperties": false
+}
