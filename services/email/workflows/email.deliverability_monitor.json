@@ -1,0 +1,93 @@
+{
+  "id": "email.deliverability_monitor",
+  "version": 1,
+  "service": "email",
+  "description": "Every 2 hours. Compare complaint, bounce and unsubscribe rates with the limits. Pause sends and escalate when a stop limit is crossed.",
+  "trigger": {
+    "cron": "0 */2 * * *"
+  },
+  "steps": [
+    {
+      "id": "stats",
+      "type": "tool",
+      "tool": {
+        "name": "esp",
+        "action": "deliverability.stats",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "assess",
+      "type": "agent",
+      "needs": [
+        "stats"
+      ],
+      "agent": {
+        "prompt_ref": "email/deliverability@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/deliverability@1"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "assess"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.assess.output.level == 'stop'",
+            "goto": "pause"
+          }
+        ],
+        "else": "record"
+      }
+    },
+    {
+      "id": "pause",
+      "type": "tool",
+      "tool": {
+        "name": "esp",
+        "action": "sending.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "incident",
+      "type": "gate",
+      "needs": [
+        "pause"
+      ],
+      "name": "A person decides when to resume",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead",
+          "ops_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "resume",
+      "type": "tool",
+      "needs": [
+        "incident"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "sending.resume",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "emit": {
+        "event": "svc.email/deliverability.checked"
+      }
+    }
+  ]
+}

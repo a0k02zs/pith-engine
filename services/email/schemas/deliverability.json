@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/deliverability@1",
+  "type": "object",
+  "properties": {
+    "level": {
+      "enum": [
+        "ok",
+        "watch",
+        "stop"
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "cause": {
+      "type": "string"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "affected_sends": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "level",
+    "metrics",
+    "cause",
+    "actions",
+    "affected_sends"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/report@1",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "worked": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "did_not_work": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "list_health": {
+      "type": "object",
+      "properties": {
+        "complaint_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "bounce_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "opt_out_rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "list_growth": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "complaint_rate",
+        "bounce_rate",
+        "opt_out_rate",
+        "list_growth"
+      ],
+      "additionalProperties": false
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "charts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "minLength": 1,
+                  "format": "date"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "kpi",
+          "series"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "headline",
+    "worked",
+    "did_not_work",
+    "list_health",
+    "next_actions",
+    "charts"
+  ],
+  "additionalProperties": false
+}

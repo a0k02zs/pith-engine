@@ -1,0 +1,142 @@
+{
+  "$comment": "Email-specific market rules for Pith M service 1 (email). Version 0.1, 2026-10-21. Codes follow engine contracts v0.1.0 enums.json. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
+  "service": "email",
+  "contract_version": "0.1.0",
+  "global": {
+    "unsubscribe_deadline_hours": 48,
+    "one_click_unsubscribe_required": true,
+    "blocked_consent_statuses": ["withdrawn", "expired", "unknown"],
+    "required_footer_fields": ["sender_legal_name", "sender_postal_address", "unsubscribe_link", "privacy_notice_url"],
+    "deliverability_limits": {
+      "complaint_rate": { "target": 0.001, "stop": 0.003 },
+      "hard_bounce_rate": { "target": 0.01, "stop": 0.02 },
+      "unsubscribe_rate": { "target": 0.003, "stop": 0.01 }
+    },
+    "frequency_cap": { "campaigns_per_day": 1, "marketing_emails_per_week": 4 },
+    "ban_fake_reply_prefixes": true
+  },
+  "markets": {
+    "GB": {
+      "group": "UK",
+      "b2c_bases": ["consent", "double_opt_in", "soft_opt_in"],
+      "b2b_bases": ["consent", "double_opt_in", "corporate_subscriber", "legitimate_interest"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["legitimate_interest_assessment", "corporate_address_only"],
+      "subject_prefix_unsolicited": null,
+      "language": "en-GB",
+      "currency": "GBP",
+      "date_format": "DD/MM/YYYY",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "19:00" },
+      "tone": "direct, low hype, understatement"
+    },
+    "SG": {
+      "group": "SG",
+      "b2c_bases": ["consent", "double_opt_in"],
+      "b2b_bases": ["consent", "double_opt_in", "legitimate_interest"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["pdpa_purpose_notice", "spam_control_act_label"],
+      "subject_prefix_unsolicited": "<ADV> ",
+      "language": "en-SG",
+      "optional_languages": ["zh-SG", "ms-SG", "ta-SG"],
+      "currency": "SGD",
+      "date_format": "DD/MM/YYYY",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "20:00" },
+      "tone": "practical, value led"
+    },
+    "US": {
+      "group": "NA",
+      "b2c_bases": ["consent", "double_opt_in", "opt_out_regime"],
+      "b2b_bases": ["consent", "double_opt_in", "opt_out_regime"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["postal_address", "ad_identification"],
+      "subject_prefix_unsolicited": null,
+      "extra_footer_fields": ["ad_identification_if_no_consent"],
+      "opt_out_link_valid_days": 30,
+      "language": "en-US",
+      "currency": "USD",
+      "date_format": "MM/DD/YYYY",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "19:00" },
+      "tone": "confident, benefit first, with proof",
+      "subdivisions": {
+        "US-CA": { "honour_global_privacy_control": true }
+      }
+    },
+    "CA": {
+      "group": "NA",
+      "b2c_bases": ["express_casl", "implied_casl"],
+      "b2b_bases": ["express_casl", "implied_casl", "casl_business_exemption"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["casl_business_exemption_with_source_url"],
+      "implied_consent_expiry_days": { "purchase_or_contract": 730, "inquiry": 183 },
+      "extra_footer_fields": ["secondary_contact_method"],
+      "opt_out_link_valid_days": 60,
+      "subject_prefix_unsolicited": null,
+      "language": "en-CA",
+      "currency": "CAD",
+      "date_format": "YYYY-MM-DD",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "19:00" },
+      "tone": "confident, benefit first, with proof",
+      "subdivisions": {
+        "CA-QC": { "required_language": "fr-CA", "french_at_least_as_prominent": true }
+      }
+    },
+    "AE": {
+      "group": "GCC",
+      "b2c_bases": ["consent", "double_opt_in"],
+      "b2b_bases": ["consent", "double_opt_in", "legitimate_interest"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["low_volume", "named_relevant_contact"],
+      "subject_prefix_unsolicited": null,
+      "language": "en-AE",
+      "b2c_language": "ar-AE",
+      "rtl_for_arabic": true,
+      "currency": "AED",
+      "date_format": "DD/MM/YYYY",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "20:00", "b2c_ramadan": "after_iftar" },
+      "tone": "respectful, premium, relationship first",
+      "subdivisions": { "AE-DU-DIFC": { "own_data_law": true }, "AE-AZ-ADGM": { "own_data_law": true } }
+    },
+    "SA": {
+      "group": "GCC",
+      "b2c_bases": ["consent", "double_opt_in"],
+      "b2b_bases": ["consent", "double_opt_in", "legitimate_interest"],
+      "cold_outbound_allowed": true,
+      "cold_outbound_requires": ["low_volume", "named_relevant_contact"],
+      "data_transfer_check_before_sync": true,
+      "subject_prefix_unsolicited": null,
+      "language": "en-SA",
+      "b2c_language": "ar-SA",
+      "rtl_for_arabic": true,
+      "currency": "SAR",
+      "date_format": "DD/MM/YYYY",
+      "weekend": ["fri", "sat"],
+      "default_send_time": { "b2b": "10:00", "b2c": "21:00", "b2c_ramadan": "after_iftar" },
+      "tone": "respectful, premium, conservative"
+    },
+    "QA": { "group": "GCC", "inherits": "SA", "data_transfer_check_before_sync": false, "language": "en-QA", "b2c_language": "ar-QA", "currency": "QAR" },
+    "KW": { "group": "GCC", "inherits": "SA", "data_transfer_check_before_sync": false, "language": "en-KW", "b2c_language": "ar-KW", "currency": "KWD" },
+    "BH": { "group": "GCC", "inherits": "SA", "data_transfer_check_before_sync": false, "language": "en-BH", "b2c_language": "ar-BH", "currency": "BHD" },
+    "OM": { "group": "GCC", "inherits": "SA", "data_transfer_check_before_sync": false, "language": "en-OM", "b2c_language": "ar-OM", "currency": "OMR" },
+    "EU_DEFAULT": {
+      "group": "EU",
+      "b2c_bases": ["consent", "double_opt_in", "soft_opt_in"],
+      "b2b_bases": ["consent", "double_opt_in"],
+      "b2b_legitimate_interest_needs_lawyer_flag": true,
+      "cold_outbound_allowed": false,
+      "third_party_data_requires": ["article_14_notice_within_30_days", "data_source_in_email"],
+      "subject_prefix_unsolicited": null,
+      "currency": "EUR",
+      "date_format": "DD/MM/YYYY",
+      "weekend": ["sat", "sun"],
+      "default_send_time": { "b2b": "10:00", "b2c": "19:00" },
+      "tone": "factual, precise, no hype"
+    },
+    "NL": { "group": "EU", "inherits": "EU_DEFAULT", "language": "nl-NL", "b2b_language_ok": "en", "lawyer_confirmed": false },
+    "DE": { "group": "EU", "inherits": "EU_DEFAULT", "b2c_bases": ["double_opt_in"], "b2b_bases": ["double_opt_in"], "language": "de-DE", "date_format": "DD.MM.YYYY", "native_editor_required": true }
+  }
+}

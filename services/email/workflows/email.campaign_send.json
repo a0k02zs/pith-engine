@@ -1,0 +1,184 @@
+{
+  "id": "email.campaign_send",
+  "version": 1,
+  "service": "email",
+  "description": "1 campaign send from the approved calendar: write, check, approve, A/B test, send the winner at local time, learn.",
+  "trigger": {
+    "event": "svc.email/send.scheduled"
+  },
+  "steps": [
+    {
+      "id": "write",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "email/write@1",
+        "output_schema": "email/drafts@1"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "agent",
+      "needs": [
+        "write"
+      ],
+      "agent": {
+        "prompt_ref": "email/qa@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/qa_report@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "qa"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "skip_if": "steps.write.output.template_reused && size(steps.write.output.new_claim_ids) == 0",
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "health",
+      "type": "tool",
+      "needs": [
+        "approve_copy"
+      ],
+      "name": "Check sender health before the send",
+      "tool": {
+        "name": "esp",
+        "action": "deliverability.status",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "health_ok",
+      "type": "branch",
+      "needs": [
+        "health"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.health.output.status == 'stopped'",
+            "goto": "hold"
+          }
+        ],
+        "else": "resolve"
+      }
+    },
+    {
+      "id": "hold",
+      "type": "gate",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "resolve",
+      "type": "tool",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "test_send",
+      "type": "tool",
+      "needs": [
+        "resolve"
+      ],
+      "name": "Send variants to the test cells",
+      "tool": {
+        "name": "esp",
+        "action": "campaign.send_test_cells",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "test_wait",
+      "type": "wait",
+      "needs": [
+        "test_send"
+      ],
+      "wait": {
+        "timeout": "4h"
+      }
+    },
+    {
+      "id": "pick",
+      "type": "agent",
+      "needs": [
+        "test_wait"
+      ],
+      "name": "Pick the winner at 95% confidence, else keep the control",
+      "agent": {
+        "prompt_ref": "email/pick_winner@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/winner@1"
+      }
+    },
+    {
+      "id": "send",
+      "type": "tool",
+      "needs": [
+        "pick"
+      ],
+      "name": "Send the winner to the rest at each contact's local time",
+      "tool": {
+        "name": "esp",
+        "action": "campaign.send_local_time",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "measure_wait",
+      "type": "wait",
+      "needs": [
+        "send"
+      ],
+      "wait": {
+        "timeout": "72h"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "needs": [
+        "measure_wait"
+      ],
+      "agent": {
+        "prompt_ref": "email/learn@1",
+        "output_schema": "email/learning@1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/outbound_plan@1",
+  "type": "object",
+  "properties": {
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "angle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contact_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "role",
+          "signal",
+          "angle",
+          "contact_count"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contact_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "contact_ref",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "lia_uk": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "necessity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "balance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "safeguards": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "purpose",
+        "necessity",
+        "balance",
+        "safeguards"
+      ],
+      "additionalProperties": false
+    },
+    "mailboxes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "daily_cap": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "start_date": {
+      "type": "string",
+      "minLength": 1,
+      "format": "date"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "groups",
+    "excluded",
+    "mailboxes",
+    "daily_cap",
+    "start_date",
+    "blockers"
+  ],
+  "additionalProperties": false
+}
