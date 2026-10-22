@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/plan@1",
+  "type": "object",
+  "properties": {
+    "quarter": {
+      "type": "string",
+      "pattern": "^[0-9]{4}Q[1-4]$"
+    },
+    "pillars": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "why"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 2
+    },
+    "briefs": {
+      "type": "array",
+      "items": {
+        "$ref": "brief@1"
+      },
+      "minItems": 1
+    },
+    "quality_failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "brief_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "brief_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "quarter",
+    "pillars",
+    "briefs",
+    "quality_failures"
+  ],
+  "additionalProperties": false
+}

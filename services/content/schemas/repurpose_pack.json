@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/repurpose_pack@1",
+  "type": "object",
+  "properties": {
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 90
+          },
+          "preview": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cta": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "subject",
+          "preview",
+          "body",
+          "cta"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3
+    },
+    "social_posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "enum": [
+              "linkedin",
+              "instagram",
+              "tiktok",
+              "facebook",
+              "x",
+              "youtube"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "platform",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 5
+    },
+    "video_scripts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hook": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beats": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 3
+          },
+          "cta": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seconds": {
+            "type": "integer",
+            "minimum": 15,
+            "maximum": 60
+          }
+        },
+        "required": [
+          "hook",
+          "beats",
+          "cta",
+          "seconds"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 2
+    },
+    "one_pager_markdown": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "emails",
+    "social_posts",
+    "video_scripts",
+    "one_pager_markdown"
+  ],
+  "additionalProperties": false
+}

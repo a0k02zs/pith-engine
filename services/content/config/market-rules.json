@@ -1,0 +1,102 @@
+{
+  "$comment": "Content marketing market rules v0.1 (2026-10-21). Source: Pith M Automation Plan, market sections. Planning summary, not legal advice. Agents read this file; market-rules.md is the human copy.",
+  "version": "0.1.0",
+  "launch_order": ["UK", "SG", "US", "CA", "AE", "SA", "QA", "KW", "BH", "OM", "EU"],
+  "all_markets": {
+    "native_editor_required_for_translation": true,
+    "named_expert_author_required": true,
+    "last_reviewed_date_required": true,
+    "case_study_requires_signed_release": true,
+    "gated_form_requires_privacy_notice_link": true
+  },
+  "markets": {
+    "UK": {
+      "language": "en-GB", "spelling": "british", "currency": "GBP", "date_format": "DD/MM/YYYY",
+      "tone": "direct, low-hype, understated, proof-led",
+      "calendar": ["January sales", "Black Friday", "Christmas", "Boxing Day", "End of tax year (5 April, B2B)"],
+      "form_consent": "consent_or_soft_opt_in", "cookie_consent_before_tracking": true,
+      "sponsored_label": "Ad", "ai_label_required": false,
+      "sensitive_topics": []
+    },
+    "SG": {
+      "language": "en-SG", "spelling": "british", "extra_languages_b2c": ["zh-SG", "ms-SG", "ta-SG"],
+      "currency": "SGD", "date_format": "DD/MM/YYYY",
+      "tone": "practical, value-led, clear numbers and steps",
+      "calendar": ["Chinese New Year", "Hari Raya Puasa", "Deepavali", "9.9 sale", "11.11 sale", "12.12 sale", "Great Singapore Sale"],
+      "form_consent": "consent_with_notified_purpose", "dnc_check_for_phone": true,
+      "sponsored_label": "Sponsored", "ai_label_required": false,
+      "sensitive_topics": ["politics"]
+    },
+    "US": {
+      "language": "en-US", "spelling": "american", "currency": "USD", "date_format": "MM/DD/YYYY",
+      "tone": "confident, benefit-first, proof with numbers and named customers",
+      "calendar": ["Super Bowl", "July 4", "Labor Day", "Thanksgiving", "Black Friday", "Cyber Monday", "Q4 budget season (B2B)"],
+      "form_consent": "opt_out_honour_gpc", "sponsored_label": "Sponsored",
+      "no_invented_testimonials": true, "ai_label_required": false,
+      "sensitive_topics": []
+    },
+    "CA": {
+      "language": "en-CA", "spelling": "canadian", "quebec_language": "fr-CA", "quebec_french_required": true,
+      "currency": "CAD", "date_format": "YYYY-MM-DD",
+      "tone": "confident, benefit-first, proof-led",
+      "calendar": ["Canada Day (1 July)", "Labour Day", "Canadian Thanksgiving", "Boxing Day"],
+      "form_consent": "express_consent_casl", "consent_record_required": true,
+      "sponsored_label": "Sponsored", "ai_label_required": false,
+      "sensitive_topics": []
+    },
+    "AE": {
+      "language": "en", "b2c_language": "ar-AE", "rtl_for_arabic": true, "currency": "AED", "date_format": "DD/MM/YYYY",
+      "weekend": ["Saturday", "Sunday"],
+      "tone": "respectful, premium, relationship-first",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha", "UAE National Day (2 December)", "Dubai Shopping Festival", "White Friday", "GITEX (B2B)"],
+      "form_consent": "consent_pdpl", "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "SA": {
+      "language": "en", "b2c_language": "ar-SA", "rtl_for_arabic": true, "currency": "SAR", "date_format": "DD/MM/YYYY",
+      "weekend": ["Friday", "Saturday"],
+      "tone": "respectful, premium, relationship-first, more conservative",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha", "Saudi Founding Day (22 February)", "Saudi National Day (23 September)", "White Friday", "LEAP (B2B)"],
+      "form_consent": "consent_pdpl", "data_transfer_check": true, "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "QA": {
+      "language": "en", "b2c_language": "ar-QA", "rtl_for_arabic": true, "currency": "QAR", "date_format": "DD/MM/YYYY",
+      "weekend": ["Friday", "Saturday"], "tone": "respectful, premium, relationship-first",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha", "Qatar National Day (18 December)"],
+      "form_consent": "consent_pdppl", "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "KW": {
+      "language": "en", "b2c_language": "ar-KW", "rtl_for_arabic": true, "currency": "KWD", "date_format": "DD/MM/YYYY",
+      "weekend": ["Friday", "Saturday"], "tone": "respectful, premium, relationship-first",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha", "Kuwait National Day (25 February)"],
+      "form_consent": "consent_citra", "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "BH": {
+      "language": "en", "b2c_language": "ar-BH", "rtl_for_arabic": true, "currency": "BHD", "date_format": "DD/MM/YYYY",
+      "weekend": ["Friday", "Saturday"], "tone": "respectful, premium, relationship-first",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha"],
+      "form_consent": "consent_pdpl", "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "OM": {
+      "language": "en", "b2c_language": "ar-OM", "rtl_for_arabic": true, "currency": "OMR", "date_format": "DD/MM/YYYY",
+      "weekend": ["Friday", "Saturday"], "tone": "respectful, premium, relationship-first",
+      "calendar": ["Ramadan", "Eid al-Fitr", "Eid al-Adha"],
+      "form_consent": "consent_pdpl", "sponsored_label": "Ad",
+      "sensitive_topics": ["politics", "religion", "alcohol", "immodest imagery"], "ai_label_required": false
+    },
+    "EU": {
+      "lead_countries": ["NL"], "language_by_country": {"NL": ["en", "nl-NL"], "DE": ["de-DE"], "FR": ["fr-FR"], "ES": ["es-ES"]},
+      "english_ok_for_b2b": ["NL", "SE", "DK", "FI"],
+      "currency": "EUR", "date_format": "DD/MM/YYYY", "date_format_by_country": {"DE": "DD.MM.YYYY"},
+      "tone": "factual, precise, no hype",
+      "form_consent": "gdpr_lawful_basis", "double_opt_in_countries": ["DE"], "article_14_notice_for_third_party_data": true,
+      "cookie_consent_before_tracking": true, "sponsored_label_by_country": {"FR": "Publicité", "DE": "Werbung", "NL": "Advertentie"},
+      "ai_label_required": true, "ai_label_basis": "EU AI Act Article 50, from 2026-08-02",
+      "sensitive_topics": []
+    }
+  }
+}

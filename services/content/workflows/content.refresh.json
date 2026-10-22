@@ -1,0 +1,14 @@
+{
+  "id": "content.refresh",
+  "version": 1,
+  "service": "content",
+  "description": "Monthly refresh audit: flag pages with a 20% traffic fall, old facts, lost AI citations or retired products, then start a content.piece run for each approved refresh.",
+  "trigger": { "cron": "0 6 1 * *", "event": "svc.content/refresh.due" },
+  "concurrency": { "key": "input.client_id", "limit": 1 },
+  "steps": [
+    { "id": "audit", "type": "agent", "name": "Refresh audit", "agent": { "prompt_ref": "content/refresh_auditor@1", "model": "claude-haiku-5-5", "output_schema": "content/refresh_flags@1", "tools": ["analytics.page_sessions", "geo.prompt_results"] } },
+    { "id": "flagged", "type": "emit", "needs": ["audit"], "emit": { "event": "svc.content/refresh.flagged" } },
+    { "id": "approve_refresh_list", "type": "gate", "needs": ["flagged"], "gate": { "approval_kind": "plan", "required_roles": ["content_lead"], "sla_hours": 72, "on_changes": "audit", "on_reject": "fail" } },
+    { "id": "run_refreshes", "type": "subflow", "needs": ["approve_refresh_list"], "subflow": { "workflow_id": "content.piece", "per": "steps.audit.output.flags" } }
+  ]
+}

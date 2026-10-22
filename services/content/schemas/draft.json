@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/draft@1",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meta_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "meta_description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 155
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "body_markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "faq": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1
+          },
+          "a": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "q",
+          "a"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "in_brain": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "source",
+          "in_brain"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proposed_source": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text",
+          "proposed_source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "needs_source": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "schema_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "Article",
+          "FAQPage",
+          "HowTo",
+          "Report",
+          "Book"
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "title",
+    "meta_title",
+    "meta_description",
+    "slug",
+    "body_markdown",
+    "faq",
+    "claims",
+    "new_claims",
+    "needs_source",
+    "schema_types"
+  ],
+  "additionalProperties": false
+}

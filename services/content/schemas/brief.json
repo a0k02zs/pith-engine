@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/brief@1",
+  "type": "object",
+  "properties": {
+    "brief_id": {
+      "type": "string",
+      "pattern": "^cm-[0-9]{4}Q[1-4]-[0-9]{3}$"
+    },
+    "client_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "market": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+    },
+    "format": {
+      "enum": [
+        "blog",
+        "whitepaper",
+        "ebook",
+        "case_study"
+      ]
+    },
+    "audience": {
+      "enum": [
+        "B2B",
+        "B2C"
+      ]
+    },
+    "persona": {
+      "type": "string",
+      "minLength": 1
+    },
+    "funnel_stage": {
+      "enum": [
+        "awareness",
+        "consideration",
+        "decision",
+        "retention"
+      ]
+    },
+    "pillar": {
+      "type": "string",
+      "minLength": 1
+    },
+    "buyer_question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "search_cluster": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "ai_prompts_to_win": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "source_of_question": {
+      "enum": [
+        "sales_call",
+        "support_ticket",
+        "search_data",
+        "ai_prompt",
+        "campaign",
+        "competitor"
+      ]
+    },
+    "original_input": {
+      "enum": [
+        "expert_interview",
+        "client_data",
+        "customer_story",
+        "test"
+      ]
+    },
+    "expert": {
+      "type": "string"
+    },
+    "working_title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "angle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outline": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "claims_needed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "new_claim": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "new_claim"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "sources_to_cite": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "cta": {
+      "enum": [
+        "demo",
+        "download",
+        "trial",
+        "subscribe",
+        "contact",
+        "buy"
+      ]
+    },
+    "internal_links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "competitor_pages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "word_count_target": {
+      "type": "integer",
+      "minimum": 300
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "repurpose": {
+      "type": "boolean"
+    },
+    "kpi_targets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [
+    "brief_id",
+    "client_id",
+    "market",
+    "language",
+    "format",
+    "persona",
+    "buyer_question",
+    "source_of_question",
+    "original_input",
+    "angle",
+    "claims_needed",
+    "cta",
+    "word_count_target",
+    "due_date",
+    "repurpose"
+  ],
+  "additionalProperties": false
+}
