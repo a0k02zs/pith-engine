@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/segments@1",
+  "type": "object",
+  "properties": {
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "filter": {
+            "type": "object"
+          },
+          "est_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "too_small_for_tests": {
+            "type": "boolean"
+          },
+          "is_new": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "filter",
+          "est_count",
+          "too_small_for_tests",
+          "is_new"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "segments",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,61 @@
+{
+  "id": "email.monthly_calendar",
+  "version": 1,
+  "service": "email",
+  "description": "Monthly. Plan, write, approve, test and send the campaign emails for the next month.",
+  "trigger": {
+    "cron": "0 8 20 * *"
+  },
+  "concurrency": {
+    "key": "client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "resolve"
+      ],
+      "agent": {
+        "prompt_ref": "email/calendar@1",
+        "output_schema": "email/calendar@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "calendar",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 48,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "sends",
+      "type": "subflow",
+      "needs": [
+        "approve_plan"
+      ],
+      "subflow": {
+        "workflow_id": "email.campaign_send",
+        "per": "steps.plan.output.sends"
+      }
+    }
+  ]
+}

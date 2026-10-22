@@ -1,0 +1,133 @@
+{
+  "id": "email.flow_build",
+  "version": 1,
+  "service": "email",
+  "description": "Build or change 1 lifecycle flow from the flow library, then publish it to the email platform.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "flow_code",
+      "markets"
+    ],
+    "properties": {
+      "flow_code": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "design",
+      "type": "agent",
+      "name": "Design the flow for this client",
+      "agent": {
+        "prompt_ref": "email/flow_design@1",
+        "output_schema": "email/flow_design@1"
+      }
+    },
+    {
+      "id": "approve_design",
+      "type": "gate",
+      "needs": [
+        "design"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 48,
+        "on_changes": "design"
+      }
+    },
+    {
+      "id": "write",
+      "type": "agent",
+      "needs": [
+        "approve_design"
+      ],
+      "name": "Write every email in the flow, per market language",
+      "agent": {
+        "prompt_ref": "email/write@1",
+        "output_schema": "email/drafts@1"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "agent",
+      "needs": [
+        "write"
+      ],
+      "name": "Pre-check copy",
+      "agent": {
+        "prompt_ref": "email/qa@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/qa_report@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "qa"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "approve_copy"
+      ],
+      "name": "Create the flow in the platform, in draft, then switch it live",
+      "tool": {
+        "name": "esp",
+        "action": "flow.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "announce",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "svc.email/flow.published"
+      }
+    }
+  ]
+}

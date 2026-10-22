@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- Pith M email base v0.1. Table layout and inline styles for email clients.
+     Set {{lang}} (for example en-GB, fr-CA, ar-AE) and {{dir}} (ltr or rtl). Brand tokens come from the client brain. -->
+<html lang="{{lang}}" dir="{{dir}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>{{subject}}</title>
+<style>
+  @media (max-width: 620px) { .container { width: 100% !important; } .px { padding-left: 16px !important; padding-right: 16px !important; } }
+  @media (prefers-color-scheme: dark) { .bg { background: #111418 !important; } .card { background: #1b1f24 !important; } .ink { color: #e8eaed !important; } }
+  a { color: {{brand_link_color}}; }
+</style>
+</head>
+<body class="bg" style="margin:0;padding:0;background:#f4f5f7;">
+  <!-- Preview text: shows in the inbox list, hidden in the email -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{{preview_text}}&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg" style="background:#f4f5f7;">
+    <tr><td align="center" style="padding:24px 0;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="container card" style="width:600px;max-width:600px;background:#ffffff;border-radius:8px;">
+        <tr><td class="px" style="padding:24px 32px;" align="{{start_side}}">
+          <img src="{{brand_logo_url}}" width="120" alt="{{brand_name}}" style="display:block;border:0;height:auto;">
+        </td></tr>
+        <tr><td class="px ink" dir="{{dir}}" style="padding:0 32px 8px;font-family:{{brand_font_stack}};font-size:16px;line-height:1.55;color:#16202c;text-align:{{start_side}};">
+          {{body_html}}
+        </td></tr>
+        <tr><td class="px" style="padding:16px 32px 32px;" align="{{start_side}}">
+          <!-- Bulletproof button -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td style="border-radius:6px;background:{{brand_primary_color}};">
+              <a href="{{cta_url}}{{utm}}" style="display:inline-block;padding:14px 24px;font-family:{{brand_font_stack}};font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:6px;">{{cta_label}}</a>
+            </td>
+          </tr></table>
+        </td></tr>
+        <tr><td class="px ink" dir="{{dir}}" style="padding:24px 32px;border-top:1px solid #e3e6ea;font-family:{{brand_font_stack}};font-size:12px;line-height:1.5;color:#5a6573;text-align:{{start_side}};">
+          {{footer_html}}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

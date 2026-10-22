@@ -1,0 +1,116 @@
+{
+  "id": "email.outbound_sequence",
+  "version": 1,
+  "service": "email",
+  "description": "B2B cold outbound for 1 list: approve list and sequence, write, check, send from outbound domains. Only in markets where cold outbound is allowed.",
+  "trigger": {
+    "event": "svc.abm/list.ready"
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Resolve the list; drops markets where cold outbound is not allowed",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "resolve"
+      ],
+      "agent": {
+        "prompt_ref": "email/outbound_plan@1",
+        "output_schema": "email/outbound_plan@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "name": "Approve list, sequence and (UK) the legitimate interest assessment",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead",
+          "client_sales"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "write",
+      "type": "agent",
+      "needs": [
+        "approve_plan"
+      ],
+      "agent": {
+        "prompt_ref": "email/outbound_write@1",
+        "output_schema": "email/drafts@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "write"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "fact"
+        ],
+        "min_brand_score": 75
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "send",
+      "type": "tool",
+      "needs": [
+        "approve_copy"
+      ],
+      "name": "Load the sequence in the outbound tool; max 50 per mailbox per day",
+      "tool": {
+        "name": "outbound",
+        "action": "sequence.start",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "started",
+      "type": "emit",
+      "needs": [
+        "send"
+      ],
+      "emit": {
+        "event": "svc.email/outbound.started"
+      }
+    }
+  ]
+}

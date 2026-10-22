@@ -1,0 +1,45 @@
+{
+  "id": "email.consent_change",
+  "version": 1,
+  "service": "email",
+  "description": "Real time. Suppress a contact in the email platform when consent is withdrawn or the contact is suppressed or erased.",
+  "trigger": {
+    "event": "engine/consent.changed"
+  },
+  "steps": [
+    {
+      "id": "route",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "input.channel == 'email' && input.status != 'granted'",
+            "goto": "suppress"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "suppress",
+      "type": "tool",
+      "tool": {
+        "name": "esp",
+        "action": "profile.suppress",
+        "risk": "remove"
+      },
+      "retry": {
+        "attempts": 5,
+        "backoff": "exponential"
+      },
+      "timeout": "1h"
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "emit": {
+        "event": "svc.email/consent.applied"
+      }
+    }
+  ]
+}

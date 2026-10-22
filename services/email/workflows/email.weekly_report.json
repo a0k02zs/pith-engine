@@ -1,0 +1,59 @@
+{
+  "id": "email.weekly_report",
+  "version": 1,
+  "service": "email",
+  "description": "Weekly. Write the email performance report; a strategist checks it before the client sees it.",
+  "trigger": {
+    "cron": "0 7 * * 1"
+  },
+  "steps": [
+    {
+      "id": "metrics",
+      "type": "tool",
+      "tool": {
+        "name": "engine",
+        "action": "metrics.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "needs": [
+        "metrics"
+      ],
+      "agent": {
+        "prompt_ref": "email/report@1",
+        "output_schema": "email/report@1"
+      }
+    },
+    {
+      "id": "approve",
+      "type": "gate",
+      "needs": [
+        "draft"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "approve"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "reports.publish",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

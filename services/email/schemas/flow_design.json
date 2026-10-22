@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/flow_design@1",
+  "type": "object",
+  "properties": {
+    "flow_code": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(B2C|B2B|SHARED|OUT)-\\d{2}$"
+    },
+    "trigger": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entry_filter": {
+      "type": "object"
+    },
+    "exits": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "delay": {
+            "type": "string",
+            "minLength": 1
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cta": {
+            "type": "string",
+            "minLength": 1
+          },
+          "optional": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "step",
+          "delay",
+          "goal",
+          "cta",
+          "optional"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "languages_by_market": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    },
+    "changes_from_library": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "change": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "change",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "flow_code",
+    "trigger",
+    "entry_filter",
+    "exits",
+    "emails",
+    "languages_by_market",
+    "changes_from_library",
+    "blockers"
+  ],
+  "additionalProperties": false
+}
