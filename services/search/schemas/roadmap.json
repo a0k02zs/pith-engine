@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/roadmap@1",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "technical_fix",
+              "new_page",
+              "page_update",
+              "schema",
+              "geo_action",
+              "sem_action"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 1
+          },
+          "effort": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "month": {
+            "enum": [
+              1,
+              2,
+              3,
+              null
+            ]
+          },
+          "owner": {
+            "enum": [
+              "pith",
+              "client_developer",
+              "subject_expert"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "value",
+          "confidence",
+          "effort",
+          "critical",
+          "month",
+          "owner"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "client_asks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "ask": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "month",
+          "ask"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "forecast": {
+      "type": "object",
+      "properties": {
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "nonbrand_sessions_month3": {
+          "type": "object",
+          "properties": {
+            "low": {
+              "type": "integer"
+            },
+            "high": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "low",
+            "high"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "assumptions",
+        "nonbrand_sessions_month3"
+      ],
+      "additionalProperties": false
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "items",
+    "client_asks",
+    "forecast",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

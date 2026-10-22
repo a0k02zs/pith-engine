@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/report@1",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "seo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "now": {
+            "type": "number"
+          },
+          "previous": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "change_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "kpi",
+          "now",
+          "previous",
+          "change_pct"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "geo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "avg_4w": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kpi",
+          "avg_4w",
+          "min",
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "sem": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "spend": {
+            "type": "number"
+          },
+          "conversions": {
+            "type": "number"
+          },
+          "cpa": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "roas": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "market",
+          "spend",
+          "conversions",
+          "cpa",
+          "roas"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "explanations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "change": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "change",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "next_month": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "client_asks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "summary",
+    "seo",
+    "geo",
+    "sem",
+    "explanations",
+    "next_month",
+    "client_asks"
+  ],
+  "additionalProperties": false
+}

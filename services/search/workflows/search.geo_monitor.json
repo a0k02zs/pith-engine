@@ -1,0 +1,108 @@
+{
+  "id": "search.geo_monitor",
+  "version": 1,
+  "service": "search",
+  "description": "W4. Weekly GEO run: each prompt on each engine 3 times, parse, compute shares, send source gaps and wrong facts.",
+  "trigger": {
+    "cron": "0 3 * * 3"
+  },
+  "steps": [
+    {
+      "id": "run_prompts",
+      "type": "tool",
+      "name": "run_prompts",
+      "tool": {
+        "name": "seo",
+        "action": "geo.run_prompts",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "analyse",
+      "type": "agent",
+      "name": "analyse",
+      "agent": {
+        "prompt_ref": "search/geo_analyst@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/geo_observations@1"
+      },
+      "needs": [
+        "run_prompts"
+      ]
+    },
+    {
+      "id": "metrics",
+      "type": "tool",
+      "name": "metrics",
+      "tool": {
+        "name": "analytics",
+        "action": "geo.compute_metrics",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "analyse"
+      ]
+    },
+    {
+      "id": "observed",
+      "type": "emit",
+      "needs": [
+        "metrics"
+      ],
+      "emit": {
+        "event": "svc.search/geo.observed"
+      },
+      "name": "observed"
+    },
+    {
+      "id": "gaps",
+      "type": "emit",
+      "needs": [
+        "analyse"
+      ],
+      "emit": {
+        "event": "svc.search/geo.source_gaps"
+      },
+      "name": "gaps"
+    },
+    {
+      "id": "wrong",
+      "type": "branch",
+      "needs": [
+        "analyse"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.analyse.output.runs.some(r => r.wrong_facts.length > 0)",
+            "goto": "wrong_fact"
+          }
+        ],
+        "else": "kpis"
+      },
+      "name": "wrong"
+    },
+    {
+      "id": "wrong_fact",
+      "type": "emit",
+      "needs": [
+        "wrong"
+      ],
+      "emit": {
+        "event": "svc.search/geo.wrong_fact"
+      },
+      "name": "wrong fact"
+    },
+    {
+      "id": "kpis",
+      "type": "emit",
+      "needs": [
+        "metrics"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      },
+      "name": "kpis"
+    }
+  ]
+}

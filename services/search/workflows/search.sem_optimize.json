@@ -1,0 +1,121 @@
+{
+  "id": "search.sem_optimize",
+  "version": 1,
+  "service": "search",
+  "description": "W6. Daily SEM optimization: pauses and negatives always apply (remove), budget moves apply only inside spend_policies, anything else waits for gate G3b.",
+  "trigger": {
+    "cron": "0 7 * * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "pull",
+      "type": "tool",
+      "name": "pull",
+      "tool": {
+        "name": "ads_google",
+        "action": "performance.report",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "propose",
+      "type": "agent",
+      "name": "propose",
+      "agent": {
+        "prompt_ref": "search/sem_optimizer@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/change_set@1"
+      },
+      "needs": [
+        "pull"
+      ]
+    },
+    {
+      "id": "apply_removals",
+      "type": "tool",
+      "name": "apply_removals",
+      "tool": {
+        "name": "ads_google",
+        "action": "changes.apply_pauses_and_negatives",
+        "risk": "remove"
+      },
+      "needs": [
+        "propose"
+      ]
+    },
+    {
+      "id": "apply_in_policy",
+      "type": "tool",
+      "name": "apply_in_policy",
+      "tool": {
+        "name": "ads_google",
+        "action": "changes.apply_budget_moves_in_policy",
+        "risk": "spend"
+      },
+      "needs": [
+        "propose"
+      ]
+    },
+    {
+      "id": "needs_ok",
+      "type": "branch",
+      "needs": [
+        "propose"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.split.needs_approval.length > 0",
+            "goto": "approve_change"
+          }
+        ],
+        "else": "kpis"
+      },
+      "name": "needs ok"
+    },
+    {
+      "id": "approve_change",
+      "type": "gate",
+      "needs": [
+        "needs_ok"
+      ],
+      "gate": {
+        "approval_kind": "budget_change",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail"
+      },
+      "name": "G3b budget change"
+    },
+    {
+      "id": "apply_approved",
+      "type": "tool",
+      "name": "apply_approved",
+      "tool": {
+        "name": "ads_google",
+        "action": "changes.apply_approved",
+        "risk": "spend"
+      },
+      "needs": [
+        "approve_change"
+      ]
+    },
+    {
+      "id": "kpis",
+      "type": "emit",
+      "needs": [
+        "apply_in_policy"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      },
+      "name": "kpis"
+    }
+  ]
+}

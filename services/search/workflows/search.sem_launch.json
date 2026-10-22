@@ -1,0 +1,124 @@
+{
+  "id": "search.sem_launch",
+  "version": 1,
+  "service": "search",
+  "description": "W5. SEM build per market, conversion tracking, checks, gate G3 (launch and budget), push paused, then enable.",
+  "trigger": {
+    "event": "svc.search/roadmap.approved"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "inputs",
+      "type": "tool",
+      "name": "inputs",
+      "tool": {
+        "name": "ads_google",
+        "action": "account.report",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "build",
+      "type": "agent",
+      "name": "build",
+      "agent": {
+        "prompt_ref": "search/sem_builder@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/sem_build@1"
+      },
+      "needs": [
+        "inputs"
+      ]
+    },
+    {
+      "id": "tracking",
+      "type": "tool",
+      "name": "tracking",
+      "tool": {
+        "name": "analytics",
+        "action": "tracking_plan.write",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "build"
+      ]
+    },
+    {
+      "id": "ads_check",
+      "type": "check",
+      "needs": [
+        "build",
+        "tracking"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 75
+      },
+      "name": "ads check"
+    },
+    {
+      "id": "approve_launch",
+      "type": "gate",
+      "needs": [
+        "ads_check"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "performance_marketer",
+          "client_finance"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "build"
+      },
+      "name": "G3 launch and budget"
+    },
+    {
+      "id": "push_paused",
+      "type": "tool",
+      "name": "push_paused",
+      "tool": {
+        "name": "ads_google",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_launch"
+      ]
+    },
+    {
+      "id": "enable",
+      "type": "tool",
+      "name": "enable",
+      "tool": {
+        "name": "ads_google",
+        "action": "campaigns.enable",
+        "risk": "spend"
+      },
+      "needs": [
+        "push_paused"
+      ]
+    },
+    {
+      "id": "launched",
+      "type": "emit",
+      "needs": [
+        "enable"
+      ],
+      "emit": {
+        "event": "svc.search/sem.launched"
+      },
+      "name": "launched"
+    }
+  ]
+}

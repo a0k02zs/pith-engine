@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/change_set@1",
+  "type": "object",
+  "properties": {
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "add_negative",
+              "pause_keyword",
+              "pause_ad",
+              "pause_campaign",
+              "budget_move",
+              "bid_strategy",
+              "new_campaign"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "to": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "type",
+          "target",
+          "from",
+          "to",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "changes",
+    "alerts"
+  ],
+  "additionalProperties": false
+}

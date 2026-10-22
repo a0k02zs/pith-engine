@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/draft@1",
+  "type": "object",
+  "properties": {
+    "brief_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meta_description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 155
+    },
+    "body_markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    },
+    "claims_used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proposed_source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "proposed_source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "open_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "brief_id",
+    "title",
+    "meta_description",
+    "body_markdown",
+    "sources",
+    "claims_used",
+    "new_claims",
+    "open_items"
+  ],
+  "additionalProperties": false
+}

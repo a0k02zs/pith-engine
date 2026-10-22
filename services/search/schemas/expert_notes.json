@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/expert_notes@1",
+  "type": "object",
+  "properties": {
+    "brief_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expert_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expert_role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_url": {
+      "type": "string"
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answer": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "question",
+          "answer"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "brief_id",
+    "expert_name",
+    "expert_role",
+    "profile_url",
+    "answers"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/sem_audit@1",
+  "type": "object",
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "enum": [
+              "conversion_tracking",
+              "structure",
+              "wasted_spend",
+              "negatives",
+              "ads",
+              "assets",
+              "bidding",
+              "budget",
+              "brand_split",
+              "settings",
+              "microsoft_ads"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "normal"
+            ]
+          },
+          "finding": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          },
+          "est_monthly_impact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "area",
+          "severity",
+          "finding",
+          "evidence",
+          "fix",
+          "est_monthly_impact"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "wasted_spend_90d": {
+      "type": "number",
+      "minimum": 0
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "findings",
+    "wasted_spend_90d",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

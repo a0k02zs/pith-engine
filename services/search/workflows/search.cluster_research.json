@@ -1,0 +1,60 @@
+{
+  "id": "search.cluster_research",
+  "version": 1,
+  "service": "search",
+  "description": "Keyword and question clusters and the GEO prompt set for 1 market (subflow of W1, and quarterly).",
+  "trigger": {
+    "cron": "0 6 1 1,4,7,10 *"
+  },
+  "steps": [
+    {
+      "id": "pull_queries",
+      "type": "tool",
+      "name": "pull_queries",
+      "tool": {
+        "name": "seo",
+        "action": "keywords.pull",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "name": "research",
+      "agent": {
+        "prompt_ref": "search/keyword_researcher@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/clusters@1"
+      },
+      "needs": [
+        "pull_queries"
+      ]
+    },
+    {
+      "id": "prompt_set",
+      "type": "agent",
+      "name": "prompt_set",
+      "agent": {
+        "prompt_ref": "search/geo_prompt_designer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/prompt_set@1"
+      },
+      "needs": [
+        "research"
+      ]
+    },
+    {
+      "id": "save",
+      "type": "tool",
+      "name": "save",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "prompt_set"
+      ]
+    }
+  ]
+}
