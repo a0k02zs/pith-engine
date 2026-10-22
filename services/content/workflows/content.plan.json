@@ -1,0 +1,16 @@
+{
+  "id": "content.plan",
+  "version": 1,
+  "service": "content",
+  "description": "Quarterly content plan: gap analysis, plan with 1 brief per piece, plan gate, then 1 content.piece run per approved brief.",
+  "trigger": { "cron": "0 6 1 1,4,7,10 *", "manual": true },
+  "inputs": { "type": "object", "required": ["client_id", "quarter", "markets", "package"], "properties": { "client_id": {"type": "string"}, "quarter": {"type": "string"}, "markets": {"type": "array", "items": {"type": "string"}}, "package": {"enum": ["starter", "growth", "authority"]} } },
+  "concurrency": { "key": "input.client_id", "limit": 1 },
+  "steps": [
+    { "id": "gap_analysis", "type": "agent", "name": "Gap analysis", "agent": { "prompt_ref": "content/gap_analyst@1", "model": "claude-opus-5-5", "output_schema": "content/gap_report@1", "tools": ["search.site_inventory", "search.clusters", "crm.objections", "geo.prompt_results"] } },
+    { "id": "plan", "type": "agent", "name": "Quarterly plan and briefs", "needs": ["gap_analysis"], "agent": { "prompt_ref": "content/planner@1", "model": "claude-opus-5-5", "output_schema": "content/plan@1" } },
+    { "id": "approve_plan", "type": "gate", "name": "Approve plan", "needs": ["plan"], "gate": { "approval_kind": "plan", "required_roles": ["content_lead", "client_marketing_lead"], "required_count": 2, "sla_hours": 72, "on_changes": "plan", "on_reject": "fail" } },
+    { "id": "plan_approved", "type": "emit", "needs": ["approve_plan"], "emit": { "event": "svc.content/plan.approved" } },
+    { "id": "run_pieces", "type": "subflow", "needs": ["plan_approved"], "subflow": { "workflow_id": "content.piece", "per": "steps.plan.output.briefs" } }
+  ]
+}
