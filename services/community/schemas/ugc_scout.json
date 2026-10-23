@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/ugc_scout@1",
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "author": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform": {
+            "type": "string",
+            "minLength": 1
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "minor_visible",
+                "third_party_people",
+                "third_party_brand",
+                "sensitive",
+                "paid_already",
+                "gcc_sensitivity"
+              ]
+            }
+          },
+          "suggested_rights_level": {
+            "enum": [
+              "R1",
+              "R2",
+              "R3",
+              "R4"
+            ]
+          },
+          "suggested_uses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "organic_repost",
+                "owned_channel",
+                "paid_ad",
+                "case_study"
+              ]
+            }
+          }
+        },
+        "required": [
+          "url",
+          "author",
+          "platform",
+          "score",
+          "why",
+          "blockers",
+          "suggested_rights_level",
+          "suggested_uses"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 20
+    }
+  },
+  "required": [
+    "candidates"
+  ],
+  "additionalProperties": false
+}

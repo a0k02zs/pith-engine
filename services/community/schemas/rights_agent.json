@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/rights_agent@1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "enum": [
+        "send_request",
+        "record_grant",
+        "needs_human_offer",
+        "close_declined",
+        "answer_question"
+      ]
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "channel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reply_class": {
+      "enum": [
+        "agreed",
+        "agreed_with_conditions",
+        "declined",
+        "question",
+        "no_reply",
+        null
+      ]
+    },
+    "rights_level": {
+      "enum": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ]
+    },
+    "grants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "likeness",
+                "ugc_reuse",
+                "paid_usage",
+                "whitelisting"
+              ]
+            },
+            "minItems": 1
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "minItems": 1
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "guardian_evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "person_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "is_minor": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "scope",
+          "markets",
+          "channels",
+          "starts_at",
+          "expires_at",
+          "evidence_ref",
+          "person_name",
+          "is_minor"
+        ],
+        "additionalProperties": false,
+        "if": {
+          "properties": {
+            "is_minor": {
+              "const": true
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "guardian_evidence_ref"
+          ],
+          "properties": {
+            "guardian_evidence_ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "approval_needed": {
+      "enum": [
+        "contract",
+        "payout",
+        null
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "action",
+    "message",
+    "channel",
+    "reply_class",
+    "rights_level",
+    "grants",
+    "approval_needed",
+    "notes"
+  ],
+  "additionalProperties": false
+}

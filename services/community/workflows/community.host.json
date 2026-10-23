@@ -1,0 +1,105 @@
+{
+  "id": "community.host",
+  "version": 1,
+  "service": "community",
+  "description": "Community host agent: welcome members, answer from approved answers, post weekly items, hand over to a person.",
+  "trigger": {
+    "event": "svc.community/member.activity"
+  },
+  "steps": [
+    {
+      "id": "host",
+      "type": "agent",
+      "name": "Decide and draft the host action",
+      "agent": {
+        "prompt_ref": "community/host@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/host@1"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Hand over?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.host.output.action == 'handover'",
+            "goto": "handover"
+          },
+          {
+            "if": "steps.host.output.action == 'none'",
+            "goto": "done"
+          }
+        ],
+        "else": "check"
+      },
+      "needs": [
+        "host"
+      ]
+    },
+    {
+      "id": "handover",
+      "type": "emit",
+      "name": "Hand over to a person",
+      "emit": {
+        "event": "engine/escalation.raised"
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Checks: brand, compliance",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ]
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "post",
+      "type": "tool",
+      "name": "Post in the community",
+      "tool": {
+        "name": "community",
+        "action": "message.post",
+        "risk": "write_external"
+      },
+      "needs": [
+        "check"
+      ]
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Record the post",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "needs": [
+        "post"
+      ]
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "name": "Nothing to do",
+      "emit": {
+        "event": "svc.community/member.activity_handled"
+      },
+      "needs": [
+        "route",
+        "record",
+        "handover"
+      ]
+    }
+  ]
+}

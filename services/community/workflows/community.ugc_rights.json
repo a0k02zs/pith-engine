@@ -1,0 +1,297 @@
+{
+  "id": "community.ugc_rights",
+  "version": 1,
+  "service": "community",
+  "description": "Weekly: find customer content, ask for rights, record one grant per person shown. Paid rights need contract and payout gates.",
+  "trigger": {
+    "cron": "0 9 * * MON"
+  },
+  "steps": [
+    {
+      "id": "collect",
+      "type": "tool",
+      "name": "Collect mentions, tags and review photos",
+      "tool": {
+        "name": "social",
+        "action": "mentions.search",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "collect_reviews",
+      "type": "tool",
+      "name": "Collect review photos",
+      "tool": {
+        "name": "reviews",
+        "action": "media.list",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "scout",
+      "type": "agent",
+      "name": "Score candidates and mark blockers",
+      "agent": {
+        "prompt_ref": "community/ugc_scout@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "community/ugc_scout@1"
+      },
+      "needs": [
+        "collect",
+        "collect_reviews"
+      ]
+    },
+    {
+      "id": "select",
+      "type": "gate",
+      "name": "Pick candidates and rights levels",
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "community_manager",
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 72,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "scout"
+      ]
+    },
+    {
+      "id": "request",
+      "type": "agent",
+      "name": "Write the rights requests",
+      "agent": {
+        "prompt_ref": "community/rights_agent@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/rights_agent@1"
+      },
+      "needs": [
+        "select"
+      ]
+    },
+    {
+      "id": "check_request",
+      "type": "check",
+      "name": "Checks: brand, compliance",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ]
+      },
+      "needs": [
+        "request"
+      ]
+    },
+    {
+      "id": "paid",
+      "type": "branch",
+      "name": "Paid rights (R3) or any payment?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.request.output.rights_level == 'R3' || item.payment_amount > 0",
+            "goto": "approve_deal"
+          }
+        ],
+        "else": "resolve_owner"
+      },
+      "needs": [
+        "check_request"
+      ]
+    },
+    {
+      "id": "approve_deal",
+      "type": "gate",
+      "name": "G4 Approve the paid rights deal and rate",
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "community_manager",
+          "client_legal"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "paid"
+      ]
+    },
+    {
+      "id": "resolve_owner",
+      "type": "tool",
+      "name": "Resolve the owner as a contact or party that may receive a direct message",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      },
+      "needs": [
+        "paid",
+        "approve_deal"
+      ]
+    },
+    {
+      "id": "send_request",
+      "type": "tool",
+      "name": "Send the request with the e-sign link",
+      "tool": {
+        "name": "social",
+        "action": "dm.send",
+        "risk": "send"
+      },
+      "needs": [
+        "resolve_owner"
+      ]
+    },
+    {
+      "id": "wait_signed",
+      "type": "wait",
+      "name": "Wait for the owner's signature",
+      "wait": {
+        "event": "svc.community/rights.signed",
+        "match": "data.request_id == item.request_id",
+        "timeout": "21d"
+      },
+      "needs": [
+        "send_request"
+      ]
+    },
+    {
+      "id": "build_grants",
+      "type": "agent",
+      "name": "Build one rights grant per person shown",
+      "agent": {
+        "prompt_ref": "community/rights_agent@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/rights_agent@1"
+      },
+      "needs": [
+        "wait_signed"
+      ]
+    },
+    {
+      "id": "countersign_needed",
+      "type": "branch",
+      "name": "Does Pith countersign (R3)?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.request.output.rights_level == 'R3'",
+            "goto": "countersign"
+          }
+        ],
+        "else": "write_grants"
+      },
+      "needs": [
+        "build_grants"
+      ]
+    },
+    {
+      "id": "countersign",
+      "type": "tool",
+      "name": "Countersign the paid rights contract",
+      "tool": {
+        "name": "esign",
+        "action": "envelope.countersign",
+        "risk": "sign"
+      },
+      "needs": [
+        "countersign_needed"
+      ]
+    },
+    {
+      "id": "write_grants",
+      "type": "tool",
+      "name": "Write the rights grants to the engine",
+      "tool": {
+        "name": "engine",
+        "action": "rights.create",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "countersign_needed",
+        "countersign"
+      ]
+    },
+    {
+      "id": "pay_needed",
+      "type": "branch",
+      "name": "Payment due?",
+      "branch": {
+        "cases": [
+          {
+            "if": "item.payment_amount > 0",
+            "goto": "approve_payout"
+          }
+        ],
+        "else": "add_to_library"
+      },
+      "needs": [
+        "write_grants"
+      ]
+    },
+    {
+      "id": "approve_payout",
+      "type": "gate",
+      "name": "G4 Approve the payout",
+      "gate": {
+        "approval_kind": "payout",
+        "required_roles": [
+          "client_finance"
+        ],
+        "required_count": 1,
+        "sla_hours": 72,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "pay_needed"
+      ]
+    },
+    {
+      "id": "pay",
+      "type": "tool",
+      "name": "Pay the owner",
+      "tool": {
+        "name": "payout",
+        "action": "transfer.create",
+        "risk": "pay"
+      },
+      "needs": [
+        "approve_payout"
+      ]
+    },
+    {
+      "id": "add_to_library",
+      "type": "tool",
+      "name": "Register the content as an approved artifact",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "pay_needed",
+        "pay"
+      ]
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Record UGC with rights",
+      "emit": {
+        "event": "engine/metric.recorded"
+      },
+      "needs": [
+        "add_to_library"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "community.weekly_report",
+  "version": 1,
+  "service": "community",
+  "description": "Weekly insights. The strategist reviews the report before the client sees it (G6).",
+  "trigger": {
+    "cron": "0 7 * * MON"
+  },
+  "steps": [
+    {
+      "id": "kpis",
+      "type": "tool",
+      "name": "Pull KPIs for this week and last week",
+      "tool": {
+        "name": "engine",
+        "action": "metrics.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "items",
+      "type": "tool",
+      "name": "Pull reviews, threads and UGC status",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "insights",
+      "type": "agent",
+      "name": "Write the report and product feedback",
+      "agent": {
+        "prompt_ref": "community/insights@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/insights@1"
+      },
+      "needs": [
+        "kpis",
+        "items"
+      ]
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "name": "G6 Report review",
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "insights"
+      },
+      "needs": [
+        "insights"
+      ]
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "name": "Publish to the client portal",
+      "tool": {
+        "name": "engine",
+        "action": "reports.publish",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_report"
+      ]
+    },
+    {
+      "id": "learn",
+      "type": "emit",
+      "name": "Write learnings to the brain",
+      "emit": {
+        "event": "engine/learning.recorded"
+      },
+      "needs": [
+        "deliver"
+      ]
+    }
+  ]
+}

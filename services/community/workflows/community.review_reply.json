@@ -1,0 +1,135 @@
+{
+  "id": "community.review_reply",
+  "version": 1,
+  "service": "community",
+  "description": "Draft a reply to each new review. 4 and 5 star replies post on their own after the trial. 3 star needs a person. 1 and 2 star, red risk and suspected violations are escalations.",
+  "trigger": {
+    "event": "svc.community/review.received"
+  },
+  "steps": [
+    {
+      "id": "draft",
+      "type": "agent",
+      "name": "Classify the review and draft a reply",
+      "agent": {
+        "prompt_ref": "community/review_replier@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/review_replier@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Checks: brand, compliance",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      },
+      "needs": [
+        "draft"
+      ]
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Route by class, risk and trial",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.draft.output.class == 'negative' || steps.draft.output.risk == 'red' || steps.draft.output.suspected_policy_violation",
+            "goto": "escalate"
+          },
+          {
+            "if": "steps.draft.output.class == 'mixed' || steps.draft.output.risk == 'amber'",
+            "goto": "approve_reply"
+          },
+          {
+            "if": "client.auto_reply_trial_passed && steps.check.brand_score >= 85",
+            "goto": "post"
+          }
+        ],
+        "else": "approve_reply"
+      },
+      "needs": [
+        "check"
+      ]
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "name": "Raise an escalation; the draft is attached as a suggestion",
+      "emit": {
+        "event": "engine/escalation.raised"
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "handle_escalation",
+      "type": "gate",
+      "name": "G3 Negative or sensitive review: a person replies",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 1,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "escalate"
+      ]
+    },
+    {
+      "id": "approve_reply",
+      "type": "gate",
+      "name": "G3 Approve a 3 star or amber reply",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 12,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "post",
+      "type": "tool",
+      "name": "Post the reply on the review platform",
+      "tool": {
+        "name": "reviews",
+        "action": "reply.post",
+        "risk": "write_external"
+      },
+      "needs": [
+        "route",
+        "approve_reply",
+        "handle_escalation"
+      ]
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Record the reply",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "needs": [
+        "post"
+      ]
+    }
+  ]
+}

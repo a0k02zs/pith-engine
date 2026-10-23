@@ -1,0 +1,132 @@
+{
+  "id": "community.moderate",
+  "version": 1,
+  "service": "community",
+  "description": "Moderate each community post and UGC submission as it arrives.",
+  "trigger": {
+    "event": "svc.community/post.created"
+  },
+  "steps": [
+    {
+      "id": "classify",
+      "type": "agent",
+      "name": "Label the item green, amber or red",
+      "agent": {
+        "prompt_ref": "community/moderator@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "community/moderator@1"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Route",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.action in ['hide','hide_and_escalate']",
+            "goto": "hide"
+          },
+          {
+            "if": "steps.classify.output.action == 'queue'",
+            "goto": "review_amber"
+          }
+        ],
+        "else": "done"
+      },
+      "needs": [
+        "classify"
+      ]
+    },
+    {
+      "id": "hide",
+      "type": "tool",
+      "name": "Hide the post now",
+      "tool": {
+        "name": "community",
+        "action": "post.hide",
+        "risk": "remove"
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "escalate_needed",
+      "type": "branch",
+      "name": "Escalate?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.action == 'hide_and_escalate'",
+            "goto": "escalate"
+          }
+        ],
+        "else": "done"
+      },
+      "needs": [
+        "hide"
+      ]
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "name": "Escalate within 1 hour",
+      "emit": {
+        "event": "engine/escalation.raised"
+      },
+      "needs": [
+        "escalate_needed"
+      ]
+    },
+    {
+      "id": "handle_escalation",
+      "type": "gate",
+      "name": "G5 Escalation",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 1,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "escalate"
+      ]
+    },
+    {
+      "id": "review_amber",
+      "type": "gate",
+      "name": "Moderator review of an amber item",
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "community_manager"
+        ],
+        "required_count": 1,
+        "sla_hours": 24,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "route"
+      ]
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "name": "Moderation done",
+      "emit": {
+        "event": "svc.community/post.moderated"
+      },
+      "needs": [
+        "route",
+        "escalate_needed",
+        "handle_escalation",
+        "review_amber"
+      ]
+    }
+  ]
+}
