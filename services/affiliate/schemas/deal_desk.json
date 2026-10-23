@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/deal_desk@1",
+  "title": "affiliate/deal_desk@1",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "registration_id": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "accept",
+              "conflict"
+            ]
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "registration_id",
+          "decision"
+        ]
+      }
+    }
+  },
+  "required": [
+    "results"
+  ]
+}

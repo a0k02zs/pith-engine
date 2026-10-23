@@ -1,0 +1,23 @@
+{
+  "$comment": "Affiliate-specific market rules for Pith M service 15. Version 0.1, 2026-10-22. Source: docs/05-market-rules.md. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
+  "service": "affiliate",
+  "contract_version": "0.1.0",
+  "markets": {
+    "GB": { "group": "UK", "currency": "GBP", "language": "en-GB", "disclosure_labels": ["ad", "affiliate link", "#ad"], "social_label_first": true, "partner_licence": null, "tax_forms": ["uk_tax_status"], "vat_rate": 0.20, "ai_label_required": false },
+    "SG": { "group": "SG", "currency": "SGD", "language": "en-SG", "disclosure_labels": ["ad", "sponsored", "affiliate link", "#ad"], "social_label_first": true, "partner_licence": null, "tax_forms": ["sg_tax_status"], "vat_rate": 0.09, "ai_label_required": false, "bulk_email_subject_prefix": "<ADV> " },
+    "US": { "group": "NA", "currency": "USD", "language": "en-US", "disclosure_labels": ["i earn a commission", "#ad", "affiliate link", "paid partnership"], "social_label_first": true, "partner_licence": null, "tax_forms": ["w9", "w8ben", "w8bene"], "vat_rate": 0, "ai_label_required": false },
+    "CA": { "group": "NA", "currency": "CAD", "language": "en-CA", "disclosure_labels": ["i earn a commission", "#ad", "affiliate link", "paid partnership"], "social_label_first": true, "partner_licence": null, "tax_forms": ["ca_gst_hst_status"], "vat_rate": 0.05, "ai_label_required": false,
+      "subdivisions": { "CA-QC": { "language": "fr-CA", "disclosure_labels": ["lien affilié", "#pub", "publicité", "#ad"] } } },
+    "AE": { "group": "GCC", "currency": "AED", "language": "ar-AE", "disclosure_labels": ["إعلان", "ad", "affiliate link", "#ad"], "social_label_first": true, "partner_licence": "uae_media_council", "tax_forms": ["ae_trn_or_none"], "vat_rate": 0.05, "ai_label_required": false },
+    "SA": { "group": "GCC", "currency": "SAR", "language": "ar-SA", "disclosure_labels": ["إعلان", "ad", "affiliate link", "#ad"], "social_label_first": true, "partner_licence": "mawthooq", "tax_forms": ["sa_vat_status"], "vat_rate": 0.15, "ai_label_required": false, "data_transfer_check": true },
+    "QA": { "inherits": "AE", "currency": "QAR", "language": "ar-QA", "partner_licence": null, "tax_forms": ["qa_tax_status"], "vat_rate": 0 },
+    "KW": { "inherits": "AE", "currency": "KWD", "language": "ar-KW", "partner_licence": null, "tax_forms": ["kw_tax_status"], "vat_rate": 0 },
+    "BH": { "inherits": "AE", "currency": "BHD", "language": "ar-BH", "partner_licence": null, "tax_forms": ["bh_vat_status"], "vat_rate": 0.10 },
+    "OM": { "inherits": "AE", "currency": "OMR", "language": "ar-OM", "partner_licence": null, "tax_forms": ["om_vat_status"], "vat_rate": 0.05 },
+    "EU": { "group": "EU", "currency": "EUR", "language": "en", "disclosure_labels": ["ad", "advertisement", "affiliate link", "#ad"], "social_label_first": true, "partner_licence": null, "tax_forms": ["eu_vat_number_or_status"], "vat_rate": null, "ai_label_required": true },
+    "NL": { "inherits": "EU", "language": "nl-NL", "disclosure_labels": ["advertentie", "affiliatelink", "#ad", "ad"] },
+    "DE": { "inherits": "EU", "language": "de-DE", "disclosure_labels": ["werbung", "anzeige", "affiliate-link", "#werbung"] },
+    "FR": { "inherits": "EU", "language": "fr-FR", "disclosure_labels": ["publicité", "collaboration commerciale", "lien affilié", "#pub"] },
+    "ES": { "inherits": "EU", "language": "es-ES", "disclosure_labels": ["publicidad", "enlace de afiliado", "#publi", "#ad"] }
+  }
+}

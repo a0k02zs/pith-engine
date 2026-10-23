@@ -1,0 +1,153 @@
+{
+  "id": "affiliate.activation_daily",
+  "version": 1,
+  "service": "affiliate",
+  "description": "Daily: run the 90-day activation plan. First day of each month: tier review.",
+  "trigger": {
+    "cron": "0 9 * * *"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "load_partners",
+      "type": "tool",
+      "name": "Load partner stats",
+      "needs": [],
+      "tool": {
+        "name": "affiliate",
+        "action": "partners.stats",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "plan_actions",
+      "type": "agent",
+      "name": "Pick next action per partner",
+      "needs": [
+        "load_partners"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/activation_coach@1",
+        "output_schema": "affiliate/activation_actions@1"
+      }
+    },
+    {
+      "id": "msg_check",
+      "type": "check",
+      "name": "Brand and compliance check on messages",
+      "needs": [
+        "plan_actions"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 75
+      }
+    },
+    {
+      "id": "send_msgs",
+      "type": "tool",
+      "name": "Send activation messages",
+      "needs": [
+        "msg_check"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "has_proposals",
+      "type": "branch",
+      "name": "Bonus or tier proposals?",
+      "needs": [
+        "send_msgs"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(steps.plan_actions.output.actions, .action in ['propose_bonus','propose_tier'])",
+            "goto": "approve_incentive"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "approve_incentive",
+      "type": "gate",
+      "name": "Approve bonus or tier upgrade",
+      "needs": [
+        "has_proposals"
+      ],
+      "gate": {
+        "approval_kind": "budget_change",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "incentive_check",
+      "type": "check",
+      "name": "Compliance check on the partner notice",
+      "needs": [
+        "approve_incentive"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "apply_incentive",
+      "type": "tool",
+      "name": "Apply approved bonus or tier on the platform",
+      "needs": [
+        "incentive_check"
+      ],
+      "tool": {
+        "name": "affiliate",
+        "action": "partner.update_terms",
+        "risk": "write_external"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "name": "Activation run finished",
+      "needs": [
+        "has_proposals"
+      ],
+      "emit": {
+        "event": "svc.affiliate/activation.completed"
+      }
+    }
+  ]
+}

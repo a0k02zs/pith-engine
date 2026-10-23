@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/outreach@1",
+  "title": "affiliate/outreach@1",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "needs_human"
+            ]
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "reply_class": {
+            "enum": [
+              "yes",
+              "question_terms",
+              "question_other",
+              "no",
+              "unsubscribe",
+              "complaint",
+              null
+            ]
+          },
+          "action": {
+            "enum": [
+              "suppress",
+              "escalate",
+              null
+            ]
+          }
+        },
+        "required": [
+          "party_id",
+          "status"
+        ]
+      }
+    }
+  },
+  "required": [
+    "items"
+  ]
+}

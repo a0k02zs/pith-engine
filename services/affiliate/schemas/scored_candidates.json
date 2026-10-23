@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/scored_candidates@1",
+  "title": "affiliate/scored_candidates@1",
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "scores": {
+            "type": "object"
+          },
+          "evidence": {
+            "type": "object"
+          },
+          "recommend": {
+            "enum": [
+              "approve",
+              "reject",
+              "review"
+            ]
+          },
+          "tier_guess": {
+            "enum": [
+              "gold",
+              "silver",
+              "bronze"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "score",
+          "recommend"
+        ]
+      }
+    }
+  },
+  "required": [
+    "candidates"
+  ]
+}

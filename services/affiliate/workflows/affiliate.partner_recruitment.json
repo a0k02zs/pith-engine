@@ -1,0 +1,293 @@
+{
+  "id": "affiliate.partner_recruitment",
+  "version": 1,
+  "service": "affiliate",
+  "description": "Weekly loop: find, score, approve, contact and onboard new partners in 1 market.",
+  "trigger": {
+    "cron": "0 8 * * 1"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "country"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "country": {
+        "type": "string"
+      },
+      "weekly_limit": {
+        "type": "integer",
+        "default": 200
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id + event.data.country",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "load_brain",
+      "type": "tool",
+      "name": "Read client brain",
+      "needs": [],
+      "tool": {
+        "name": "engine",
+        "action": "brain.get",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "discover",
+      "type": "tool",
+      "name": "Pull candidates from networks, Service 5 rankings, Service 6 creators, Service 8 tech-stack data",
+      "needs": [
+        "load_brain"
+      ],
+      "tool": {
+        "name": "enrichment",
+        "action": "partners.search",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "score",
+      "type": "agent",
+      "name": "Score and vet candidates (T3)",
+      "needs": [
+        "discover"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/partner_scout@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "affiliate/scored_candidates@1"
+      }
+    },
+    {
+      "id": "upsert_parties",
+      "type": "tool",
+      "name": "Save candidates as parties (kind partner or affiliate)",
+      "needs": [
+        "score"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "parties.upsert",
+        "risk": "write_internal"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "approve_shortlist",
+      "type": "gate",
+      "name": "Approve partner shortlist (batch, up to 50)",
+      "needs": [
+        "upsert_parties"
+      ],
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "influencer_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "resolve_recipients",
+      "type": "tool",
+      "name": "Resolve lawful recipients (G5): POST /audiences/resolve with party_ids[] of the approved shortlist, channel email, purpose marketing",
+      "needs": [
+        "approve_shortlist"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "write_outreach",
+      "type": "agent",
+      "name": "Write first messages (T4)",
+      "needs": [
+        "resolve_recipients"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/recruiter@1",
+        "output_schema": "affiliate/outreach@1"
+      }
+    },
+    {
+      "id": "outreach_check",
+      "type": "check",
+      "name": "Footer, claims and spam check per party country",
+      "needs": [
+        "write_outreach"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "brand",
+          "spam",
+          "links"
+        ],
+        "min_brand_score": 75
+      }
+    },
+    {
+      "id": "send_outreach",
+      "type": "tool",
+      "name": "Send messages that passed",
+      "needs": [
+        "outreach_check"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "wait_replies",
+      "type": "wait",
+      "name": "Collect replies for 7 days",
+      "needs": [
+        "send_outreach"
+      ],
+      "wait": {
+        "event": "svc.affiliate/reply.received",
+        "match": "async.data.run_id == run.id",
+        "timeout": "7d"
+      }
+    },
+    {
+      "id": "sort_replies",
+      "type": "agent",
+      "name": "Sort replies, draft FAQ answers",
+      "needs": [
+        "wait_replies"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/recruiter@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "affiliate/outreach@1"
+      }
+    },
+    {
+      "id": "route_replies",
+      "type": "branch",
+      "name": "Route terms questions and complaints to a person (G4)",
+      "needs": [
+        "sort_replies"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(steps.sort_replies.output.items, .status == 'needs_human')",
+            "goto": "escalate_reply"
+          }
+        ],
+        "else": "approve_partner"
+      }
+    },
+    {
+      "id": "escalate_reply",
+      "type": "emit",
+      "name": "Partner question or complaint for a person",
+      "needs": [
+        "route_replies"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "approve_partner",
+      "type": "gate",
+      "name": "Accept partners on standard terms (batch)",
+      "needs": [
+        "route_replies"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "influencer_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "onboard",
+      "type": "agent",
+      "name": "Write welcome pack (T5) and disclosure guide (T6)",
+      "needs": [
+        "approve_partner"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/activation_coach@1",
+        "output_schema": "affiliate/activation_actions@1"
+      }
+    },
+    {
+      "id": "onboard_check",
+      "type": "check",
+      "name": "Compliance check on onboarding messages",
+      "needs": [
+        "onboard"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "send_onboard",
+      "type": "tool",
+      "name": "Send onboarding messages",
+      "needs": [
+        "onboard_check"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "emit_joined",
+      "type": "emit",
+      "name": "Partner joined",
+      "needs": [
+        "send_onboard"
+      ],
+      "emit": {
+        "event": "svc.affiliate/partner.joined"
+      }
+    }
+  ]
+}
