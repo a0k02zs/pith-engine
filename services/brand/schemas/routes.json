@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/routes@1",
+  "title": "brand routes output",
+  "type": "object",
+  "properties": {
+    "routes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "idea": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "pillars": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "proof_points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "exists": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "exists"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "proof_points"
+              ]
+            }
+          },
+          "why_win": {
+            "type": "string"
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "market_fit": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "market": {
+                  "enum": [
+                    "UK",
+                    "SG",
+                    "NA",
+                    "GCC",
+                    "EU"
+                  ]
+                },
+                "fit": {
+                  "enum": [
+                    "strong",
+                    "medium",
+                    "weak"
+                  ]
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "market",
+                "fit"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "idea",
+          "statement",
+          "pillars",
+          "why_win",
+          "risks",
+          "market_fit"
+        ]
+      }
+    },
+    "recommended": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "routes",
+    "recommended",
+    "reason"
+  ]
+}

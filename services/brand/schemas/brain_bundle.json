@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/brain_bundle@1",
+  "title": "brand brain_bundle output",
+  "type": "object",
+  "properties": {
+    "profile_doc": {
+      "type": "object"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "banned_terms": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "chunks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "enum": [
+              "profile",
+              "guideline"
+            ]
+          },
+          "source_ref": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "content"
+        ]
+      }
+    },
+    "scorer_test_set": {
+      "type": "object",
+      "properties": {
+        "on_brand": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 20,
+          "maxItems": 20
+        },
+        "off_brand": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 20,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "on_brand",
+        "off_brand"
+      ]
+    },
+    "unmapped": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "profile_doc",
+    "chunks",
+    "scorer_test_set",
+    "unmapped"
+  ]
+}

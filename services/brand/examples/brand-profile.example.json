@@ -1,0 +1,225 @@
+{
+  "client_id": "00000000-0000-4000-8000-000000000013",
+  "version": 1,
+  "status": "draft",
+  "positioning": "For finance teams at mid-size firms who close the books under time pressure, Ledgerly is the close-management platform that cuts month-end close to 5 days, because it reconciles bank, card and ERP data every night.",
+  "voice": {
+    "summary": "Clear, calm and expert. We show the number, then explain it. No hype.",
+    "traits": [
+      "Clear, not simplistic",
+      "Calm, not cold",
+      "Expert, not jargon-heavy"
+    ],
+    "do": [
+      "Lead with the result and a number",
+      "Use short sentences",
+      "Explain finance terms the first time"
+    ],
+    "dont": [
+      "Use hype words such as revolutionary or game-changing",
+      "Use exclamation marks in B2B copy",
+      "Promise outcomes we cannot prove"
+    ],
+    "examples": [
+      {
+        "good": "Close the month in 5 days, not 12.",
+        "bad": "Revolutionise your close forever!",
+        "why": "Concrete number; no hype."
+      }
+    ],
+    "by_market": {
+      "GB": {
+        "tone": "Understated, direct",
+        "locale": "en-GB",
+        "notes": "British spelling. Avoid superlatives."
+      },
+      "US": {
+        "tone": "Confident, benefit-first",
+        "locale": "en-US",
+        "notes": "Lead with proof: numbers, case studies."
+      },
+      "AE": {
+        "tone": "Respectful, relationship-first",
+        "locale": "en-AE",
+        "notes": "Arabic versions for government-linked buyers need native review."
+      }
+    },
+    "tone_by_situation": [
+      {
+        "situation": "complaint",
+        "formal": 4,
+        "playful": 1,
+        "expert": 3,
+        "bold": 2,
+        "note": "Acknowledge, then give the next step."
+      }
+    ],
+    "style_rules": {
+      "en-GB": [
+        "British spelling",
+        "Dates as DD/MM/YYYY"
+      ],
+      "en-US": [
+        "US spelling",
+        "Dates as MM/DD/YYYY"
+      ]
+    }
+  },
+  "sender_identity": {
+    "legal_name": "Ledgerly Ltd",
+    "trading_name": "Ledgerly",
+    "postal_address": "1 Example Street, London EC1A 1AA, United Kingdom",
+    "privacy_notice_url": "https://example.com/privacy"
+  },
+  "personas": [
+    {
+      "id": "p-controller",
+      "name": "Financial controller",
+      "segment": "b2b",
+      "markets": [
+        "GB",
+        "US",
+        "AE"
+      ],
+      "role": "Champion and daily user",
+      "pains": [
+        "Close takes 10 to 15 days",
+        "Manual spreadsheet reconciliations"
+      ],
+      "goals": [
+        "Close in 5 days",
+        "Clean audit trail"
+      ],
+      "objections": [
+        "Integration with our ERP",
+        "Time to implement"
+      ]
+    }
+  ],
+  "approved_claims": [],
+  "banned_terms": [
+    {
+      "term": "revolutionary",
+      "reason": "Hype; off-voice"
+    },
+    {
+      "term": "guaranteed savings",
+      "reason": "Unprovable financial claim"
+    }
+  ],
+  "visual": {
+    "colors": {
+      "primary": "#14324B",
+      "accent": "#2E8B72",
+      "neutral": "#F4F6F8"
+    },
+    "fonts": [
+      "Inter",
+      "IBM Plex Sans Arabic"
+    ],
+    "logo_urls": {
+      "full_colour_svg": "https://example.com/logo.svg",
+      "arabic_lockup_svg": "https://example.com/logo-ar.svg"
+    },
+    "imagery_rules": [
+      "Real finance teams at work; no stock handshakes",
+      "Modest dress in GCC imagery"
+    ],
+    "logo_rules": {
+      "clear_space": "Height of the L",
+      "min_size": "24 px digital, 10 mm print",
+      "misuse": [
+        "Do not stretch",
+        "Do not mirror the Arabic lockup"
+      ]
+    },
+    "templates": [
+      {
+        "channel": "social_post",
+        "tool": "canva",
+        "id_or_url": "https://example.com/template"
+      }
+    ],
+    "color_roles": {
+      "primary": {
+        "role": "Headlines and buttons",
+        "text_pairs": [
+          "#FFFFFF on #14324B"
+        ]
+      }
+    }
+  },
+  "media_rules": {
+    "ai_avatar_allowed": false,
+    "voice_clone_allowed": false
+  },
+  "competitors": [
+    {
+      "name": "Competitor A",
+      "domain": "example.org",
+      "markets": [
+        "GB",
+        "US"
+      ]
+    }
+  ],
+  "sensitive_topics": [
+    "Layoffs and job loss from automation"
+  ],
+  "locales": [
+    "en-GB",
+    "en-US",
+    "ar-AE"
+  ],
+  "organization": {
+    "legal_name": "Ledgerly Ltd",
+    "url": "https://example.com",
+    "logo": "https://example.com/logo.svg",
+    "same_as": [
+      "https://www.linkedin.com/company/example"
+    ]
+  },
+  "messaging": {
+    "promise": "Close the month in 5 days, with every number explained.",
+    "pillars": [
+      {
+        "name": "Speed",
+        "message": "Nightly reconciliation cuts close time.",
+        "proof_points": [
+          "Bank, card and ERP data matched every night"
+        ]
+      }
+    ],
+    "persona_messages": [
+      {
+        "persona_id": "p-controller",
+        "stage": "problem",
+        "message": "Your team should not spend 12 days on the close."
+      }
+    ],
+    "objections": [
+      {
+        "objection": "Integration with our ERP",
+        "answer": "Native connectors for the main ERPs; setup in 2 weeks."
+      }
+    ]
+  },
+  "boilerplate": [
+    {
+      "locale": "en-GB",
+      "words_50": "Ledgerly helps finance teams at mid-size firms close the books faster.",
+      "words_100": "Ledgerly helps finance teams at mid-size firms close the books faster, with nightly reconciliation of bank, card and ERP data."
+    }
+  ],
+  "taglines": [
+    {
+      "text": "Close with confidence.",
+      "locale": "en-GB",
+      "markets": [
+        "GB",
+        "US"
+      ],
+      "status": "proposed"
+    }
+  ]
+}

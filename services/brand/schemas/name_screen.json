@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/name_screen@1",
+  "title": "brand name_screen output",
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "descriptive",
+              "suggestive",
+              "invented",
+              "compound",
+              "borrowed",
+              "tagline"
+            ]
+          },
+          "idea": {
+            "type": "string"
+          },
+          "domain_patterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "issue": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "none",
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "language",
+          "issue",
+          "severity"
+        ]
+      }
+    },
+    "top10": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "reason"
+        ]
+      }
+    },
+    "disclaimer": {
+      "const": "Linguistic screen only. Not a trademark search."
+    }
+  },
+  "required": [
+    "results",
+    "top10",
+    "disclaimer"
+  ]
+}

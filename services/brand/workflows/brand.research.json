@@ -1,0 +1,63 @@
+{
+  "id": "brand.research",
+  "version": 1,
+  "service": "brand",
+  "description": "Competitor and voice-of-customer research for 1 market. Called by brand.build per market.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "market"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "market": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "collect_sources",
+      "type": "tool",
+      "name": "Pull competitor pages, reviews, social comments and search queries",
+      "tool": {
+        "name": "research_collector",
+        "action": "collect",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "competitors",
+      "type": "agent",
+      "name": "Category map and white space",
+      "needs": [
+        "collect_sources"
+      ],
+      "agent": {
+        "prompt_ref": "brand/competitor_analyst@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/competitors@1"
+      }
+    },
+    {
+      "id": "voc",
+      "type": "agent",
+      "name": "Voice-of-customer themes",
+      "needs": [
+        "collect_sources"
+      ],
+      "agent": {
+        "prompt_ref": "brand/voc_miner@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "brand/voc@1"
+      }
+    }
+  ]
+}

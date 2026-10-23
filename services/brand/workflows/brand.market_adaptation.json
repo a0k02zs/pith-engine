@@ -1,0 +1,69 @@
+{
+  "id": "brand.market_adaptation",
+  "version": 1,
+  "service": "brand",
+  "description": "Adapt name, taglines, boilerplate and identity for 1 locale; a native editor signs off. Called by brand.build per locale.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "locale"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "locale": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "adapt",
+      "type": "agent",
+      "name": "Locale versions and culture check",
+      "agent": {
+        "prompt_ref": "brand/market_adapter@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/adaptation@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Brand and compliance check of locale copy",
+      "needs": [
+        "adapt"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "native_review",
+      "type": "gate",
+      "name": "Native editor sign-off",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "native_editor"
+        ],
+        "required_count": 1,
+        "sla_hours": 72,
+        "on_changes": "adapt"
+      }
+    }
+  ]
+}

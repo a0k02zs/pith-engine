@@ -1,0 +1,19 @@
+{
+  "id": "brand.monitor",
+  "version": 1,
+  "service": "brand",
+  "description": "Monthly brand health: brand score by service and market, drift alerts, brand health note for strategist review.",
+  "trigger": { "cron": "0 7 2 * *" },
+  "concurrency": { "key": "event.data.client_id", "limit": 1 },
+  "steps": [
+    { "id": "pull_scores", "type": "tool", "name": "Brand scores, branded search, share of voice", "tool": { "name": "warehouse", "action": "query.brand_health", "risk": "read" } },
+    { "id": "report", "type": "agent", "name": "Write the brand health note", "needs": ["pull_scores"],
+      "agent": { "prompt_ref": "brand/health_reporter@1", "model": "claude-opus-5-5", "output_schema": "brand/health_note@1" } },
+    { "id": "drift", "type": "branch", "name": "Drift for 2 months?", "needs": ["report"],
+      "branch": { "cases": [ { "if": "steps.report.output.drift_months >= 2", "goto": "drift_alert" } ], "else": "approve_report" } },
+    { "id": "drift_alert", "type": "emit", "name": "Start the brand drift fix play", "needs": ["drift"], "emit": { "event": "svc.brand/drift.detected" } },
+    { "id": "approve_report", "type": "gate", "name": "Strategist reviews the note", "needs": ["drift"],
+      "gate": { "approval_kind": "report", "required_roles": ["strategist"], "required_count": 1, "sla_hours": 24, "on_changes": "report" } },
+    { "id": "measure", "type": "emit", "name": "Record brand KPIs", "needs": ["approve_report"], "emit": { "event": "engine/metric.recorded" } }
+  ]
+}

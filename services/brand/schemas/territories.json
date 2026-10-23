@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/territories@1",
+  "title": "brand territories output",
+  "type": "object",
+  "properties": {
+    "territories": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "idea": {
+            "type": "string"
+          },
+          "pillar": {
+            "type": "string"
+          },
+          "colours": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "properties": {
+                "hex": {
+                  "type": "string",
+                  "pattern": "^#[0-9A-Fa-f]{6}$"
+                },
+                "role": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "hex",
+                "role"
+              ]
+            }
+          },
+          "type": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "family": {
+                  "type": "string"
+                },
+                "licence": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "family",
+                "licence"
+              ]
+            }
+          },
+          "imagery": {
+            "type": "string"
+          },
+          "devices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "prompts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 12
+          },
+          "culture_notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "market": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "market",
+                "note"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "idea",
+          "colours",
+          "type",
+          "imagery",
+          "prompts"
+        ]
+      }
+    }
+  },
+  "required": [
+    "territories"
+  ]
+}

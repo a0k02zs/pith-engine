@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/adaptation@1",
+  "title": "brand adaptation output",
+  "type": "object",
+  "properties": {
+    "locales": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "name_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taglines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "boilerplate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "needs_native_review": {
+            "const": true
+          }
+        },
+        "required": [
+          "locale",
+          "needs_native_review"
+        ]
+      }
+    },
+    "culture_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string"
+          },
+          "element": {
+            "type": "string"
+          },
+          "issue": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "element",
+          "issue",
+          "fix"
+        ]
+      }
+    },
+    "local_rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "locales",
+    "culture_flags"
+  ]
+}

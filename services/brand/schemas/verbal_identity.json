@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/verbal_identity@1",
+  "title": "brand verbal_identity output",
+  "type": "object",
+  "properties": {
+    "promise": {
+      "type": "string"
+    },
+    "desc_25": {
+      "type": "string"
+    },
+    "desc_50": {
+      "type": "string"
+    },
+    "pillars": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "proof_points": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "message"
+        ]
+      }
+    },
+    "persona_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "persona": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "persona",
+          "stage",
+          "message"
+        ]
+      }
+    },
+    "objections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "objection": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objection",
+          "answer"
+        ]
+      }
+    },
+    "boilerplate": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "words_50": {
+            "type": "string"
+          },
+          "words_100": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "locale",
+          "words_50",
+          "words_100"
+        ]
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "product",
+              "price",
+              "health",
+              "finance",
+              "legal",
+              "environmental",
+              "comparative",
+              "other"
+            ]
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_ref": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "approved"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "category",
+          "markets",
+          "status"
+        ]
+      }
+    },
+    "traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trait": {
+            "type": "string"
+          },
+          "not": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "pass": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fail": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "trait",
+          "not"
+        ]
+      }
+    },
+    "tone": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "situation": {
+            "type": "string"
+          },
+          "formal": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "playful": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "expert": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "bold": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "situation",
+          "formal",
+          "playful",
+          "expert",
+          "bold"
+        ]
+      }
+    },
+    "vocabulary": {
+      "type": "object",
+      "properties": {
+        "use": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "markets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "term",
+              "reason"
+            ]
+          }
+        },
+        "explain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "style_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "locale",
+          "rules"
+        ]
+      }
+    },
+    "taglines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "pillar": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    "new_taglines": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "promise",
+    "pillars",
+    "claims",
+    "traits",
+    "tone",
+    "vocabulary",
+    "new_taglines"
+  ]
+}
