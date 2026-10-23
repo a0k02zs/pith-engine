@@ -480,7 +480,8 @@
     "pr": "Muck Rack, Cision, Meltwater",
     "events": "Zoom, ON24, Livestorm",
     "outbound": "Apollo, sequencers",
-    "enrichment": "Apollo, ZoomInfo, Clay, 6sense"
+    "enrichment": "Apollo, ZoomInfo, Clay, 6sense",
+    "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft"
   },
   "engine_actions": {
     "$comment": "Tool name 'engine'. Actions any service may call.",
@@ -493,7 +494,9 @@
     "rights.check": "read",
     "learnings.write": "write_internal",
     "artifacts.create": "write_internal",
-    "artifacts.brand_score": "read"
+    "artifacts.brand_score": "read",
+    "parties.upsert": "write_internal: create or update a party (same as POST /parties)",
+    "metrics.query": "read: read KPI values (same as GET /metrics)"
   },
   "conversion_kinds": [
     "purchase",
