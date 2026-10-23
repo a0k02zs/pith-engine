@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/exec_notes@1",
+  "title": "What the executive sent for the week (task output)",
+  "type": "object",
+  "properties": {
+    "executive_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "media_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "executive_id"
+  ],
+  "additionalProperties": false
+}

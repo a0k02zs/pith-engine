@@ -1,0 +1,137 @@
+{
+  "id": "pr.crisis",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-8. Press and crisis escalation from any service. Agents draft; people decide and speak.",
+  "trigger": {
+    "event": "engine/escalation.raised"
+  },
+  "steps": [
+    {
+      "id": "triage",
+      "type": "agent",
+      "name": "Severity (T9.1), facts known and unknown, reach, pause list",
+      "agent": {
+        "prompt_ref": "pr/crisis_triage@1",
+        "output_schema": "pr/crisis_brief@1"
+      }
+    },
+    {
+      "id": "level3",
+      "type": "branch",
+      "needs": [
+        "triage"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.triage.output.level >= 3",
+            "goto": "pause"
+          }
+        ],
+        "else": "escalate"
+      }
+    },
+    {
+      "id": "pause",
+      "type": "tool",
+      "name": "Level 3: pause scheduled sends, posts, pitches and ads in every service",
+      "needs": [
+        "level3"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "client.pause_scheduled",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "gate",
+      "name": "The PR lead takes ownership within 15 minutes",
+      "needs": [
+        "level3"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "pr_lead"
+        ],
+        "sla_hours": 0.25,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "holding",
+      "type": "agent",
+      "name": "Holding statement draft (T9.2) and Q&A",
+      "needs": [
+        "escalate"
+      ],
+      "agent": {
+        "prompt_ref": "pr/crisis_triage@1",
+        "output_schema": "pr/holding_statement@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "holding"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 0
+      }
+    },
+    {
+      "id": "decide",
+      "type": "gate",
+      "name": "Legal and the executive approve every word",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "client_legal",
+          "client_executive"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "holding"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "task",
+      "needs": [
+        "decide"
+      ],
+      "task": {
+        "title": "Issue the statement, answer journalists and close the issue",
+        "assignee_roles": [
+          "pr_lead"
+        ],
+        "due_hours": 24,
+        "done_output_schema": "pr/crisis_close@1"
+      }
+    },
+    {
+      "id": "review",
+      "type": "agent",
+      "name": "Post-crisis review and lessons",
+      "needs": [
+        "respond"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reporter@1",
+        "output_schema": "pr/learnings@1"
+      }
+    }
+  ]
+}

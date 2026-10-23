@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/interview_brief@1",
+  "title": "Interview brief (T10)",
+  "type": "object",
+  "properties": {
+    "party_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outlet": {
+      "type": "string",
+      "minLength": 1
+    },
+    "when": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "phone",
+        "video",
+        "in_person",
+        "podcast",
+        "broadcast"
+      ]
+    },
+    "journalist_angle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proof": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "message",
+          "proof"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "hard_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1
+          },
+          "a": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "q",
+          "a"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "avoid": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "listed_rule": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "party_id",
+    "outlet",
+    "when",
+    "format",
+    "journalist_angle",
+    "messages",
+    "hard_questions",
+    "avoid",
+    "listed_rule"
+  ],
+  "additionalProperties": false
+}

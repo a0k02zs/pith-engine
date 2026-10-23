@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/request_replies@1",
+  "title": "Journalist request reply drafts (WF-4)",
+  "type": "object",
+  "properties": {
+    "replies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "party_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 700
+          },
+          "quote_source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "request_id",
+          "party_id",
+          "subject",
+          "body",
+          "quote",
+          "quote_source_refs",
+          "deadline_at"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "replies"
+  ],
+  "additionalProperties": false
+}

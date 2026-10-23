@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/learnings@1",
+  "title": "Lessons for the client brain",
+  "type": "object",
+  "properties": {
+    "learnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "early_signal": {
+            "type": "boolean"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          }
+        },
+        "required": [
+          "fact",
+          "evidence",
+          "n",
+          "early_signal",
+          "market"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "learnings"
+  ],
+  "additionalProperties": false
+}
