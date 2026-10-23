@@ -1,0 +1,180 @@
+{
+  "id": "video.variant_refresh",
+  "version": 1,
+  "service": "video",
+  "description": "New hooks and cutdowns on an approved video body. No new scenes, no new claims. Starts from fatigue flags.",
+  "trigger": {
+    "event": "svc.video/refresh.requested"
+  },
+  "steps": [
+    {
+      "id": "hooks",
+      "type": "agent",
+      "name": "New hooks for the fatigued video",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "video/hook_writer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/hooks@1"
+      }
+    },
+    {
+      "id": "precheck",
+      "type": "agent",
+      "needs": [
+        "hooks"
+      ],
+      "agent": {
+        "prompt_ref": "video/compliance_precheck@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/precheck@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "precheck"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_hooks",
+      "type": "gate",
+      "name": "Approve new hooks",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "skip_if": "size(steps.hooks.output.new_claims) == 0 && input.body_reused && input.hook_types_previously_approved",
+        "on_reject": "fail",
+        "on_changes": "hooks"
+      }
+    },
+    {
+      "id": "versions",
+      "type": "agent",
+      "needs": [
+        "approve_hooks"
+      ],
+      "agent": {
+        "prompt_ref": "video/versioner@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/export_plan@1",
+        "tools": [
+          "video"
+        ]
+      }
+    },
+    {
+      "id": "render",
+      "type": "tool",
+      "needs": [
+        "versions"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "exports.render",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "qc_auto",
+      "type": "agent",
+      "needs": [
+        "render"
+      ],
+      "agent": {
+        "prompt_ref": "video/qc_checker@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/qc_report@1",
+        "tools": [
+          "video"
+        ]
+      }
+    },
+    {
+      "id": "qc",
+      "type": "check",
+      "needs": [
+        "qc_auto"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_final",
+      "type": "gate",
+      "name": "G4 Final review by editor",
+      "needs": [
+        "qc"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "editor"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "versions"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "needs": [
+        "approve_final"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "assets.store",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "needs": [
+        "deliver"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "handoff",
+      "type": "emit",
+      "needs": [
+        "register"
+      ],
+      "emit": {
+        "event": "svc.video/asset.delivered"
+      }
+    }
+  ]
+}

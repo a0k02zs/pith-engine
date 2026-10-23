@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/releases@1",
+  "title": "Consent and release forms sent (T4)",
+  "type": "object",
+  "properties": {
+    "sent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "party_id",
+          "scopes",
+          "evidence_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "refused": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "sent",
+    "refused"
+  ],
+  "additionalProperties": false
+}

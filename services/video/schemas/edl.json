@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/edl@1",
+  "title": "Edit decision list",
+  "type": "object",
+  "properties": {
+    "edl": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clip_id": {
+            "type": "string"
+          },
+          "in": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2}\\.\\d{3}$"
+          },
+          "out": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2}\\.\\d{3}$"
+          },
+          "track": {
+            "type": "string",
+            "pattern": "^[va][0-9]+$"
+          },
+          "row": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clip_id",
+          "in",
+          "out",
+          "track",
+          "row"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "captions_file": {
+      "type": "string"
+    },
+    "music": {
+      "type": "object",
+      "properties": {
+        "library": {
+          "type": "string"
+        },
+        "track_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "library",
+        "track_id"
+      ],
+      "additionalProperties": false
+    },
+    "overlays": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "editor_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "edl",
+    "captions_file",
+    "music",
+    "overlays",
+    "editor_notes"
+  ],
+  "additionalProperties": false
+}

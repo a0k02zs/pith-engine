@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/brief@1",
+  "title": "Checked video brief (T1)",
+  "type": "object",
+  "properties": {
+    "brief": {
+      "type": "object",
+      "properties": {
+        "objective": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "markets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "minItems": 1
+        },
+        "locales": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}-[A-Z]{2}$"
+          },
+          "minItems": 1
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "format": {
+          "enum": [
+            "short_form",
+            "ad_variants",
+            "explainer",
+            "demo",
+            "testimonial",
+            "executive",
+            "hero",
+            "event_clips"
+          ]
+        },
+        "segment": {
+          "enum": [
+            "b2b",
+            "b2c"
+          ]
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date"
+        },
+        "budget_band": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        },
+        "campaign_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "objective",
+        "audience",
+        "markets",
+        "locales",
+        "channels",
+        "format",
+        "segment",
+        "deadline",
+        "budget_band",
+        "cta"
+      ],
+      "additionalProperties": false
+    },
+    "inferred_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "brief",
+    "inferred_fields",
+    "questions",
+    "conflicts",
+    "ready",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

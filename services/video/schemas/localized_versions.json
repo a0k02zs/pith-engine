@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/localized_versions@1",
+  "title": "Versions per market and language",
+  "type": "object",
+  "properties": {
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}-[A-Z]{2}$"
+          },
+          "captions_srt": {
+            "type": "string"
+          },
+          "on_screen_text": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "row": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "row",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "dub_script": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "voice": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "stock",
+                  "consented_clone",
+                  "human",
+                  "none"
+                ]
+              },
+              "rights_grant_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "rights_grant_id"
+            ],
+            "additionalProperties": false
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "market",
+          "language",
+          "captions_srt",
+          "on_screen_text",
+          "dub_script",
+          "voice",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "versions"
+  ],
+  "additionalProperties": false
+}

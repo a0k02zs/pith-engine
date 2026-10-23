@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/hooks@1",
+  "title": "5 hooks per ad",
+  "type": "object",
+  "properties": {
+    "ads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ad_id": {
+            "type": "string"
+          },
+          "hooks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "hook_id": {
+                  "type": "string"
+                },
+                "spoken": {
+                  "type": "string"
+                },
+                "on_screen": {
+                  "type": "string"
+                },
+                "first_frame": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "problem_callout",
+                    "bold_claim",
+                    "pattern_break",
+                    "question",
+                    "before_after",
+                    "social_proof",
+                    "pov",
+                    "direct_address"
+                  ]
+                },
+                "persona": {
+                  "type": "string"
+                },
+                "claim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_new_type": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "hook_id",
+                "spoken",
+                "on_screen",
+                "first_frame",
+                "type",
+                "persona",
+                "claim_ids",
+                "is_new_type"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 5,
+            "maxItems": 5
+          }
+        },
+        "required": [
+          "ad_id",
+          "hooks"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "ads",
+    "new_claims",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

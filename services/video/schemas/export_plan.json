@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/export_plan@1",
+  "title": "Export set per placement",
+  "type": "object",
+  "properties": {
+    "exports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+(_[a-z0-9-]+){7}s_v[0-9]+$"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "placement": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}-[A-Z]{2}$"
+          },
+          "ratio": {
+            "enum": [
+              "9:16",
+              "1:1",
+              "4:5",
+              "16:9"
+            ]
+          },
+          "duration_s": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "safe_zone": {
+            "type": "string"
+          },
+          "captions": {
+            "enum": [
+              "burned",
+              "sidecar"
+            ]
+          }
+        },
+        "required": [
+          "file_name",
+          "platform",
+          "placement",
+          "market",
+          "language",
+          "ratio",
+          "duration_s",
+          "safe_zone",
+          "captions"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "exports"
+  ],
+  "additionalProperties": false
+}

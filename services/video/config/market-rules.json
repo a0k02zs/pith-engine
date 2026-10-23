@@ -1,0 +1,119 @@
+{
+  "$comment": "Video rules per engine market code. Planning summary from docs/05-market-rules.md, not legal advice. A local lawyer confirms each market before launch. The engine holds the binding compliance rules in engine/specs/compliance-rules.json.",
+  "global": {
+    "loudness_lufs": { "social": -14, "broadcast_eu": -23, "tolerance": 1 },
+    "caption": { "max_chars_per_line": 42, "max_lines": 2, "max_drift_s": 0.3 },
+    "words_per_second": { "en": 2.5, "fr": 2.7, "ar": 2.2, "de": 2.3, "nl": 2.4 },
+    "min_impressions_per_variant": 1000,
+    "fatigue": { "hook_rate_drop": 0.25, "max_frequency": 3, "frequency_window_days": 7 },
+    "takedown_deadline_hours": 24,
+    "track_days": { "A": 3, "B": 10, "C": 15 },
+    "consent_scopes_for_use": {
+      "filmed": ["likeness"],
+      "avatar": ["likeness", "avatar"],
+      "voice_clone": ["voice_clone"],
+      "paid": ["paid_usage"],
+      "creator_reuse": ["ugc_reuse"]
+    },
+    "actor_label": "Actor portrayal"
+  },
+  "markets": {
+    "GB": {
+      "group": "UK",
+      "languages": ["en-GB"],
+      "currency": "GBP",
+      "date_format": "DD/MM/YYYY",
+      "paid_label": "Ad",
+      "ai_label": "AI-generated",
+      "consent_for_every_person": false,
+      "native_review": false,
+      "tone": "Low-hype, dry, plain British English."
+    },
+    "SG": {
+      "group": "SG",
+      "languages": ["en-SG", "zh-SG", "ms-SG", "ta-SG"],
+      "currency": "SGD",
+      "date_format": "DD/MM/YYYY",
+      "paid_label": "Sponsored",
+      "ai_label": "AI-generated",
+      "consent_for_every_person": false,
+      "native_review": false,
+      "tone": "Practical and value-led, British spelling."
+    },
+    "US": {
+      "group": "NA",
+      "languages": ["en-US", "es-US"],
+      "currency": "USD",
+      "date_format": "MM/DD/YYYY",
+      "paid_label": "Ad",
+      "ai_label": "AI-generated",
+      "actor_label_required": true,
+      "consent_for_every_person": false,
+      "native_review": false,
+      "tone": "Confident, benefit-first, with proof."
+    },
+    "CA": {
+      "group": "NA",
+      "languages": ["en-CA", "fr-CA"],
+      "currency": "CAD",
+      "date_format": "YYYY-MM-DD",
+      "paid_label": "#ad",
+      "ai_label": "AI-generated",
+      "consent_for_every_person": false,
+      "native_review": false,
+      "tone": "Friendly and factual, Canadian spelling.",
+      "subdivisions": {
+        "CA-QC": {
+          "languages": ["fr-CA"],
+          "paid_label": "#pub",
+          "ai_label": "Généré par IA",
+          "french_master_required": true,
+          "native_review": true
+        }
+      }
+    },
+    "AE": {
+      "group": "GCC",
+      "languages": ["ar-AE", "en-AE"],
+      "currency": "AED",
+      "date_format": "DD/MM/YYYY",
+      "paid_label": "إعلان",
+      "paid_label_en": "Ad",
+      "ai_label": "مُنشأ بالذكاء الاصطناعي",
+      "ai_label_en": "AI-generated",
+      "consent_for_every_person": true,
+      "creator_licence_required": true,
+      "native_review": true,
+      "rtl": true,
+      "tone": "Premium and respectful. Modest dress. No alcohol, pork, gambling or dating content."
+    },
+    "SA": { "inherits": "AE", "languages": ["ar-SA", "en-SA"], "currency": "SAR", "data_residency_check": true, "tone": "More conservative than the UAE. Premium and respectful." },
+    "QA": { "inherits": "AE", "languages": ["ar-QA", "en-QA"], "currency": "QAR" },
+    "KW": { "inherits": "AE", "languages": ["ar-KW", "en-KW"], "currency": "KWD" },
+    "BH": { "inherits": "AE", "languages": ["ar-BH", "en-BH"], "currency": "BHD" },
+    "OM": { "inherits": "AE", "languages": ["ar-OM", "en-OM"], "currency": "OMR" },
+    "EU_DEFAULT": {
+      "group": "EU",
+      "languages": [],
+      "currency": "EUR",
+      "date_format": "DD/MM/YYYY",
+      "paid_label": "Ad",
+      "ai_label": "AI-generated",
+      "ai_label_required_from": "2026-08-02",
+      "consent_for_every_person": false,
+      "dpia_before_clone": true,
+      "native_review": true,
+      "tone": "Factual and precise. Native editor for every non-English master."
+    },
+    "NL": { "inherits": "EU_DEFAULT", "languages": ["nl-NL", "en-NL"], "paid_label": "Advertentie", "ai_label": "Gemaakt met AI" },
+    "DE": { "inherits": "EU_DEFAULT", "languages": ["de-DE"], "date_format": "DD.MM.YYYY", "paid_label": "Werbung", "ai_label": "KI-generiert" },
+    "FR": {
+      "inherits": "EU_DEFAULT",
+      "languages": ["fr-FR"],
+      "paid_label": "Publicité",
+      "ai_label": "Image virtuelle",
+      "retouch_label": "Image retouchée",
+      "french_master_required": true
+    }
+  }
+}

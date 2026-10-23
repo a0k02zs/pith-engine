@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/footage@1",
+  "title": "Footage delivered by a shoot or creator",
+  "type": "object",
+  "properties": {
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clip_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "duration_s": {
+            "type": "number"
+          },
+          "people_party_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "clip_id",
+          "url",
+          "duration_s",
+          "people_party_ids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "selects_logged": {
+      "type": "boolean"
+    },
+    "shoot_report": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "clips",
+    "selects_logged"
+  ],
+  "additionalProperties": false
+}

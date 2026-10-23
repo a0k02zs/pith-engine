@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/qc_report@1",
+  "title": "Automated QC (T7)",
+  "type": "object",
+  "properties": {
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_name": {
+            "type": "string"
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "check": {
+                  "type": "string"
+                },
+                "result": {
+                  "enum": [
+                    "pass",
+                    "fail"
+                  ]
+                },
+                "measured": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "check",
+                "result",
+                "measured",
+                "expected"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "overall": {
+            "enum": [
+              "pass",
+              "fail"
+            ]
+          }
+        },
+        "required": [
+          "file_name",
+          "checks",
+          "overall"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "overall": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    }
+  },
+  "required": [
+    "reports",
+    "overall"
+  ],
+  "additionalProperties": false
+}
