@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/intent_monitor@1",
+  "title": "ABM intent monitor output",
+  "type": "object",
+  "properties": {
+    "accounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "intent_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "delta_7d": {
+            "type": "number",
+            "minimum": -100,
+            "maximum": 100
+          },
+          "surge": {
+            "type": "boolean"
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "top_signals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 3
+          },
+          "sources_missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "intent_score",
+          "delta_7d",
+          "surge",
+          "stale",
+          "top_signals",
+          "sources_missing"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "accounts"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/account_researcher@1",
+  "title": "ABM account researcher output",
+  "type": "object",
+  "properties": {
+    "account_id": {
+      "type": "string"
+    },
+    "brief_type": {
+      "enum": [
+        "account",
+        "cluster"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "text",
+          "source",
+          "date"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string"
+          },
+          "client_value_point_id": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "priority",
+          "client_value_point_id",
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "proof": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case_study_id": {
+            "type": "string"
+          },
+          "why_relevant": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "case_study_id",
+          "why_relevant"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "current_solution": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "hooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "risks": {
+      "type": "object",
+      "properties": {
+        "public_sector": {
+          "type": "boolean"
+        },
+        "open_tender": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "public_sector",
+        "open_tender",
+        "notes"
+      ],
+      "additionalProperties": false
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "account_id",
+    "brief_type",
+    "summary",
+    "priorities",
+    "fit",
+    "proof",
+    "current_solution",
+    "hooks",
+    "risks",
+    "open_questions"
+  ],
+  "additionalProperties": false
+}

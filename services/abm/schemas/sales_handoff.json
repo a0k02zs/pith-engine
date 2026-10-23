@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/sales_handoff@1",
+  "title": "ABM sales handoff output",
+  "type": "object",
+  "properties": {
+    "account_id": {
+      "type": "string"
+    },
+    "why_now": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "signal": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "signal",
+          "date"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "engaged": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "contact_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "economic_buyer",
+              "champion",
+              "technical_evaluator",
+              "user_lead",
+              "procurement_legal",
+              "blocker"
+            ]
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "contact_id",
+          "name",
+          "role",
+          "actions"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cares_about": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_step": {
+      "type": "string",
+      "minLength": 1
+    },
+    "talk_track": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3
+    },
+    "objection": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "text",
+        "answer",
+        "claim_ids"
+      ],
+      "additionalProperties": false
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "account_id",
+    "why_now",
+    "engaged",
+    "cares_about",
+    "next_step",
+    "talk_track",
+    "objection",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

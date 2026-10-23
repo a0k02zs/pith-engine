@@ -1,0 +1,65 @@
+{
+  "id": "abm.sales_handoff",
+  "version": 1,
+  "service": "abm",
+  "description": "When an account passes the hand-off threshold, write the sales brief and get gate G5 from client sales.",
+  "trigger": {
+    "event": "svc.abm/account.sales_ready"
+  },
+  "concurrency": {
+    "key": "account_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "write_brief",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "abm/sales_handoff@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/sales_handoff@1"
+      }
+    },
+    {
+      "id": "g5_accept",
+      "type": "gate",
+      "needs": [
+        "write_brief"
+      ],
+      "name": "G5 Accept hand-off",
+      "gate": {
+        "approval_kind": "handoff",
+        "required_roles": [
+          "client_sales"
+        ],
+        "required_count": 1,
+        "sla_hours": 24,
+        "on_reject": "goto",
+        "on_changes": "write_brief"
+      }
+    },
+    {
+      "id": "create_opportunity",
+      "type": "tool",
+      "needs": [
+        "g5_accept"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "create_opportunity",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_accepted",
+      "type": "emit",
+      "needs": [
+        "create_opportunity"
+      ],
+      "emit": {
+        "event": "svc.abm/handoff.accepted"
+      }
+    }
+  ]
+}
