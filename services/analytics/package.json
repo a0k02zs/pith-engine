@@ -1,0 +1,21 @@
+{
+  "name": "@pith/analytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pith M analytics and attribution service (service 12): attribution models, data checks, MMM checks, workflows, agent prompts and output schemas.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}

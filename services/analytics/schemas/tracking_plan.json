@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/tracking_plan@1",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^(x_)?[a-z][a-z0-9_]*$"
+          },
+          "trigger": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "value_rule": {
+            "type": "string"
+          },
+          "consent_category": {
+            "enum": [
+              "analytics",
+              "marketing",
+              "necessary"
+            ]
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ga4",
+                "meta",
+                "google_ads",
+                "linkedin",
+                "tiktok",
+                "crm",
+                "warehouse"
+              ]
+            },
+            "minItems": 1
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "conversion": {
+            "enum": [
+              "main",
+              "secondary",
+              "none"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "trigger",
+          "parameters",
+          "consent_category",
+          "destinations",
+          "services",
+          "conversion"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "lookback_days": {
+      "type": "object",
+      "properties": {
+        "click": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 180
+        },
+        "view": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        }
+      },
+      "required": [
+        "click",
+        "view"
+      ],
+      "additionalProperties": false
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "consent_mode": {
+            "enum": [
+              "advanced",
+              "basic",
+              "none"
+            ]
+          },
+          "warehouse_region": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "market",
+          "consent_mode",
+          "warehouse_region"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "what": {
+            "type": "string",
+            "minLength": 1
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "what",
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "version",
+    "events",
+    "lookback_days",
+    "markets",
+    "changes",
+    "open_questions"
+  ],
+  "additionalProperties": false
+}

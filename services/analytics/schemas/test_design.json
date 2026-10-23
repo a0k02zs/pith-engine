@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/test_design@1",
+  "type": "object",
+  "properties": {
+    "design": {
+      "enum": [
+        "platform_lift",
+        "geo_holdout",
+        "audience_holdout"
+      ]
+    },
+    "hypothesis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decisions": {
+      "type": "object",
+      "properties": {
+        "if_positive": {
+          "type": "string",
+          "minLength": 1
+        },
+        "if_flat": {
+          "type": "string",
+          "minLength": 1
+        },
+        "if_negative": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "if_positive",
+        "if_flat",
+        "if_negative"
+      ],
+      "additionalProperties": false
+    },
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+    },
+    "test_units": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "control_units": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "base_rate": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1
+    },
+    "expected_lift": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "n_test": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "n_control": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "start": {
+      "type": "string",
+      "format": "date"
+    },
+    "days": {
+      "type": "integer",
+      "minimum": 21
+    },
+    "cooldown_days": {
+      "type": "integer",
+      "minimum": 7,
+      "maximum": 14
+    },
+    "expected_cost": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "design",
+    "hypothesis",
+    "decisions",
+    "market",
+    "test_units",
+    "control_units",
+    "base_rate",
+    "expected_lift",
+    "n_test",
+    "n_control",
+    "start",
+    "days",
+    "cooldown_days",
+    "expected_cost"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,243 @@
+{
+  "id": "analytics.onboarding",
+  "version": 1,
+  "service": "analytics",
+  "description": "Audit, tracking plan, tag build, go-live, warehouse and dashboard for a new analytics client. Gates G1, G2 and G3.",
+  "trigger": {
+    "event": "svc.analytics/client.onboarded"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "intake",
+      "type": "task",
+      "task": {
+        "title": "Fill in the analytics intake form and give Pith read access to GA4, GTM, ad accounts and CRM",
+        "assignee_roles": [
+          "client_marketing_lead"
+        ],
+        "due_hours": 336,
+        "done_output_schema": "analytics/intake@1"
+      }
+    },
+    {
+      "id": "brain",
+      "type": "tool",
+      "needs": [
+        "intake"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "crawl",
+      "type": "tool",
+      "needs": [
+        "intake"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "tags.crawl",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "configs",
+      "type": "tool",
+      "needs": [
+        "intake"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "configs.export",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "match_rate",
+      "type": "tool",
+      "needs": [
+        "intake"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:match_rate_28d",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "needs": [
+        "brain",
+        "crawl",
+        "configs",
+        "match_rate"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/audit@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/audit@1"
+      }
+    },
+    {
+      "id": "g1_audit",
+      "type": "gate",
+      "needs": [
+        "audit"
+      ],
+      "name": "G1 audit sign-off",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "analytics_lead"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "audit"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "g1_audit"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/tracking_plan@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/tracking_plan@1"
+      }
+    },
+    {
+      "id": "g2_tracking_plan",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "name": "G2 tracking plan",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "analytics_lead",
+          "client_marketing_lead"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "build",
+      "type": "tool",
+      "needs": [
+        "g2_tracking_plan"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "gtm.build_from_plan:staging",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "test",
+      "type": "tool",
+      "needs": [
+        "build"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "tags.assert_plan:staging",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "compliance",
+      "type": "check",
+      "needs": [
+        "test"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "g3_go_live",
+      "type": "gate",
+      "needs": [
+        "compliance"
+      ],
+      "name": "G3 tracking go-live",
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "analytics_lead",
+          "ops_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "g3_go_live"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "gtm.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "warehouse",
+      "type": "tool",
+      "needs": [
+        "publish"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.build:int_touchpoints,fct_attribution,mmm_weekly",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "dashboard",
+      "type": "tool",
+      "needs": [
+        "warehouse"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "dashboard.clone:pith_analytics_v1",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "ready",
+      "type": "emit",
+      "needs": [
+        "dashboard"
+      ],
+      "emit": {
+        "event": "svc.analytics/client.ready"
+      }
+    }
+  ]
+}

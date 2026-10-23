@@ -1,0 +1,100 @@
+{
+  "id": "analytics.daily_data_qa",
+  "version": 1,
+  "service": "analytics",
+  "description": "Every day at 06:00. Run the data checks in code, then look for anomalies. Alerts go to Pith staff only. No client output.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "qa_metrics",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:qa_metrics",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "tool",
+      "needs": [
+        "qa_metrics"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "qa.run",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_qa",
+      "type": "branch",
+      "needs": [
+        "qa"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.qa.output.status == 'block'",
+            "goto": "alert_block"
+          }
+        ],
+        "else": "series"
+      }
+    },
+    {
+      "id": "alert_block",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/alert.raised"
+      }
+    },
+    {
+      "id": "series",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:daily_kpi_forecast",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "watch",
+      "type": "agent",
+      "needs": [
+        "series"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/alerts@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "analytics/alerts@1"
+      }
+    },
+    {
+      "id": "alerts",
+      "type": "emit",
+      "needs": [
+        "watch"
+      ],
+      "emit": {
+        "event": "svc.analytics/alert.raised"
+      }
+    },
+    {
+      "id": "record_coverage",
+      "type": "emit",
+      "needs": [
+        "qa"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}

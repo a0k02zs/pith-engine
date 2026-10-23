@@ -1,0 +1,69 @@
+# Tracking plan · {{client_name}}
+# Owner: Pith analytics lead. Approved at gate G2. Every Pith service reads this file.
+plan_version: 1.0.0
+client_id: "{{client_id}}"
+business_model: b2c_ecommerce        # b2c_ecommerce | b2c_app | b2b | mixed
+markets: [uk]                        # engine market codes
+currency: GBP
+timezone: Europe/London
+
+windows:                             # playbook.md section 5
+  click_lookback_days: 30
+  view_lookback_days: 1
+  b2b_opportunity_window_days: 90
+
+attribution:
+  default_model: position_based      # last_non_direct | position_based | time_decay | markov | b2b_account
+  also_compute: [last_non_direct, time_decay, data_driven]
+
+consent:
+  cmp: cookiebot
+  consent_mode: advanced             # basic | advanced | off (see markets.md)
+  by_market:
+    uk: { analytics_before_consent: false, marketing_before_consent: false, warehouse_region: europe-west2 }
+
+conversions:
+  main: purchase
+  secondary: [begin_checkout, sign_up, generate_lead]
+
+events:
+  - name: purchase                   # engine standard name
+    trigger: order confirmation page view OR server webhook from order system (preferred)
+    source: server                   # client | server
+    params:
+      transaction_id: { type: string, required: true, note: "dedup key for pixel + CAPI" }
+      value: { type: number, required: true, rule: "net of tax and shipping, after discount" }
+      currency: { type: string, required: true }
+      items: { type: array, required: true }
+      coupon: { type: string, required: false }
+      new_customer: { type: boolean, required: true }
+    consent_category: analytics
+    destinations:
+      ga4: true
+      warehouse: true
+      meta_capi: { when_consent: marketing, user_data: [hashed_email, hashed_phone] }
+      google_ads_enhanced: { when_consent: marketing }
+      tiktok_events_api: { when_consent: marketing }
+    used_by_services: [analytics_attribution, paid_social, campaigns, email]
+
+  - name: generate_lead
+    trigger: form submit success (not button click)
+    source: client
+    params:
+      form_id: { type: string, required: true }
+      lead_type: { type: string, enum: [demo, contact, download, webinar], required: true }
+      value: { type: number, required: false, rule: "expected value from client brain" }
+    consent_category: analytics
+    destinations: { ga4: true, warehouse: true, crm: { field: original_source } , linkedin_capi: { when_consent: marketing } }
+    used_by_services: [abm, content, events, cro]
+
+utm:
+  standard: engine/specs/analytics.md   # do not define a local standard
+  required_on: [paid, email, sms, whatsapp, influencer, affiliate, social_organic_links]
+
+pii_rules:
+  - "No email, phone, name or ID in any event parameter or URL."
+  - "Hashed user data goes only to conversion APIs, server-side, with marketing consent."
+
+changes: []                          # filled by tracking-planner on each new version
+open_questions: []

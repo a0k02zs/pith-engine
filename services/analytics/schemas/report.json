@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/report@1",
+  "type": "object",
+  "properties": {
+    "report_type": {
+      "enum": [
+        "weekly",
+        "monthly_roi"
+      ]
+    },
+    "headline": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3,
+      "minItems": 3
+    },
+    "qa_note": {
+      "type": "string"
+    },
+    "body_markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "pattern": "^We propose "
+          },
+          "expected_effect": {
+            "type": "string",
+            "minLength": 1
+          },
+          "risk": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text",
+          "expected_effect",
+          "risk"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "word_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 900
+    }
+  },
+  "required": [
+    "report_type",
+    "headline",
+    "qa_note",
+    "body_markdown",
+    "proposals",
+    "word_count"
+  ],
+  "additionalProperties": false
+}
