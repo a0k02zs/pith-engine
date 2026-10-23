@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/weekly_analysis@1",
+  "title": "Weekly video performance analysis",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "string"
+    },
+    "top_videos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_name": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "file_name",
+          "metric",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fatigued": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "learnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "metric": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "baseline": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "n",
+              "metric",
+              "value",
+              "baseline"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "rule",
+          "market",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "refresh_briefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "brief_seed": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "brief_seed",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "small_samples": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "period",
+    "top_videos",
+    "fatigued",
+    "learnings",
+    "refresh_briefs",
+    "small_samples"
+  ],
+  "additionalProperties": false
+}

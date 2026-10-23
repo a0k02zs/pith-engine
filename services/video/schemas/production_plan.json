@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/production_plan@1",
+  "title": "Track, shot list, assets, people and cost",
+  "type": "object",
+  "properties": {
+    "track": {
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "track_reason": {
+      "type": "string"
+    },
+    "shot_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "shot": {
+            "type": "integer"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "ai",
+              "stock",
+              "filmed",
+              "creator",
+              "screen"
+            ]
+          },
+          "duration_s": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "shot",
+          "rows",
+          "type",
+          "subject",
+          "source",
+          "duration_s",
+          "notes"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "in_dam": {
+            "type": "boolean"
+          },
+          "licence_needed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item",
+          "type",
+          "in_dam",
+          "licence_needed"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "people": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "party_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "uses": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "filmed",
+                "avatar",
+                "voice_clone",
+                "paid",
+                "creator_reuse"
+              ]
+            }
+          },
+          "needs_consent": {
+            "type": "boolean"
+          },
+          "needs_contract": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "role",
+          "party_id",
+          "uses",
+          "needs_consent",
+          "needs_contract"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cost_estimate": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "item",
+              "amount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "currency",
+        "lines",
+        "total"
+      ],
+      "additionalProperties": false
+    },
+    "needs_spend_gate": {
+      "type": "boolean"
+    },
+    "needs_rights_gate": {
+      "type": "boolean"
+    },
+    "new_template": {
+      "type": "boolean"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "track",
+    "track_reason",
+    "shot_list",
+    "assets",
+    "people",
+    "cost_estimate",
+    "needs_spend_gate",
+    "needs_rights_gate",
+    "new_template",
+    "blockers"
+  ],
+  "additionalProperties": false
+}
