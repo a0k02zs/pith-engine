@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/voc@1",
+  "title": "brand voc output",
+  "type": "object",
+  "properties": {
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "share": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "sentiment": {
+            "enum": [
+              "positive",
+              "neutral",
+              "negative",
+              "mixed"
+            ]
+          },
+          "quotes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "source_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "source_id"
+              ]
+            }
+          },
+          "market": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "share",
+          "sentiment",
+          "quotes"
+        ]
+      }
+    },
+    "customer_words": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "client_strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "competitor_strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "themes"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/scoped_brief@1",
+  "title": "brand scoped_brief output",
+  "type": "object",
+  "properties": {
+    "package": {
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "package_confidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "UK",
+          "SG",
+          "NA",
+          "GCC",
+          "EU"
+        ]
+      },
+      "minItems": 1
+    },
+    "subdivisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "b2b_or_b2c": {
+      "enum": [
+        "b2b",
+        "b2c",
+        "both"
+      ]
+    },
+    "stakeholders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_role": {
+            "type": "string"
+          },
+          "approval_role": {
+            "enum": [
+              "client_approver",
+              "client_executive",
+              "client_legal"
+            ]
+          }
+        },
+        "required": [
+          "name_role",
+          "approval_role"
+        ]
+      }
+    },
+    "hard_dates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "package",
+    "package_confidence",
+    "markets",
+    "b2b_or_b2c",
+    "stakeholders"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/competitors@1",
+  "title": "brand competitors output",
+  "type": "object",
+  "properties": {
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string"
+          },
+          "positioning": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "promise": {
+            "type": "string"
+          },
+          "proof": {
+            "type": "string"
+          },
+          "price_signal": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "string"
+          },
+          "visual_codes": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "positioning",
+          "sources"
+        ]
+      }
+    },
+    "cliches": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "axes": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "string"
+        },
+        "y": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "plot": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "x",
+          "y"
+        ]
+      }
+    },
+    "white_space": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "area",
+          "evidence"
+        ]
+      }
+    },
+    "must_keep_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "competitors",
+    "white_space"
+  ]
+}

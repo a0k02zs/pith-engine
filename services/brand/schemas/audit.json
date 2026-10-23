@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/audit@1",
+  "title": "brand audit output",
+  "type": "object",
+  "properties": {
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string"
+          },
+          "voice_traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "visual": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "channel"
+        ]
+      }
+    },
+    "top_traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trait": {
+            "type": "string"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "trait",
+          "examples"
+        ]
+      }
+    },
+    "claims_found": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "asset_id": {
+            "type": "string"
+          },
+          "needs_evidence": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "asset_id",
+          "needs_evidence"
+        ]
+      }
+    },
+    "consistency_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "causes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "frequent_terms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "off_brand_terms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "assets",
+    "top_traits",
+    "claims_found",
+    "consistency_score"
+  ]
+}
