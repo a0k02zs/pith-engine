@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/payout_file@1",
+  "title": "affiliate/payout_file@1",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}$"
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "conversions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "gross": {
+            "type": "number"
+          },
+          "reversals": {
+            "type": "number"
+          },
+          "carried_forward": {
+            "type": "number"
+          },
+          "net": {
+            "type": "number"
+          },
+          "statement_text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "party_id",
+          "currency",
+          "conversions",
+          "gross",
+          "reversals",
+          "net",
+          "statement_text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blocked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "net": {
+            "type": "number"
+          },
+          "request_text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "party_id",
+          "reason",
+          "request_text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "totals_by_currency": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Z]{3}$"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "within_cap": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "period",
+    "lines",
+    "blocked",
+    "totals_by_currency",
+    "within_cap",
+    "summary"
+  ],
+  "additionalProperties": false
+}

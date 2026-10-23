@@ -1,0 +1,283 @@
+{
+  "id": "affiliate.programme_launch",
+  "version": 1,
+  "service": "affiliate",
+  "description": "Design, approve, set up and open an affiliate or partner programme for 1 client. Plan target: 15 working days.",
+  "trigger": {
+    "event": "svc.affiliate/programme.requested",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "markets"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "intake": {
+        "type": "object",
+        "description": "Template T1"
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "load_brain",
+      "type": "tool",
+      "name": "Read client brain",
+      "needs": [],
+      "tool": {
+        "name": "engine",
+        "action": "brain.get",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "design",
+      "type": "agent",
+      "name": "Margin check and programme design (T2)",
+      "needs": [
+        "load_brain"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/programme_designer@1",
+        "output_schema": "affiliate/programme_proposal@1"
+      }
+    },
+    {
+      "id": "fix_first",
+      "type": "branch",
+      "name": "Stop if margin or tracking fails",
+      "needs": [
+        "design"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.design.output.status == 'fix_first'",
+            "goto": "escalate_fix_first"
+          }
+        ],
+        "else": "approve_terms"
+      }
+    },
+    {
+      "id": "escalate_fix_first",
+      "type": "emit",
+      "name": "Tell the account lead to fix tracking or pricing first",
+      "needs": [
+        "fix_first"
+      ],
+      "emit": {
+        "event": "svc.affiliate/programme.blocked"
+      }
+    },
+    {
+      "id": "approve_terms",
+      "type": "gate",
+      "name": "Approve commission and budget cap",
+      "needs": [
+        "fix_first"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "client_finance",
+          "account_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "design"
+      }
+    },
+    {
+      "id": "draft_terms",
+      "type": "agent",
+      "name": "Fill programme terms per market (T2b)",
+      "needs": [
+        "approve_terms"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/terms_drafter@1",
+        "output_schema": "affiliate/terms@1"
+      }
+    },
+    {
+      "id": "approve_legal",
+      "type": "gate",
+      "name": "Approve programme terms",
+      "needs": [
+        "draft_terms"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "client_legal"
+        ],
+        "required_count": 1,
+        "sla_hours": 120,
+        "on_reject": "fail",
+        "on_changes": "draft_terms"
+      }
+    },
+    {
+      "id": "terms_check",
+      "type": "check",
+      "name": "Compliance check on terms and disclosure guide",
+      "needs": [
+        "approve_legal"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "platform_setup",
+      "type": "tool",
+      "name": "Create programme on the affiliate platform",
+      "needs": [
+        "terms_check"
+      ],
+      "tool": {
+        "name": "affiliate",
+        "action": "programme.create",
+        "risk": "write_external"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "tracking_test",
+      "type": "tool",
+      "name": "Place 3 test orders and confirm tracking",
+      "needs": [
+        "platform_setup"
+      ],
+      "tool": {
+        "name": "affiliate",
+        "action": "tracking.test",
+        "risk": "write_internal"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "creative_pack",
+      "type": "agent",
+      "name": "Make partner creative pack",
+      "needs": [
+        "approve_terms"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/creative_packer@1",
+        "output_schema": "affiliate/creative_pack@1"
+      }
+    },
+    {
+      "id": "creative_check",
+      "type": "check",
+      "name": "Brand and compliance check on creative",
+      "needs": [
+        "creative_pack"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "name": "Approve new creative (skips when all assets reuse approved creative)",
+      "needs": [
+        "creative_check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "creative_pack",
+        "skip_if": "steps.creative_pack.output.all_reused && size(steps.creative_pack.output.new_claim_ids) == 0"
+      }
+    },
+    {
+      "id": "go_live",
+      "type": "gate",
+      "name": "Go-live checklist",
+      "needs": [
+        "tracking_test",
+        "approve_creative"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "platform_setup"
+      }
+    },
+    {
+      "id": "open_programme",
+      "type": "tool",
+      "name": "Open applications",
+      "needs": [
+        "go_live"
+      ],
+      "tool": {
+        "name": "affiliate",
+        "action": "programme.open",
+        "risk": "write_external"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "emit_live",
+      "type": "emit",
+      "name": "Programme live",
+      "needs": [
+        "open_programme"
+      ],
+      "emit": {
+        "event": "svc.affiliate/programme.live"
+      }
+    }
+  ]
+}

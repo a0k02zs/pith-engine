@@ -1,0 +1,45 @@
+{
+  "$comment": "Programme rules for Pith M service 15 (affiliate). Version 0.1, 2026-10-22. Source: docs/01-playbook.md. Commission ranges are planning ranges from common practice, not measured data; the Programme Designer uses the client's own margin data.",
+  "service": "affiliate",
+  "contract_version": "0.1.0",
+  "reporting_currency": "GBP",
+  "commission_ranges": {
+    "affiliate_physical": { "model": "cpa_percent", "min": 0.05, "max": 0.10, "cookie_days": 30, "lock_days": [30, 45] },
+    "affiliate_digital": { "model": "cpa_percent", "min": 0.20, "max": 0.30, "cookie_days": 30, "lock_days": [30, 30] },
+    "affiliate_recurring": { "model": "recurring_percent", "min": 0.15, "max": 0.20, "max_recurring_months": 12, "cookie_days": 60, "lock_days": [30, 30] },
+    "coupon_cashback": { "model": "cpa_percent", "min": 0.02, "max": 0.05, "cookie_days": 7, "lock_days": [45, 45] },
+    "agency_referral": { "model": "revenue_share", "min": 0.10, "max": 0.20, "cookie_days": 180, "lock_days": [0, 0] },
+    "reseller": { "model": "revenue_share", "min": 0.20, "max": 0.40, "cookie_days": 0, "lock_days": [0, 0] }
+  },
+  "fix_first": { "min_gross_margin": 0.20, "requires_checkout_tracking": true },
+  "budget_cap_buffer": 1.2,
+  "tiers": {
+    "gold": { "top_revenue_share_percentile": 0.10, "months": 3, "commission_uplift_points": [2, 5] },
+    "silver": { "min_monthly_conversions": 1 },
+    "bronze": {}
+  },
+  "activation_plan": [
+    { "day": 0, "action": "welcome" },
+    { "day": 3, "action": "link_check", "if": "clicks == 0" },
+    { "day": 7, "action": "content_ideas" },
+    { "day": 14, "action": "nudge", "if": "clicks == 0" },
+    { "day": 30, "action": "first_month_report" },
+    { "day": 60, "action": "mark_dormant", "if": "conversions == 0" },
+    { "day": 90, "action": "tier_review" }
+  ],
+  "scorecard": {
+    "weights": { "audience_fit": 0.25, "content_fit": 0.20, "reach": 0.15, "quality": 0.15, "incrementality": 0.15, "brand_safety": 0.10 },
+    "approve_at": 3.5,
+    "review_at": 2.5,
+    "reject_if_brand_safety_at_or_below": 2
+  },
+  "fraud": {
+    "min_seconds_click_to_conversion": 10,
+    "max_conversions_per_ip_per_day": 3,
+    "new_partner_days": 30,
+    "new_partner_cvr_multiple_of_median": 3,
+    "partner_review_after_holds_in_7_days": 3,
+    "person_review_over_gbp": 500
+  },
+  "payout": { "min_payout_gbp": 25, "require_tax_form": true, "require_payout_method": true }
+}

@@ -1,0 +1,279 @@
+{
+  "id": "affiliate.compliance_and_report",
+  "version": 1,
+  "service": "affiliate",
+  "description": "Weekly disclosure sweep and B2B deal desk. Monthly client report.",
+  "trigger": {
+    "cron": "0 7 * * 3"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "monthly_report": {
+        "type": "boolean",
+        "default": false
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "crawl",
+      "type": "tool",
+      "name": "Fetch partner pages and posts that sent traffic",
+      "needs": [],
+      "tool": {
+        "name": "seo",
+        "action": "crawl.fetch",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "sweep",
+      "type": "agent",
+      "name": "Check disclosure, claims, brand bidding, AI labels",
+      "needs": [
+        "crawl"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/compliance_monitor@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "affiliate/compliance_findings@1"
+      }
+    },
+    {
+      "id": "warn",
+      "type": "agent",
+      "name": "Write fix requests for first, minor findings (T7)",
+      "needs": [
+        "sweep"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/recruiter@1",
+        "output_schema": "affiliate/outreach@1"
+      }
+    },
+    {
+      "id": "warn_check",
+      "type": "check",
+      "name": "Compliance check on fix requests",
+      "needs": [
+        "warn"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "send_warn",
+      "type": "tool",
+      "name": "Send fix requests",
+      "needs": [
+        "warn_check"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "serious",
+      "type": "branch",
+      "name": "Serious or repeat findings?",
+      "needs": [
+        "sweep"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(steps.sweep.output.findings, .severity == 'serious' || .repeat == true)",
+            "goto": "remove_partner"
+          }
+        ],
+        "else": "deal_desk"
+      }
+    },
+    {
+      "id": "remove_partner",
+      "type": "gate",
+      "name": "Remove partner?",
+      "needs": [
+        "serious"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "influencer_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "removal_check",
+      "type": "check",
+      "name": "Compliance check on removal notice",
+      "needs": [
+        "remove_partner"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "apply_removal",
+      "type": "tool",
+      "name": "Deactivate partner and reverse pending",
+      "needs": [
+        "removal_check"
+      ],
+      "tool": {
+        "name": "affiliate",
+        "action": "partner.deactivate",
+        "risk": "write_external"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "deal_desk",
+      "type": "agent",
+      "name": "Check B2B deal registrations against CRM",
+      "needs": [
+        "serious"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/deal_desk@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "affiliate/deal_desk@1"
+      }
+    },
+    {
+      "id": "conflicts",
+      "type": "branch",
+      "name": "Deal conflicts?",
+      "needs": [
+        "deal_desk"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(steps.deal_desk.output.results, .decision == 'conflict')",
+            "goto": "decide_conflict"
+          }
+        ],
+        "else": "is_report_week"
+      }
+    },
+    {
+      "id": "decide_conflict",
+      "type": "gate",
+      "name": "Decide deal conflict",
+      "needs": [
+        "conflicts"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "client_sales"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "is_report_week",
+      "type": "branch",
+      "name": "Monthly report this run?",
+      "needs": [
+        "conflicts"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.monthly_report == true",
+            "goto": "report"
+          }
+        ],
+        "else": "end"
+      }
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "name": "Monthly client report (T9)",
+      "needs": [
+        "is_report_week"
+      ],
+      "agent": {
+        "prompt_ref": "affiliate/reporter@1",
+        "output_schema": "affiliate/report@1"
+      }
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "name": "Approve report",
+      "needs": [
+        "report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "publish_report",
+      "type": "tool",
+      "name": "Send report to client portal",
+      "needs": [
+        "approve_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "end",
+      "type": "emit",
+      "name": "Run finished",
+      "needs": [
+        "is_report_week"
+      ],
+      "emit": {
+        "event": "svc.affiliate/sweep.completed"
+      }
+    }
+  ]
+}

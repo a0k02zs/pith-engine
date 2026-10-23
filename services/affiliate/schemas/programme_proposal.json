@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/programme_proposal@1",
+  "title": "affiliate/programme_proposal@1",
+  "type": "object",
+  "properties": {
+    "status": {
+      "enum": [
+        "ok",
+        "needs_human",
+        "fix_first"
+      ]
+    },
+    "programmes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "affiliate",
+              "customer_referral",
+              "agency_referral",
+              "reseller",
+              "technology"
+            ]
+          },
+          "commission": {
+            "type": "object",
+            "properties": {
+              "model": {
+                "enum": [
+                  "cpa_percent",
+                  "cpa_fixed",
+                  "recurring_percent",
+                  "revenue_share",
+                  "two_sided_reward"
+                ]
+              },
+              "value": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "recurring_months": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            }
+          },
+          "max_commission_calc": {
+            "type": "object"
+          },
+          "cookie_days": {
+            "type": "integer"
+          },
+          "lock_days": {
+            "type": "integer"
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "forbidden": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "commission"
+        ]
+      }
+    },
+    "monthly_budget_cap": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "forecast": {
+      "type": "object"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "client_data",
+              "assumption"
+            ]
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
