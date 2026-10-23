@@ -1,0 +1,71 @@
+{
+  "id": "cro.localize",
+  "version": 1,
+  "service": "cro",
+  "description": "Child run per market: adapt approved copy, add market legal text, native review for fr, de, es and ar.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "market",
+      "source_copy"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "market": {
+        "type": "string"
+      },
+      "source_copy": {
+        "type": "object"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "localize",
+      "type": "agent",
+      "name": "Localize copy, currency, tax text, payment marks",
+      "agent": {
+        "prompt_ref": "cro/localizer@1",
+        "output_schema": "cro/localized_copy@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "localize"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "native_review",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "name": "Native editor review (part of G2b)",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 48,
+        "skip_if": "!steps.localize.output.needs_native_review",
+        "on_changes": "localize"
+      }
+    }
+  ]
+}

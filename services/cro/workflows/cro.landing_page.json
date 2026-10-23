@@ -1,0 +1,279 @@
+{
+  "id": "cro.landing_page",
+  "version": 1,
+  "service": "cro",
+  "description": "Track A: a new landing page from brief to live page with a first test. Target 5 working days. 02-pipeline.md section 2.",
+  "trigger": {
+    "event": "svc.cro/page.requested",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "brief"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "brief": {
+        "type": "object",
+        "description": "Fields from 04-templates.md section 2"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Check the brief and plan the page",
+      "agent": {
+        "prompt_ref": "cro/page_planner@1",
+        "output_schema": "cro/page_plan@1"
+      }
+    },
+    {
+      "id": "brief_ok",
+      "type": "branch",
+      "needs": [
+        "plan"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.plan.output.status == 'need_info'",
+            "goto": "ask_brief"
+          }
+        ],
+        "else": "copy"
+      }
+    },
+    {
+      "id": "ask_brief",
+      "type": "emit",
+      "needs": [
+        "brief_ok"
+      ],
+      "name": "Return the questions to the calling service; the run ends",
+      "emit": {
+        "event": "svc.cro/page.needs_info"
+      }
+    },
+    {
+      "id": "copy",
+      "type": "agent",
+      "needs": [
+        "brief_ok"
+      ],
+      "agent": {
+        "prompt_ref": "cro/copywriter@1",
+        "output_schema": "cro/page_copy@1"
+      }
+    },
+    {
+      "id": "localize",
+      "type": "subflow",
+      "needs": [
+        "copy"
+      ],
+      "subflow": {
+        "workflow_id": "cro.localize",
+        "per": "input.brief.markets"
+      }
+    },
+    {
+      "id": "build",
+      "type": "agent",
+      "needs": [
+        "localize"
+      ],
+      "name": "Fill templates/landing-page-base.html",
+      "agent": {
+        "prompt_ref": "cro/page_builder@1",
+        "output_schema": "cro/build@1"
+      }
+    },
+    {
+      "id": "stage",
+      "type": "tool",
+      "needs": [
+        "build"
+      ],
+      "name": "Publish to a staging URL (not indexed)",
+      "tool": {
+        "name": "page_builder",
+        "action": "page.publish_staging",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "checks",
+      "type": "check",
+      "needs": [
+        "stage"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "accessibility",
+          "links",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "needs": [
+        "checks"
+      ],
+      "name": "G2a Creative",
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead"
+        ],
+        "sla_hours": 48,
+        "skip_if": "steps.build.output.template_reused",
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "approve_creative"
+      ],
+      "name": "G2b Copy",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "skip_if": "steps.copy.output.copy_reused && size(steps.copy.output.new_claims) == 0",
+        "on_changes": "copy"
+      }
+    },
+    {
+      "id": "needs_claim",
+      "type": "branch",
+      "needs": [
+        "approve_copy"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.copy.output.new_claims) > 0",
+            "goto": "approve_claim"
+          }
+        ],
+        "else": "qa"
+      }
+    },
+    {
+      "id": "approve_claim",
+      "type": "gate",
+      "needs": [
+        "needs_claim"
+      ],
+      "name": "G2c Claim, price or offer",
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal",
+          "client_approver",
+          "client_finance"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "copy"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "agent",
+      "needs": [
+        "needs_claim"
+      ],
+      "agent": {
+        "prompt_ref": "cro/qa@1",
+        "model": "claude-haiku-5-5",
+        "tools": [
+          "browser.screenshot",
+          "lighthouse.run"
+        ],
+        "output_schema": "cro/qa_report@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "qa"
+      ],
+      "name": "G3 Go-live (engine G9)",
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "ops_lead",
+          "client_developer",
+          "cro_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "tool": {
+        "name": "page_builder",
+        "action": "page.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "published",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "name": "Page live: calling service may start traffic under its own budget gates",
+      "emit": {
+        "event": "svc.cro/page.published"
+      }
+    },
+    {
+      "id": "wait_data",
+      "type": "wait",
+      "needs": [
+        "published"
+      ],
+      "name": "14 days of live data",
+      "wait": {
+        "timeout": "14d"
+      }
+    },
+    {
+      "id": "first_test",
+      "type": "subflow",
+      "needs": [
+        "wait_data"
+      ],
+      "name": "Hand-off to track B with the launch test",
+      "subflow": {
+        "workflow_id": "cro.optimization_test"
+      }
+    }
+  ]
+}
