@@ -102,7 +102,7 @@
       ],
       "name": "Publish to a staging URL (not indexed)",
       "tool": {
-        "name": "page_builder",
+        "name": "cms",
         "action": "page.publish_staging",
         "risk": "write_internal"
       }
@@ -237,7 +237,7 @@
         "approve_go_live"
       ],
       "tool": {
-        "name": "page_builder",
+        "name": "cms",
         "action": "page.publish",
         "risk": "write_external"
       }

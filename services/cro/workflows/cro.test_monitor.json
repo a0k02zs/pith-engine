@@ -27,7 +27,7 @@
       ],
       "name": "Read visitors and conversions per arm and guardrail metrics",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.results.read",
         "risk": "read"
       }
@@ -40,8 +40,8 @@
       ],
       "name": "cro-stats srm on the arm counts",
       "tool": {
-        "name": "cro_stats",
-        "action": "srm",
+        "name": "cro",
+        "action": "stats.srm",
         "risk": "read"
       }
     },
@@ -53,8 +53,8 @@
       ],
       "name": "cro-stats analyze per guardrail metric (stop if worse at p < 0.01, or page errors 2x)",
       "tool": {
-        "name": "cro_stats",
-        "action": "analyze",
+        "name": "cro",
+        "action": "stats.analyze",
         "risk": "read"
       }
     },
@@ -87,7 +87,7 @@
       ],
       "name": "Pause the experiment: all traffic to control",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.pause",
         "risk": "remove"
       }
@@ -128,7 +128,7 @@
       ],
       "name": "Planned end: pause the experiment, all traffic to control until G4",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.pause",
         "risk": "remove"
       }

@@ -211,7 +211,7 @@
       ],
       "name": "Create the variant as a draft (not live) in VWO or Optimizely",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.create_draft",
         "risk": "write_internal"
       }
@@ -348,7 +348,7 @@
       ],
       "name": "Start the experiment at the planned split",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.start",
         "risk": "write_external"
       }
@@ -448,7 +448,7 @@
       ],
       "name": "Send the winner to 100% of traffic and open the hard-code ticket",
       "tool": {
-        "name": "experiment_platform",
+        "name": "cro",
         "action": "experiment.ship_variant",
         "risk": "write_external"
       }

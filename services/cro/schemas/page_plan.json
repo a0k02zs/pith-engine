@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cro/page_plan@1",
+  "type": "object",
+  "properties": {
+    "status": {
+      "enum": [
+        "ok",
+        "need_info"
+      ]
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "template": {
+      "enum": [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6"
+      ]
+    },
+    "primary_cta": {
+      "type": "string",
+      "minLength": 1
+    },
+    "message_match_promise": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "job": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "job"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+      }
+    },
+    "launch_test": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "primary_metric": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "statement",
+        "primary_metric"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "status",
+    "questions"
+  ],
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "status": {
+        "const": "ok"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "template",
+      "primary_cta",
+      "message_match_promise",
+      "sections",
+      "markets",
+      "languages",
+      "launch_test"
+    ]
+  },
+  "else": {
+    "properties": {
+      "questions": {
+        "minItems": 1
+      }
+    }
+  }
+}
