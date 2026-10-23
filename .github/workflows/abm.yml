@@ -1,0 +1,21 @@
+name: abm
+on:
+  pull_request:
+    paths: ["services/abm/**", "engine/contracts/**", "engine/specs/compliance-rules.json"]
+  push:
+    branches: [main]
+    paths: ["services/abm/**", "engine/contracts/**", "engine/specs/compliance-rules.json"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/abm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test

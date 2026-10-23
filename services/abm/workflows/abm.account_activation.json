@@ -1,0 +1,225 @@
+{
+  "id": "abm.account_activation",
+  "version": 1,
+  "service": "abm",
+  "description": "For 1 account: map the buying committee, research, write assets, check them, get G2 or G3, get G4 when there is new spend or a gift that needs approval, then start the play.",
+  "trigger": {
+    "event": "svc.abm/account.listed"
+  },
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "account_id": {
+        "type": "string"
+      },
+      "tier": {
+        "enum": [
+          1,
+          2,
+          3
+        ]
+      },
+      "play_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "client_id",
+      "account_id",
+      "tier"
+    ]
+  },
+  "concurrency": {
+    "key": "account_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "resolve_committee",
+      "type": "tool",
+      "name": "Consented contacts at the account",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "map_committee",
+      "type": "agent",
+      "needs": [
+        "resolve_committee"
+      ],
+      "agent": {
+        "prompt_ref": "abm/buying_committee_mapper@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/buying_committee_mapper@1",
+        "tools": [
+          "enrichment.people_search"
+        ]
+      }
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "needs": [
+        "map_committee"
+      ],
+      "agent": {
+        "prompt_ref": "abm/account_researcher@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/account_researcher@1",
+        "tools": [
+          "web.search",
+          "web.fetch"
+        ]
+      }
+    },
+    {
+      "id": "personalize",
+      "type": "agent",
+      "needs": [
+        "research"
+      ],
+      "agent": {
+        "prompt_ref": "abm/personalizer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/personalizer@1"
+      }
+    },
+    {
+      "id": "check_assets",
+      "type": "check",
+      "needs": [
+        "personalize"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "g2_tier1_assets",
+      "type": "gate",
+      "name": "G2 Approve every Tier 1 asset",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "personalize",
+        "skip_if": "input.tier != 1"
+      },
+      "needs": [
+        "check_assets"
+      ]
+    },
+    {
+      "id": "g3_templates",
+      "type": "gate",
+      "name": "G3 Approve Tier 2 and 3 templates",
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 72,
+        "skip_if": "input.tier == 1 || (all(output.personalize.assets, a => a.template_approved && !a.template_changed))",
+        "on_reject": "fail",
+        "on_changes": "personalize"
+      },
+      "needs": [
+        "g2_tier1_assets"
+      ]
+    },
+    {
+      "id": "needs_budget",
+      "type": "branch",
+      "needs": [
+        "g3_templates"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(output.personalize.assets, a => a.new_spend != null) || any(gift_decisions, g => g.decision == 'needs_approval')",
+            "goto": "g4_spend_gifts"
+          }
+        ],
+        "else": "start_play"
+      }
+    },
+    {
+      "id": "g4_spend_gifts",
+      "type": "gate",
+      "name": "G4 Approve spend and gifts",
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "account_lead",
+          "client_finance"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "personalize"
+      }
+    },
+    {
+      "id": "upload_account_audience",
+      "type": "tool",
+      "needs": [
+        "g4_spend_gifts"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "matched_audience_upload",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "launch_account_ads",
+      "type": "tool",
+      "needs": [
+        "upload_account_audience"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "launch_campaign",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "start_play_after_ads",
+      "type": "emit",
+      "needs": [
+        "launch_account_ads"
+      ],
+      "emit": {
+        "event": "svc.abm/play.started"
+      }
+    },
+    {
+      "id": "start_play",
+      "type": "emit",
+      "emit": {
+        "event": "svc.abm/play.started"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "abm.intent_daily",
+  "version": 1,
+  "service": "abm",
+  "description": "Update intent scores for every listed account each day and emit surge events.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "concurrency": {
+    "key": "client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "collect_signals",
+      "type": "tool",
+      "name": "Pull intent, web visit, hiring and news signals",
+      "tool": {
+        "name": "enrichment",
+        "action": "pull_intent_daily",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3
+      }
+    },
+    {
+      "id": "score_intent",
+      "type": "agent",
+      "needs": [
+        "collect_signals"
+      ],
+      "agent": {
+        "prompt_ref": "abm/intent_monitor@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/intent_monitor@1"
+      }
+    },
+    {
+      "id": "save_scores",
+      "type": "tool",
+      "needs": [
+        "score_intent"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "company.update_abm_fields",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "is_surge",
+      "type": "branch",
+      "needs": [
+        "save_scores"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "any(output.score_intent.accounts, a => a.surge && !a.stale)",
+            "goto": "emit_surge"
+          }
+        ],
+        "else": "emit_updated"
+      }
+    },
+    {
+      "id": "emit_surge",
+      "type": "emit",
+      "emit": {
+        "event": "svc.abm/account.surged"
+      }
+    },
+    {
+      "id": "emit_updated",
+      "type": "emit",
+      "emit": {
+        "event": "svc.abm/intent.updated"
+      }
+    }
+  ]
+}

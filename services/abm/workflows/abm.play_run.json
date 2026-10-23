@@ -1,0 +1,108 @@
+{
+  "id": "abm.play_run",
+  "version": 1,
+  "service": "abm",
+  "description": "Plan and send the touches of 1 play for 1 contact. Compliance check at send time; stops on an open opportunity, opt-out, complaint or high bounce rate.",
+  "trigger": {
+    "event": "svc.abm/play.started"
+  },
+  "concurrency": {
+    "key": "contact_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "resolve_contact",
+      "type": "tool",
+      "name": "Re-resolve the contact with consent for each channel",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan_touches",
+      "type": "agent",
+      "needs": [
+        "resolve_contact"
+      ],
+      "agent": {
+        "prompt_ref": "abm/play_orchestrator@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "abm/play_orchestrator@1"
+      }
+    },
+    {
+      "id": "wait_slot",
+      "type": "wait",
+      "needs": [
+        "plan_touches"
+      ],
+      "wait": {
+        "event": "svc.abm/touch.slot_open",
+        "match": "data.contact_id == event.data.contact_id",
+        "timeout": "8w"
+      }
+    },
+    {
+      "id": "send_time_check",
+      "type": "check",
+      "needs": [
+        "wait_slot"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "send_touch",
+      "type": "tool",
+      "tool": {
+        "name": "outbound",
+        "action": "touch.send",
+        "risk": "send"
+      },
+      "needs": [
+        "send_time_check"
+      ],
+      "name": "Send the touch (email, LinkedIn message, or direct mail through the gifting partner)"
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "send_touch"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    },
+    {
+      "id": "stop_or_next",
+      "type": "branch",
+      "needs": [
+        "record"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "opportunity_open || opted_out || complaint || bounce_rate > 0.03 || touches_left == 0",
+            "goto": "play_done"
+          }
+        ],
+        "else": "wait_slot"
+      }
+    },
+    {
+      "id": "play_done",
+      "type": "emit",
+      "emit": {
+        "event": "svc.abm/play.completed"
+      }
+    }
+  ]
+}

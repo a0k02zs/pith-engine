@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/personalizer@1",
+  "title": "ABM personalizer output",
+  "type": "object",
+  "properties": {
+    "play_id": {
+      "enum": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8"
+      ]
+    },
+    "account_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cluster": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "template_id": {
+            "type": "string"
+          },
+          "channel": {
+            "enum": [
+              "email",
+              "linkedin_message",
+              "paid_ad",
+              "landing_page",
+              "direct_mail",
+              "phone_call",
+              "webinar",
+              "in_person_event"
+            ]
+          },
+          "role": {
+            "enum": [
+              "economic_buyer",
+              "champion",
+              "technical_evaluator",
+              "user_lead",
+              "procurement_legal",
+              "blocker"
+            ]
+          },
+          "contact_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "locale": {
+            "type": "string"
+          },
+          "subject_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2
+          },
+          "body_text": {
+            "type": "string"
+          },
+          "cta_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reference_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "gift": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000.0
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "item",
+                  "items",
+                  "value",
+                  "currency"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "new_spend": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000000.0
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "platform",
+                  "amount",
+                  "currency"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "asset_id",
+          "template_id",
+          "channel",
+          "role",
+          "contact_id",
+          "locale",
+          "subject_options",
+          "body_text",
+          "cta_url",
+          "labels",
+          "claim_ids",
+          "reference_ids",
+          "gift",
+          "new_spend"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "escalate": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "play_id",
+    "account_id",
+    "cluster",
+    "assets",
+    "open_questions",
+    "escalate"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/buying_committee_mapper@1",
+  "title": "ABM buying committee mapper output",
+  "type": "object",
+  "properties": {
+    "account_id": {
+      "type": "string"
+    },
+    "committee": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contact_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "enum": [
+              "economic_buyer",
+              "champion",
+              "technical_evaluator",
+              "user_lead",
+              "procurement_legal",
+              "blocker"
+            ]
+          },
+          "job_title": {
+            "type": "string"
+          },
+          "seniority": {
+            "enum": [
+              "c_level",
+              "vp",
+              "director",
+              "manager",
+              "individual"
+            ]
+          },
+          "country": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "channels_allowed": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "email",
+                "linkedin_message",
+                "paid_ad",
+                "landing_page",
+                "direct_mail",
+                "phone_call",
+                "webinar",
+                "in_person_event"
+              ]
+            }
+          },
+          "cares_about": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "resolved",
+              "gap"
+            ]
+          }
+        },
+        "required": [
+          "contact_id",
+          "role",
+          "job_title",
+          "seniority",
+          "country",
+          "language",
+          "channels_allowed",
+          "cares_about",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "enum": [
+              "economic_buyer",
+              "champion",
+              "technical_evaluator",
+              "user_lead",
+              "procurement_legal",
+              "blocker"
+            ]
+          },
+          "target_titles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "role",
+          "target_titles"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "coverage_roles": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "meets_target": {
+      "type": "boolean"
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "account_id",
+    "committee",
+    "gaps",
+    "coverage_roles",
+    "meets_target",
+    "open_questions"
+  ],
+  "additionalProperties": false
+}

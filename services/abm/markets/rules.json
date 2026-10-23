@@ -1,0 +1,115 @@
+{
+  "$comment": "ABM market rules as data. Proposed addition to engine/specs/compliance-rules.json. Planning summary, not legal advice. 'confirm': true means a local lawyer must confirm before launch.",
+  "version": "0.1.0",
+  "service": "abm",
+  "markets": {
+    "GB": {
+      "b2b_email_basis": "legitimate_interest_corporate",
+      "requires_lia": true,
+      "consent_only_if": ["sole_trader", "partnership", "generic_email_domain"],
+      "required_in_email": ["sender_identity", "opt_out"],
+      "phone_check": "CTPS",
+      "gift_limit": { "currency": "GBP", "private_sector": 50, "public_sector": 0 },
+      "send_window_local": ["09:00", "17:00"],
+      "weekend": ["SAT", "SUN"],
+      "languages": ["en-GB"],
+      "blackouts": ["open_tender_same_contract"],
+      "confirm": false
+    },
+    "EU": {
+      "b2b_email_basis": "per_country",
+      "per_country": {
+        "DE": { "b2b_email_basis": "opt_in", "confirm": true },
+        "AT": { "b2b_email_basis": "opt_in", "confirm": true },
+        "FR": { "b2b_email_basis": "legitimate_interest_role_relevant", "confirm": true },
+        "NL": { "b2b_email_basis": "legitimate_interest_corporate", "confirm": true },
+        "default": { "b2b_email_basis": "opt_in", "confirm": true }
+      },
+      "requires_lia": true,
+      "article_14_notice_days": 30,
+      "required_in_email": ["sender_identity", "opt_out", "article_14_notice_link"],
+      "gift_limit": { "currency": "EUR", "private_sector": 50, "public_sector": 0 },
+      "data_residency": "eu_region_if_client_requires",
+      "send_window_local": ["09:00", "17:00"],
+      "weekend": ["SAT", "SUN"],
+      "languages": "contact_business_language",
+      "confirm": true
+    },
+    "US": {
+      "b2b_email_basis": "opt_out",
+      "required_in_email": ["honest_header", "honest_subject", "postal_address", "opt_out"],
+      "opt_out_deadline_business_days": 10,
+      "honour_gpc_states": ["CA"],
+      "gift_limit": { "currency": "USD", "private_sector": 75, "public_sector": 0 },
+      "send_window_local": ["09:00", "11:00"],
+      "weekend": ["SAT", "SUN"],
+      "languages": ["en-US"],
+      "confirm": false
+    },
+    "CA": {
+      "b2b_email_basis": "consent_express_or_implied",
+      "implied_consent_types": ["existing_business_relationship_2y", "conspicuous_publication_role_relevant"],
+      "no_consent_action": "company_level_ads_only",
+      "required_in_email": ["sender_identity", "postal_address", "unsubscribe_60_days"],
+      "gift_limit": { "currency": "CAD", "private_sector": 75, "public_sector": 0 },
+      "regional_overrides": { "QC": { "languages": ["fr-CA"], "privacy_law": "Law 25" } },
+      "send_window_local": ["09:00", "11:00"],
+      "weekend": ["SAT", "SUN"],
+      "languages": ["en-CA"],
+      "confirm": true
+    },
+    "AE": {
+      "b2b_email_basis": "legitimate_interest_with_care",
+      "required_in_email": ["sender_identity", "opt_out"],
+      "free_zone_laws": ["DIFC", "ADGM"],
+      "play_order": ["P1", "P4", "P2"],
+      "whatsapp_requires": "number_given_for_purpose_or_meeting_held",
+      "gift_limit": { "currency": "AED", "private_sector": 300, "public_sector": 0, "public_sector_needs_written_account_approval": true },
+      "gift_banned_items": ["alcohol", "pork_products"],
+      "weekend": ["SAT", "SUN"],
+      "languages": ["en", "ar-AE"],
+      "arabic_required_for": ["government", "government_linked"],
+      "ramadan_mode": "reduced_cold_touches",
+      "confirm": true
+    },
+    "SA": {
+      "b2b_email_basis": "confirm_consent_need",
+      "data_transfer_check": true,
+      "regulator": "SDAIA",
+      "required_in_email": ["sender_identity", "opt_out"],
+      "play_order": ["P1", "P4", "P2"],
+      "whatsapp_requires": "number_given_for_purpose_or_meeting_held",
+      "gift_limit": { "currency": "SAR", "private_sector": 300, "public_sector": 0, "public_sector_needs_written_account_approval": true },
+      "gift_banned_items": ["alcohol", "pork_products"],
+      "weekend": ["FRI", "SAT"],
+      "languages": ["en", "ar-SA"],
+      "arabic_required_for": ["government", "government_linked"],
+      "ramadan_mode": "reduced_cold_touches",
+      "confirm": true
+    },
+    "QA": { "inherits": "SA", "data_transfer_check": false, "regulator": "PDPPL", "gift_limit": { "currency": "QAR", "private_sector": 300, "public_sector": 0 }, "languages": ["en", "ar-QA"], "confirm": true },
+    "KW": { "inherits": "SA", "data_transfer_check": false, "regulator": "CITRA", "gift_limit": { "currency": "KWD", "private_sector": 25, "public_sector": 0 }, "languages": ["en", "ar-KW"], "confirm": true },
+    "BH": { "inherits": "SA", "data_transfer_check": false, "regulator": "PDPL Law 30 of 2018", "gift_limit": { "currency": "BHD", "private_sector": 30, "public_sector": 0 }, "languages": ["en", "ar-BH"], "confirm": true },
+    "OM": { "inherits": "SA", "data_transfer_check": false, "regulator": "PDPL Royal Decree 6 of 2022", "gift_limit": { "currency": "OMR", "private_sector": 30, "public_sector": 0 }, "languages": ["en", "ar-OM"], "confirm": true },
+    "SG": {
+      "b2b_email_basis": "business_contact_information",
+      "required_in_email": ["sender_identity", "unsubscribe"],
+      "bulk_email_subject_label": "<ADV>",
+      "bulk_applies_to_tiers": [3],
+      "phone_check": "DNC_registry_with_b2b_exemption",
+      "gift_limit": { "currency": "SGD", "private_sector": 80, "public_sector": 0 },
+      "send_window_local": ["09:00", "17:00"],
+      "weekend": ["SAT", "SUN"],
+      "languages": ["en-SG"],
+      "confirm": true
+    }
+  },
+  "all_markets": {
+    "contacts_source": "POST /audiences/resolve",
+    "compliance_check": "POST /compliance/check",
+    "gift_above_limit_gate": "G4",
+    "named_customer_reference_requires": "signed_reference_in_client_brain",
+    "language_and_weekend_from": "account_country",
+    "data_law_from": "contact_country"
+  }
+}
