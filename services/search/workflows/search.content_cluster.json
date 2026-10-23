@@ -1,0 +1,246 @@
+{
+  "id": "search.content_cluster",
+  "version": 1,
+  "service": "search",
+  "description": "W3. Monthly cluster: briefs from top results and AI answers, expert input, drafts, checks, claim gate, expert sign-off (G2), client publish OK when the contract asks (G2b), publish.",
+  "trigger": {
+    "cron": "0 7 1 * *",
+    "event": "svc.search/roadmap.approved"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "serp",
+      "type": "tool",
+      "name": "serp",
+      "tool": {
+        "name": "seo",
+        "action": "serp.top10_and_ai_answers",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "brief",
+      "type": "agent",
+      "name": "brief",
+      "agent": {
+        "prompt_ref": "search/brief_writer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/brief@1"
+      },
+      "needs": [
+        "serp"
+      ]
+    },
+    {
+      "id": "expert_input",
+      "type": "task",
+      "needs": [
+        "brief"
+      ],
+      "task": {
+        "title": "Answer the expert questions in the brief (form or 20-minute call)",
+        "assignee_roles": [
+          "subject_expert"
+        ],
+        "due_hours": 120,
+        "done_output_schema": "search/expert_notes@1"
+      },
+      "name": "expert input"
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "name": "draft",
+      "agent": {
+        "prompt_ref": "search/page_drafter@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/draft@1"
+      },
+      "needs": [
+        "expert_input"
+      ]
+    },
+    {
+      "id": "draft_check",
+      "type": "check",
+      "needs": [
+        "draft"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 75
+      },
+      "name": "draft check"
+    },
+    {
+      "id": "new_claims",
+      "type": "branch",
+      "needs": [
+        "draft_check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.draft.output.new_claims.length > 0",
+            "goto": "claim_gate"
+          }
+        ],
+        "else": "expert_signoff"
+      },
+      "name": "new claims"
+    },
+    {
+      "id": "claim_gate",
+      "type": "gate",
+      "needs": [
+        "new_claims"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_approver",
+          "client_legal"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "draft"
+      },
+      "name": "G6 new claim"
+    },
+    {
+      "id": "expert_signoff",
+      "type": "gate",
+      "needs": [
+        "claim_gate"
+      ],
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "subject_expert"
+        ],
+        "sla_hours": 120,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      },
+      "name": "G2 expert sign-off"
+    },
+    {
+      "id": "cms_draft",
+      "type": "tool",
+      "name": "cms_draft",
+      "tool": {
+        "name": "cms",
+        "action": "page.upsert_draft",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "expert_signoff"
+      ]
+    },
+    {
+      "id": "publish_ok_needed",
+      "type": "branch",
+      "needs": [
+        "cms_draft"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.contract.client_publish_ok == true",
+            "goto": "client_publish_ok"
+          }
+        ],
+        "else": "publish_check"
+      },
+      "name": "publish ok needed"
+    },
+    {
+      "id": "client_publish_ok",
+      "type": "gate",
+      "needs": [
+        "publish_ok_needed"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail"
+      },
+      "name": "G2b client publish OK"
+    },
+    {
+      "id": "publish_check",
+      "type": "check",
+      "needs": [
+        "client_publish_ok"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      },
+      "name": "publish check"
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "name": "publish",
+      "tool": {
+        "name": "cms",
+        "action": "page.publish",
+        "risk": "write_external"
+      },
+      "needs": [
+        "publish_check"
+      ]
+    },
+    {
+      "id": "submit_urls",
+      "type": "tool",
+      "name": "submit_urls",
+      "tool": {
+        "name": "seo",
+        "action": "indexnow.submit",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "publish"
+      ]
+    },
+    {
+      "id": "published",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "svc.search/page.published"
+      },
+      "name": "published"
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "name": "record"
+    }
+  ]
+}

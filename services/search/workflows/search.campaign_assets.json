@@ -1,0 +1,111 @@
+{
+  "id": "search.campaign_assets",
+  "version": 1,
+  "service": "search",
+  "description": "Search share of a campaign (service-integration item 9): SEM ads from the channel brief, checks, copy gate, artifacts; enable only after svc.campaigns/market.launched. Budgets stay with the campaign optimizer.",
+  "trigger": {
+    "event": "svc.campaigns/concept.approved"
+  },
+  "steps": [
+    {
+      "id": "build",
+      "type": "agent",
+      "name": "build",
+      "agent": {
+        "prompt_ref": "search/sem_builder@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/sem_build@1",
+        "tools": [
+          "ads_google.account_report"
+        ]
+      }
+    },
+    {
+      "id": "ads_check",
+      "type": "check",
+      "needs": [
+        "build"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 75
+      },
+      "name": "ads check"
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "ads_check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "performance_marketer",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "build"
+      },
+      "name": "G3c campaign ad copy"
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "register",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_copy"
+      ]
+    },
+    {
+      "id": "push_paused",
+      "type": "tool",
+      "name": "push_paused",
+      "tool": {
+        "name": "ads_google",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "register"
+      ]
+    },
+    {
+      "id": "wait_launch",
+      "type": "wait",
+      "needs": [
+        "push_paused"
+      ],
+      "wait": {
+        "event": "svc.campaigns/market.launched",
+        "match": "data.campaign_id == input.campaign_id && data.market == input.market",
+        "timeout": "60d"
+      },
+      "name": "wait launch"
+    },
+    {
+      "id": "enable",
+      "type": "tool",
+      "name": "enable",
+      "tool": {
+        "name": "ads_google",
+        "action": "campaigns.enable",
+        "risk": "spend"
+      },
+      "needs": [
+        "wait_launch"
+      ]
+    }
+  ]
+}

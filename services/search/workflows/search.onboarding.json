@@ -1,0 +1,153 @@
+{
+  "id": "search.onboarding",
+  "version": 1,
+  "service": "search",
+  "description": "W1. Access check, technical audit, clusters per market, GEO baseline, SEM audit and the 90-day roadmap (gate G1).",
+  "trigger": {
+    "event": "svc.search/client.onboarded"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "access_check",
+      "type": "tool",
+      "name": "access_check",
+      "tool": {
+        "name": "seo",
+        "action": "access.verify",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "crawl",
+      "type": "tool",
+      "name": "crawl",
+      "tool": {
+        "name": "seo",
+        "action": "crawl.site",
+        "risk": "read"
+      },
+      "needs": [
+        "access_check"
+      ]
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "name": "audit",
+      "agent": {
+        "prompt_ref": "search/technical_auditor@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/audit@1",
+        "tools": [
+          "seo.crawl_results",
+          "seo.robots_txt"
+        ]
+      },
+      "needs": [
+        "crawl"
+      ]
+    },
+    {
+      "id": "clusters",
+      "type": "subflow",
+      "needs": [
+        "access_check"
+      ],
+      "subflow": {
+        "workflow_id": "search.cluster_research",
+        "per": "input.markets"
+      },
+      "name": "clusters"
+    },
+    {
+      "id": "geo_baseline",
+      "type": "subflow",
+      "needs": [
+        "clusters"
+      ],
+      "subflow": {
+        "workflow_id": "search.geo_monitor",
+        "per": "input.markets"
+      },
+      "name": "geo baseline"
+    },
+    {
+      "id": "sem_audit",
+      "type": "agent",
+      "name": "sem_audit",
+      "agent": {
+        "prompt_ref": "search/sem_auditor@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/sem_audit@1",
+        "tools": [
+          "ads_google.account_report"
+        ]
+      },
+      "needs": [
+        "access_check"
+      ]
+    },
+    {
+      "id": "roadmap",
+      "type": "agent",
+      "name": "roadmap",
+      "agent": {
+        "prompt_ref": "search/roadmap_planner@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/roadmap@1"
+      },
+      "needs": [
+        "audit",
+        "geo_baseline",
+        "sem_audit"
+      ]
+    },
+    {
+      "id": "approve_roadmap",
+      "type": "gate",
+      "needs": [
+        "roadmap"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "seo_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "roadmap"
+      },
+      "name": "G1 roadmap"
+    },
+    {
+      "id": "roadmap_approved",
+      "type": "emit",
+      "needs": [
+        "approve_roadmap"
+      ],
+      "emit": {
+        "event": "svc.search/roadmap.approved"
+      },
+      "name": "roadmap approved"
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "name": "learn",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_roadmap"
+      ]
+    }
+  ]
+}

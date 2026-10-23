@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/clusters@1",
+  "type": "object",
+  "properties": {
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "main_keyword": {
+            "type": "string",
+            "minLength": 1
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0
+          },
+          "volume": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "intent": {
+            "enum": [
+              "informational",
+              "commercial",
+              "transactional",
+              "navigational"
+            ]
+          },
+          "stage": {
+            "enum": [
+              "awareness",
+              "consideration",
+              "decision"
+            ]
+          },
+          "persona": {
+            "type": "string"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\?$"
+            },
+            "minItems": 1
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proven": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "main_keyword",
+          "keywords",
+          "volume",
+          "intent",
+          "stage",
+          "persona",
+          "questions",
+          "url",
+          "proven"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "market",
+    "locale",
+    "clusters",
+    "gaps"
+  ],
+  "additionalProperties": false
+}
