@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/mmm_readout@1",
+  "type": "object",
+  "properties": {
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "roi_median": {
+            "type": "number"
+          },
+          "roi_ci90": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "marginal_roi": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "channel",
+          "roi_median",
+          "roi_ci90",
+          "marginal_roi"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "enum": [
+              "resplit",
+              "minus_10",
+              "plus_10"
+            ]
+          },
+          "budget": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "expected_revenue": {
+            "type": "number",
+            "minimum": 0
+          },
+          "interval": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": [
+          "name",
+          "budget",
+          "expected_revenue",
+          "interval"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3,
+      "minItems": 3
+    },
+    "label": {
+      "const": "Draft for approval"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "channels",
+    "scenarios",
+    "label",
+    "notes"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/intake@1",
+  "type": "object",
+  "properties": {
+    "business_model": {
+      "enum": [
+        "b2c",
+        "b2b",
+        "b2b_enterprise"
+      ]
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+      },
+      "minItems": 1
+    },
+    "main_conversion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "access_granted": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "ga4",
+          "gtm",
+          "bigquery",
+          "meta",
+          "google_ads",
+          "linkedin",
+          "tiktok",
+          "crm",
+          "order_system"
+        ]
+      }
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    }
+  },
+  "required": [
+    "business_model",
+    "markets",
+    "main_conversion",
+    "access_granted",
+    "currency"
+  ],
+  "additionalProperties": false
+}

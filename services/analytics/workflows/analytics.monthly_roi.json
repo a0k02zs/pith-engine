@@ -1,0 +1,218 @@
+{
+  "id": "analytics.monthly_roi",
+  "version": 1,
+  "service": "analytics",
+  "description": "On the 3rd working day of the month. ROI report across channels and Pith services, then a review call and a decision log. Gate G4.",
+  "trigger": {
+    "cron": "0 7 1-5 * 1-5"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "working_day",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "client.calendar.working_day_of_month == 3",
+            "goto": "qa_metrics"
+          }
+        ],
+        "else": "not_today"
+      }
+    },
+    {
+      "id": "not_today",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/monthly.skipped"
+      }
+    },
+    {
+      "id": "qa_metrics",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:qa_metrics:window=month",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "tool",
+      "needs": [
+        "qa_metrics"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "qa.run",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_qa",
+      "type": "branch",
+      "needs": [
+        "qa"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.qa.output.status == 'block'",
+            "goto": "hold"
+          }
+        ],
+        "else": "kpis"
+      }
+    },
+    {
+      "id": "hold",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/report.held"
+      }
+    },
+    {
+      "id": "kpis",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:kpi_table:grain=month",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "attribution",
+      "type": "tool",
+      "needs": [
+        "kpis"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:attribution_summary:grain=month",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "services",
+      "type": "tool",
+      "needs": [
+        "kpis"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:pith_service_roi",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "cohorts",
+      "type": "tool",
+      "needs": [
+        "kpis"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:cohort_payback",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "findings",
+      "type": "agent",
+      "needs": [
+        "kpis",
+        "attribution",
+        "qa"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/findings@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/findings@1"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "needs": [
+        "findings",
+        "services",
+        "cohorts"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/report@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/report@1"
+      }
+    },
+    {
+      "id": "g4_report",
+      "type": "gate",
+      "needs": [
+        "draft"
+      ],
+      "name": "G4 report review",
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "needs": [
+        "g4_report"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "reports.publish",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "review_call",
+      "type": "task",
+      "needs": [
+        "deliver"
+      ],
+      "task": {
+        "title": "Hold the monthly review call and log each decision with an owner and a date",
+        "assignee_roles": [
+          "strategist"
+        ],
+        "due_hours": 504,
+        "done_output_schema": "analytics/decision_log@1"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "review_call"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "closed",
+      "type": "emit",
+      "needs": [
+        "learn"
+      ],
+      "emit": {
+        "event": "svc.analytics/monthly.closed"
+      }
+    }
+  ]
+}

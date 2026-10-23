@@ -1,0 +1,153 @@
+{
+  "$comment": "Analytics rules per market. Planning summary from docs/markets.md, not legal advice. EU member states resolve to EU.",
+  "global": {
+    "min_cell_size": 20,
+    "eu_members": [
+      "AT",
+      "BE",
+      "BG",
+      "HR",
+      "CY",
+      "CZ",
+      "DK",
+      "EE",
+      "FI",
+      "FR",
+      "DE",
+      "GR",
+      "HU",
+      "IE",
+      "IT",
+      "LV",
+      "LT",
+      "LU",
+      "MT",
+      "NL",
+      "PL",
+      "PT",
+      "RO",
+      "SK",
+      "SI",
+      "ES",
+      "SE"
+    ]
+  },
+  "markets": {
+    "GB": {
+      "group": "uk",
+      "analytics_before_consent": false,
+      "marketing_before_consent": false,
+      "consent_mode": "advanced",
+      "warehouse_region": "europe-west2",
+      "currency": "GBP",
+      "week_starts": "mon",
+      "report_language": "en-GB",
+      "modelled_conversions_column": true,
+      "gpc": false,
+      "geo_test_units": "itv_regions"
+    },
+    "SG": {
+      "group": "sg",
+      "analytics_before_consent": true,
+      "marketing_before_consent": true,
+      "consent_mode": "basic",
+      "warehouse_region": "asia-southeast1",
+      "currency": "SGD",
+      "week_starts": "mon",
+      "report_language": "en-SG",
+      "modelled_conversions_column": false,
+      "gpc": false,
+      "geo_test_units": null
+    },
+    "US": {
+      "group": "na",
+      "analytics_before_consent": true,
+      "marketing_before_consent": true,
+      "consent_mode": "basic",
+      "warehouse_region": "US",
+      "currency": "USD",
+      "week_starts": "sun",
+      "report_language": "en-US",
+      "modelled_conversions_column": false,
+      "gpc": true,
+      "geo_test_units": "dma"
+    },
+    "CA": {
+      "group": "na",
+      "analytics_before_consent": true,
+      "marketing_before_consent": true,
+      "consent_mode": "basic",
+      "warehouse_region": "northamerica-northeast1",
+      "currency": "CAD",
+      "week_starts": "sun",
+      "report_language": "en-CA",
+      "modelled_conversions_column": false,
+      "gpc": false,
+      "geo_test_units": "provinces_or_cma"
+    },
+    "CA-QC": {
+      "inherits": "CA",
+      "analytics_before_consent": false,
+      "marketing_before_consent": false,
+      "consent_mode": "advanced",
+      "report_language": "fr-CA",
+      "modelled_conversions_column": true
+    },
+    "EU": {
+      "group": "eu",
+      "analytics_before_consent": false,
+      "marketing_before_consent": false,
+      "consent_mode": "advanced",
+      "warehouse_region": "EU",
+      "currency": "EUR",
+      "week_starts": "mon",
+      "report_language": "en",
+      "modelled_conversions_column": true,
+      "gpc": false,
+      "geo_test_units": "nuts2_in_one_country"
+    },
+    "GCC": {
+      "group": "gcc",
+      "analytics_before_consent": false,
+      "marketing_before_consent": false,
+      "consent_mode": "advanced",
+      "warehouse_region": "me-central1",
+      "warehouse_region_needs_legal_check": true,
+      "currency": "USD",
+      "week_starts": "sun",
+      "report_language": "en",
+      "modelled_conversions_column": true,
+      "gpc": false,
+      "geo_test_units": "country_or_emirate",
+      "ramadan_controls": true
+    },
+    "AE": {
+      "inherits": "GCC",
+      "currency": "AED",
+      "week_starts": "mon"
+    },
+    "SA": {
+      "inherits": "GCC",
+      "currency": "SAR",
+      "warehouse_region": "me-central2",
+      "warehouse_region_needs_legal_check": false,
+      "data_transfer_check": true
+    },
+    "QA": {
+      "inherits": "GCC",
+      "currency": "QAR"
+    },
+    "KW": {
+      "inherits": "GCC",
+      "currency": "KWD"
+    },
+    "BH": {
+      "inherits": "GCC",
+      "currency": "BHD"
+    },
+    "OM": {
+      "inherits": "GCC",
+      "currency": "OMR"
+    }
+  }
+}

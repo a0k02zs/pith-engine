@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analytics/audit@1",
+  "type": "object",
+  "properties": {
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "enum": [
+              "consent",
+              "conversion_definition",
+              "match_rate",
+              "campaign_tagging",
+              "ad_platform_signals",
+              "cross_domain",
+              "crm_source",
+              "retention_access"
+            ]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "not_applicable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "area",
+          "score",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 8,
+      "minItems": 8
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "area": {
+            "type": "string",
+            "minLength": 1
+          },
+          "problem": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effort": {
+            "enum": [
+              "S",
+              "M",
+              "L"
+            ]
+          },
+          "value": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "owner": {
+            "enum": [
+              "pith",
+              "client"
+            ]
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "compliance",
+                "revenue",
+                "quick_win"
+              ]
+            }
+          }
+        },
+        "required": [
+          "rank",
+          "area",
+          "problem",
+          "evidence",
+          "fix",
+          "effort",
+          "value",
+          "owner"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 10,
+      "minItems": 1
+    },
+    "match_rate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "areas",
+    "fixes",
+    "match_rate",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

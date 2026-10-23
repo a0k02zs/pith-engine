@@ -1,0 +1,157 @@
+{
+  "id": "analytics.weekly_report",
+  "version": 1,
+  "service": "analytics",
+  "description": "Every Monday at 06:30. Weekly client report. Gate G4 runs every week; the engine does not let a report gate skip.",
+  "trigger": {
+    "cron": "30 6 * * 1"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "qa_metrics",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:qa_metrics:window=7d",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "tool",
+      "needs": [
+        "qa_metrics"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "qa.run",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_qa",
+      "type": "branch",
+      "needs": [
+        "qa"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.qa.output.status == 'block'",
+            "goto": "hold"
+          }
+        ],
+        "else": "refresh"
+      }
+    },
+    {
+      "id": "hold",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/report.held"
+      }
+    },
+    {
+      "id": "refresh",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.build:int_touchpoints,fct_attribution",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "kpis",
+      "type": "tool",
+      "needs": [
+        "refresh"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:kpi_table:grain=week",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "attribution",
+      "type": "tool",
+      "needs": [
+        "refresh"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:attribution_summary:grain=week",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "findings",
+      "type": "agent",
+      "needs": [
+        "kpis",
+        "attribution",
+        "qa"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/findings@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/findings@1"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "needs": [
+        "findings"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/report@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/report@1"
+      }
+    },
+    {
+      "id": "g4_report",
+      "type": "gate",
+      "needs": [
+        "draft"
+      ],
+      "name": "G4 report review",
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 8,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "needs": [
+        "g4_report"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "reports.publish",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "delivered",
+      "type": "emit",
+      "needs": [
+        "deliver"
+      ],
+      "emit": {
+        "event": "svc.analytics/report.delivered"
+      }
+    }
+  ]
+}
