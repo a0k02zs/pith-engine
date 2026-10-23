@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/holding_statement@1",
+  "title": "Holding statement draft (WF-8)",
+  "type": "object",
+  "properties": {
+    "crisis_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "short": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 280
+    },
+    "qa": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1
+          },
+          "a": {
+            "type": "string",
+            "minLength": 1
+          },
+          "needs_fact_check": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "q",
+          "a",
+          "needs_fact_check"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "fact_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "crisis_id",
+    "statement",
+    "short",
+    "qa",
+    "fact_checks"
+  ],
+  "additionalProperties": false
+}

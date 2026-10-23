@@ -1,0 +1,149 @@
+{
+  "id": "pr.reactive_request",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-4. Journalist request feeds (Qwoted, ResponseSource, Featured). Target: 2 hours from request to a sent reply.",
+  "trigger": {
+    "cron": "*/30 * * * *"
+  },
+  "steps": [
+    {
+      "id": "feeds",
+      "type": "tool",
+      "name": "Pull new journalist requests from all feeds",
+      "tool": {
+        "name": "pr",
+        "action": "requests.list",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "match",
+      "type": "agent",
+      "name": "Match to spokespeople and pillars; drop low fit",
+      "needs": [
+        "feeds"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reactive_responder@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "pr/request_matches@1"
+      }
+    },
+    {
+      "id": "any",
+      "type": "branch",
+      "needs": [
+        "match"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.match.output.matches) > 0",
+            "goto": "draft"
+          }
+        ],
+        "else": "none"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "name": "Reply (T5) with a quote from the spokesperson's own words",
+      "needs": [
+        "any"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reactive_responder@1",
+        "output_schema": "pr/request_replies@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "draft"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "expert",
+      "type": "gate",
+      "name": "Spokesperson approves the quote",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_executive",
+          "subject_expert"
+        ],
+        "sla_hours": 2,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "pr_ok",
+      "type": "gate",
+      "name": "PR lead approves and owns the send",
+      "needs": [
+        "expert"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "pr_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "draft_mail",
+      "type": "tool",
+      "needs": [
+        "pr_ok"
+      ],
+      "tool": {
+        "name": "mailbox",
+        "action": "drafts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "human_send",
+      "type": "task",
+      "needs": [
+        "draft_mail"
+      ],
+      "task": {
+        "title": "Send the journalist request reply from your own mailbox before the deadline",
+        "assignee_roles": [
+          "pr_lead"
+        ],
+        "due_hours": 2,
+        "done_output_schema": "pr/send_log@1"
+      }
+    },
+    {
+      "id": "none",
+      "type": "emit",
+      "needs": [
+        "any"
+      ],
+      "emit": {
+        "event": "svc.pr/request.skipped"
+      }
+    }
+  ]
+}

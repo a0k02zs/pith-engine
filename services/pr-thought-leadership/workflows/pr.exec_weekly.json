@@ -1,0 +1,167 @@
+{
+  "id": "pr.exec_weekly",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-6. Executive thought leadership on LinkedIn, 1 run per executive per week. The executive approves every post.",
+  "trigger": {
+    "cron": "0 9 * * 1"
+  },
+  "concurrency": {
+    "key": "event.data.executive_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "ideas",
+      "type": "task",
+      "name": "Idea capture from the executive",
+      "task": {
+        "title": "Send this week's 5-minute voice memo or 3 bullet notes",
+        "assignee_roles": [
+          "client_executive"
+        ],
+        "due_hours": 24,
+        "done_output_schema": "pr/exec_notes@1"
+      }
+    },
+    {
+      "id": "transcribe",
+      "type": "tool",
+      "needs": [
+        "ideas"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "audio.transcribe",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "drafts",
+      "type": "agent",
+      "name": "3 to 4 posts (T7) from the executive's own ideas and voice profile",
+      "needs": [
+        "transcribe"
+      ],
+      "agent": {
+        "prompt_ref": "pr/exec_ghostwriter@1",
+        "output_schema": "pr/exec_posts@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "drafts"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "exec_ok",
+      "type": "gate",
+      "name": "The executive approves each post; this gate never skips",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_executive"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "drafts"
+      }
+    },
+    {
+      "id": "needs_legal",
+      "type": "branch",
+      "needs": [
+        "exec_ok"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "client.is_listed || size(steps.drafts.output.new_claim_ids) > 0",
+            "goto": "legal"
+          }
+        ],
+        "else": "schedule"
+      }
+    },
+    {
+      "id": "legal",
+      "type": "gate",
+      "name": "Listed clients or new claims",
+      "needs": [
+        "needs_legal"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "drafts"
+      }
+    },
+    {
+      "id": "schedule",
+      "type": "tool",
+      "name": "Official LinkedIn API with the executive's own authorization",
+      "needs": [
+        "needs_legal"
+      ],
+      "tool": {
+        "name": "social",
+        "action": "linkedin.member_post.schedule",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "week_end",
+      "type": "wait",
+      "needs": [
+        "schedule"
+      ],
+      "wait": {
+        "event": "svc.pr/exec_week.ended",
+        "match": "async.data.executive_id == input.executive_id",
+        "timeout": "5d"
+      }
+    },
+    {
+      "id": "engage",
+      "type": "agent",
+      "name": "5 suggested comments; the executive posts them by hand",
+      "needs": [
+        "week_end"
+      ],
+      "agent": {
+        "prompt_ref": "pr/exec_ghostwriter@1",
+        "output_schema": "pr/comment_suggestions@1"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "name": "Engagement by pillar and format; POST /learnings",
+      "needs": [
+        "week_end"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reporter@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "pr/learnings@1"
+      }
+    }
+  ]
+}

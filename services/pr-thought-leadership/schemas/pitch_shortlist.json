@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/pitch_shortlist@1",
+  "title": "Pitch shortlist for 1 angle (WF-3)",
+  "type": "object",
+  "properties": {
+    "angle_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "picks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "why_this_story": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "party_id",
+          "fit",
+          "tier",
+          "why_this_story"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 30
+    }
+  },
+  "required": [
+    "angle_id",
+    "picks"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+{
+  "$comment": "PR market rules for service 14. Planning summary from docs/06-market-rules.md, not legal advice. Keys are engine market groups; GB uses UK, EU countries use EU.",
+  "markets": {
+    "UK": {
+      "language": "en-GB", "tone": "low hype, evidence first", "weekend": ["Saturday", "Sunday"], "time_zone": "Europe/London",
+      "pitch_window": { "days": ["Tuesday", "Wednesday", "Thursday"], "from": "08:00", "to": "10:30" },
+      "pitch_basis": ["legitimate_interest"], "optout_line": true, "privacy_link": true, "postal_address": false,
+      "listed_rule": "UK MAR: inside information goes out through a Regulatory Information Service first",
+      "sensitive_topics": [], "banned_hype": ["world-leading", "revolutionary", "game-changer"],
+      "tier1": ["Financial Times", "The Times", "The Guardian", "The Telegraph", "BBC", "Sky News", "Reuters", "Bloomberg UK", "City AM", "The Economist"]
+    },
+    "SG": {
+      "language": "en-SG", "extra_languages": ["zh-SG", "ms-SG", "ta-SG"], "tone": "practical, value-led, regional", "weekend": ["Saturday", "Sunday"], "time_zone": "Asia/Singapore",
+      "pitch_window": { "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "from": "09:00", "to": "11:00" },
+      "pitch_basis": ["legitimate_interest", "consent"], "optout_line": true, "privacy_link": true, "postal_address": false,
+      "listed_rule": "SGX continuing disclosure: announce through SGXNet first",
+      "sensitive_topics": ["politics", "religion", "race"], "banned_hype": [],
+      "tier1": ["The Straits Times", "The Business Times", "CNA", "Nikkei Asia", "Tech in Asia", "e27", "DealStreetAsia", "Lianhe Zaobao"]
+    },
+    "US": {
+      "language": "en-US", "tone": "confident, benefit first, with proof", "weekend": ["Saturday", "Sunday"], "time_zone": "America/New_York",
+      "pitch_window": { "days": ["Tuesday", "Wednesday", "Thursday"], "from": "07:00", "to": "10:00" },
+      "pitch_basis": ["opt_out_regime", "legitimate_interest"], "optout_line": true, "privacy_link": true, "postal_address": true,
+      "listed_rule": "SEC Regulation FD: no selective disclosure of material non-public information",
+      "sensitive_topics": [], "banned_hype": [],
+      "tier1": ["The Wall Street Journal", "The New York Times", "Bloomberg", "Reuters", "AP", "CNBC", "Fortune", "Axios", "TechCrunch"]
+    },
+    "CA": {
+      "language": "en-CA", "quebec_language": "fr-CA", "tone": "less hype than the US; Canadian data helps", "weekend": ["Saturday", "Sunday"], "time_zone": "America/Toronto",
+      "pitch_window": { "days": ["Tuesday", "Wednesday", "Thursday"], "from": "08:00", "to": "10:30" },
+      "pitch_basis": ["casl_business_exemption", "express_casl", "implied_casl"], "optout_line": true, "privacy_link": true, "postal_address": true,
+      "listed_rule": "National Policy 51-201: no selective disclosure",
+      "sensitive_topics": [], "banned_hype": [],
+      "tier1": ["The Globe and Mail", "National Post", "Financial Post", "CBC", "Radio-Canada", "CTV", "The Canadian Press", "BNN Bloomberg", "La Presse", "Le Devoir"]
+    },
+    "GCC": {
+      "language": "en", "b2c_language": "ar", "tone": "respectful, premium, relationship first", "weekend": ["Friday", "Saturday"],
+      "weekend_by_country": { "AE": ["Saturday", "Sunday"] }, "time_zone": "Asia/Dubai",
+      "pitch_window": { "days": ["Monday", "Tuesday", "Wednesday", "Thursday"], "from": "09:30", "to": "12:00" },
+      "pitch_basis": ["legitimate_interest", "consent"], "optout_line": true, "privacy_link": true, "postal_address": false,
+      "listed_rule": "Follow the exchange (ADX, DFM, Tadawul, QSE) disclosure rules first",
+      "sensitive_topics": ["politics", "religion", "rulers", "public morals"], "banned_hype": [],
+      "avoid_periods": ["ramadan"],
+      "tier1": ["The National", "Gulf News", "Khaleej Times", "Arabian Business", "Arab News", "Asharq Al-Awsat", "Argaam", "The Peninsula", "Gulf Times", "AGBI"]
+    },
+    "EU": {
+      "language": "en", "tone": "factual and precise; no hype", "weekend": ["Saturday", "Sunday"], "time_zone": "Europe/Amsterdam",
+      "pitch_window": { "days": ["Monday", "Tuesday", "Wednesday", "Thursday"], "from": "09:00", "to": "11:00" },
+      "pitch_basis": ["legitimate_interest"], "optout_line": true, "privacy_link": true, "postal_address": false,
+      "listed_rule": "EU MAR: inside information goes out through the official channel first",
+      "ai_editor_named": true, "sensitive_topics": [], "banned_hype": ["revolutionary", "game-changer"],
+      "tier1": ["Het Financieele Dagblad", "NRC", "de Volkskrant", "NOS", "Financial Times Europe", "Sifted", "Reuters", "Bloomberg"]
+    }
+  }
+}

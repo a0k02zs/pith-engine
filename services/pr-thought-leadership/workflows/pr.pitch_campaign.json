@@ -1,0 +1,251 @@
+{
+  "id": "pr.pitch_campaign",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-3. 1 approved angle: personal pitches, drafts in the sender's mailbox, a person sends, 1 follow-up, coverage capture.",
+  "trigger": {
+    "event": "svc.pr/angle.approved"
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 3
+  },
+  "steps": [
+    {
+      "id": "shortlist",
+      "type": "agent",
+      "name": "10 to 30 journalists for this angle; skip do_not_contact and anyone pitched in 14 days",
+      "agent": {
+        "prompt_ref": "pr/media_researcher@1",
+        "output_schema": "pr/pitch_shortlist@1"
+      }
+    },
+    {
+      "id": "assets",
+      "type": "agent",
+      "name": "Fact sheet and data; a release only for real news",
+      "needs": [
+        "shortlist"
+      ],
+      "agent": {
+        "prompt_ref": "pr/release_writer@1",
+        "output_schema": "pr/release@1"
+      }
+    },
+    {
+      "id": "pitches",
+      "type": "agent",
+      "name": "1 pitch (T4) per journalist",
+      "needs": [
+        "shortlist",
+        "assets"
+      ],
+      "agent": {
+        "prompt_ref": "pr/pitch_writer@1",
+        "output_schema": "pr/pitches@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "pitches"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact",
+          "links",
+          "spam"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "approve",
+      "type": "gate",
+      "name": "PR lead approves pitches (bulk approve allowed)",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "pr_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "pitches"
+      }
+    },
+    {
+      "id": "is_listed",
+      "type": "branch",
+      "needs": [
+        "approve"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "client.is_listed && steps.pitches.output.price_sensitive",
+            "goto": "listed"
+          }
+        ],
+        "else": "drafts"
+      }
+    },
+    {
+      "id": "listed",
+      "type": "gate",
+      "name": "Listed client: legal approves price-sensitive content",
+      "needs": [
+        "is_listed"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "pitches"
+      }
+    },
+    {
+      "id": "drafts",
+      "type": "tool",
+      "name": "Create drafts in the sender's own mailbox; there is no send action",
+      "needs": [
+        "is_listed"
+      ],
+      "tool": {
+        "name": "mailbox",
+        "action": "drafts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "human_send",
+      "type": "task",
+      "name": "A person sends each pitch",
+      "needs": [
+        "drafts"
+      ],
+      "task": {
+        "title": "Read, edit and send your pitch drafts from your own mailbox",
+        "assignee_roles": [
+          "pr_lead"
+        ],
+        "due_hours": 72,
+        "done_output_schema": "pr/send_log@1"
+      }
+    },
+    {
+      "id": "wait_reply",
+      "type": "wait",
+      "needs": [
+        "human_send"
+      ],
+      "wait": {
+        "event": "svc.pr/pitch.replied",
+        "match": "async.data.angle_id == input.angle_id",
+        "timeout": "5d"
+      }
+    },
+    {
+      "id": "follow_up",
+      "type": "agent",
+      "name": "1 follow-up draft for journalists who did not reply",
+      "needs": [
+        "wait_reply"
+      ],
+      "agent": {
+        "prompt_ref": "pr/pitch_writer@1",
+        "output_schema": "pr/pitches@1"
+      }
+    },
+    {
+      "id": "check_fu",
+      "type": "check",
+      "needs": [
+        "follow_up"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "approve_fu",
+      "type": "gate",
+      "needs": [
+        "check_fu"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "pr_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "follow_up"
+      }
+    },
+    {
+      "id": "drafts_fu",
+      "type": "tool",
+      "needs": [
+        "approve_fu"
+      ],
+      "tool": {
+        "name": "mailbox",
+        "action": "drafts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "human_send_fu",
+      "type": "task",
+      "needs": [
+        "drafts_fu"
+      ],
+      "task": {
+        "title": "Send the follow-up drafts from your own mailbox",
+        "assignee_roles": [
+          "pr_lead"
+        ],
+        "due_hours": 48,
+        "done_output_schema": "pr/send_log@1"
+      }
+    },
+    {
+      "id": "coverage",
+      "type": "wait",
+      "needs": [
+        "human_send_fu"
+      ],
+      "wait": {
+        "event": "svc.pr/coverage.found",
+        "match": "async.data.angle_id == input.angle_id",
+        "timeout": "30d"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "name": "Reply and placement rates by journalist and angle; POST /learnings",
+      "needs": [
+        "coverage"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reporter@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "pr/learnings@1"
+      }
+    }
+  ]
+}

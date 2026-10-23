@@ -1,0 +1,88 @@
+{
+  "id": "pr.monthly_report",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-9. Monthly report (T12) with KPIs and next steps.",
+  "trigger": {
+    "cron": "0 7 2 * *"
+  },
+  "steps": [
+    {
+      "id": "kpis",
+      "type": "tool",
+      "tool": {
+        "name": "engine",
+        "action": "metrics.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "needs": [
+        "kpis"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reporter@1",
+        "output_schema": "pr/monthly_report@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "report"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "review",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "pr_lead",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "report"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "name": "Store the report for the client portal",
+      "needs": [
+        "review"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "name": "POST /learnings",
+      "needs": [
+        "deliver"
+      ],
+      "agent": {
+        "prompt_ref": "pr/reporter@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "pr/learnings@1"
+      }
+    }
+  ]
+}

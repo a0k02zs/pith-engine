@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/media_list@1",
+  "title": "Media list from the media researcher (WF-1)",
+  "type": "object",
+  "properties": {
+    "journalists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "outlet": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beats": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "recent_articles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "required": [
+                "title",
+                "url",
+                "date"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 3
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "tier_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fit": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "pitch_preferences": {
+            "type": "string"
+          },
+          "consent_basis": {
+            "type": "string",
+            "enum": [
+              "legitimate_interest",
+              "opt_out_regime",
+              "casl_business_exemption",
+              "express_casl",
+              "implied_casl",
+              "consent"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "outlet",
+          "role",
+          "country",
+          "language",
+          "beats",
+          "recent_articles",
+          "tier",
+          "tier_reason",
+          "fit",
+          "consent_basis",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "new_tier1_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "removed_party_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "journalists",
+    "new_tier1_count",
+    "removed_party_ids"
+  ],
+  "additionalProperties": false
+}

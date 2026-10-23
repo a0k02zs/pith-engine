@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/angle_cards@1",
+  "title": "Angle cards for next month (WF-2)",
+  "type": "object",
+  "properties": {
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}$"
+    },
+    "angles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "angle_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "story_type": {
+            "type": "string",
+            "enum": [
+              "data_story",
+              "announcement",
+              "expert_comment",
+              "trend_piece",
+              "contrarian_view",
+              "customer_story",
+              "founder_story",
+              "seasonal_hook",
+              "award_or_list"
+            ]
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+            },
+            "minItems": 1
+          },
+          "target_tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "headline": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hook": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reader_value": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proof": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "claim_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "text",
+                "claim_id",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "spokesperson_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "offer": {
+            "type": "string",
+            "enum": [
+              "exclusive",
+              "embargo",
+              "open",
+              "comment_only"
+            ]
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "geo_prompts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "sensitive": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": "object",
+            "properties": {
+              "news_value": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "fit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "proof": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "effort": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              }
+            },
+            "required": [
+              "news_value",
+              "fit",
+              "proof",
+              "effort"
+            ],
+            "additionalProperties": false
+          },
+          "lowest_score_reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "angle_id",
+          "story_type",
+          "markets",
+          "target_tier",
+          "headline",
+          "hook",
+          "reader_value",
+          "proof",
+          "spokesperson_id",
+          "offer",
+          "risks",
+          "geo_prompts",
+          "sensitive",
+          "score",
+          "lowest_score_reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 8,
+      "maxItems": 12
+    },
+    "new_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "month",
+    "angles",
+    "new_claim_ids",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,182 @@
+{
+  "id": "pr.announcement",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-5. Real announcements: release (T8), interview briefs, embargo pitches, wire and newsroom.",
+  "trigger": {
+    "event": "svc.pr/announcement.requested",
+    "manual": true
+  },
+  "steps": [
+    {
+      "id": "release",
+      "type": "agent",
+      "name": "Release per market and language (T8)",
+      "agent": {
+        "prompt_ref": "pr/release_writer@1",
+        "output_schema": "pr/release@1"
+      }
+    },
+    {
+      "id": "briefs",
+      "type": "agent",
+      "name": "Interview briefs (T10)",
+      "needs": [
+        "release"
+      ],
+      "agent": {
+        "prompt_ref": "pr/briefing_agent@1",
+        "output_schema": "pr/interview_brief@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "release"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact",
+          "links"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "native",
+      "type": "gate",
+      "name": "Native editor for Arabic, French and EU languages",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "release",
+        "skip_if": "size(steps.release.output.translated_markets) == 0"
+      }
+    },
+    {
+      "id": "client_copy",
+      "type": "gate",
+      "needs": [
+        "native"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver",
+          "client_executive"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "release"
+      }
+    },
+    {
+      "id": "legal",
+      "type": "gate",
+      "name": "Claims, listed-company rule, partner and customer approval",
+      "needs": [
+        "client_copy"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "release"
+      }
+    },
+    {
+      "id": "embargo",
+      "type": "subflow",
+      "needs": [
+        "legal"
+      ],
+      "subflow": {
+        "workflow_id": "pr.pitch_campaign",
+        "per": "market"
+      }
+    },
+    {
+      "id": "wire_go",
+      "type": "gate",
+      "name": "Approve wire time and wire fee",
+      "needs": [
+        "embargo"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "pr_lead",
+          "client_approver"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "required_count": 2
+      }
+    },
+    {
+      "id": "final_check",
+      "type": "check",
+      "needs": [
+        "wire_go"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "wire",
+      "type": "tool",
+      "name": "Wire distribution at the approved time",
+      "needs": [
+        "final_check"
+      ],
+      "tool": {
+        "name": "pr",
+        "action": "wire.schedule",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "newsroom",
+      "type": "tool",
+      "name": "Newsroom page",
+      "needs": [
+        "final_check"
+      ],
+      "tool": {
+        "name": "cms",
+        "action": "page.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "live",
+      "type": "emit",
+      "needs": [
+        "wire",
+        "newsroom"
+      ],
+      "emit": {
+        "event": "svc.pr/announcement.live"
+      }
+    }
+  ]
+}
