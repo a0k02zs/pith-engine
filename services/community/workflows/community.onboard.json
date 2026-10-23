@@ -1,0 +1,148 @@
+{
+  "id": "community.onboard",
+  "version": 1,
+  "service": "community",
+  "description": "Audit a new client and agree the 90-day programme. Gates G1 plan and G2 templates.",
+  "trigger": {
+    "manual": true
+  },
+  "steps": [
+    {
+      "id": "pull_reviews",
+      "type": "tool",
+      "name": "Pull review platform stats",
+      "tool": {
+        "name": "reviews",
+        "action": "stats.get",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "pull_ugc",
+      "type": "tool",
+      "name": "Find tagged customer content",
+      "tool": {
+        "name": "social",
+        "action": "mentions.search",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "pull_community",
+      "type": "tool",
+      "name": "Pull community health",
+      "tool": {
+        "name": "community",
+        "action": "stats.get",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "name": "Audit and draft the programme plan",
+      "agent": {
+        "prompt_ref": "community/auditor@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/auditor@1"
+      },
+      "needs": [
+        "pull_reviews",
+        "pull_ugc",
+        "pull_community"
+      ]
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "name": "G1 Programme plan",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "audit"
+      },
+      "needs": [
+        "audit"
+      ]
+    },
+    {
+      "id": "draft_templates",
+      "type": "agent",
+      "name": "Fill review request templates for the client and markets",
+      "agent": {
+        "prompt_ref": "community/review_requester@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "community/review_requester@1"
+      },
+      "needs": [
+        "approve_plan"
+      ]
+    },
+    {
+      "id": "check_templates",
+      "type": "check",
+      "name": "Checks: brand, compliance, links",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 80
+      },
+      "needs": [
+        "draft_templates"
+      ]
+    },
+    {
+      "id": "approve_templates",
+      "type": "gate",
+      "name": "G2 Templates: review requests, rights forms, community guidelines",
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "draft_templates"
+      },
+      "needs": [
+        "check_templates"
+      ]
+    },
+    {
+      "id": "submit_whatsapp",
+      "type": "tool",
+      "name": "Submit WhatsApp templates to Meta for approval",
+      "tool": {
+        "name": "whatsapp",
+        "action": "templates.submit",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_templates"
+      ]
+    },
+    {
+      "id": "activated",
+      "type": "emit",
+      "name": "Programme live",
+      "emit": {
+        "event": "svc.community/programme.activated"
+      },
+      "needs": [
+        "submit_whatsapp"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "$comment": "Community and UGC rules per engine market code, from docs/02-market-rules.md. Planning summary, not legal advice. A local lawyer confirms each market before launch.",
+  "global": {
+    "max_requests_per_contact_days": 90,
+    "reminders_per_order": 1,
+    "reminder_after_days": 5,
+    "quiet_hours": { "start": "20:00", "end": "09:00" },
+    "no_ask_platforms": ["yelp"],
+    "native_request_only_platforms": ["amazon"],
+    "no_incentive_platforms": ["google", "amazon", "yelp", "trustpilot"],
+    "rights_expiry_warning_days": 30,
+    "withdrawal_removal_days": 30,
+    "auto_reply_trial_days": 30,
+    "auto_reply_max_edit_rate": 0.1,
+    "auto_reply_min_brand_score": 85,
+    "rights_months": { "R1": 12, "R2": 24, "R3": 12, "R4": 24 },
+    "champion_min_members_helped": 5,
+    "review_request_purpose": "marketing"
+  },
+  "markets": {
+    "GB": {
+      "group": "UK", "languages": ["en-GB"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in", "soft_opt_in"],
+      "sms_bases": ["consent", "double_opt_in", "soft_opt_in"],
+      "dnc_check": false, "paid_ugc_label": "Ad", "ai_disclosure_required": true,
+      "review_widget_verification_note": false, "paid_post_licence": null,
+      "extra_sensitive_topics": [], "tone": "understated, plain"
+    },
+    "SG": {
+      "group": "SG", "languages": ["en-SG", "zh-SG", "ms-SG", "ta-SG"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in"],
+      "sms_bases": ["consent", "double_opt_in"],
+      "dnc_check": true, "paid_ugc_label": "Sponsored", "ai_disclosure_required": true,
+      "review_widget_verification_note": false, "paid_post_licence": null,
+      "extra_sensitive_topics": ["race", "religion"], "tone": "friendly, practical"
+    },
+    "US": {
+      "group": "NA", "languages": ["en-US"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in", "opt_out_regime"],
+      "sms_bases": ["prior_express_written"],
+      "dnc_check": false, "paid_ugc_label": "#ad", "ai_disclosure_required": true,
+      "review_widget_verification_note": false, "paid_post_licence": null,
+      "publicity_release_for_ads": true,
+      "extra_sensitive_topics": [], "tone": "warm, direct"
+    },
+    "CA": {
+      "group": "NA", "languages": ["en-CA", "fr-CA"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in", "express_casl", "implied_casl"],
+      "sms_bases": ["express_casl", "implied_casl"],
+      "dnc_check": false, "paid_ugc_label": "#ad", "ai_disclosure_required": true,
+      "review_widget_verification_note": false, "paid_post_licence": null,
+      "extra_sensitive_topics": [], "tone": "warm, direct",
+      "subdivisions": { "CA-QC": { "languages": ["fr-CA"], "paid_ugc_label": "#pub" } }
+    },
+    "AE": {
+      "group": "GCC", "languages": ["ar-AE", "en"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in"],
+      "sms_bases": ["consent", "double_opt_in"],
+      "dnc_check": false, "paid_ugc_label": "Ad", "ai_disclosure_required": true,
+      "review_widget_verification_note": false, "paid_post_licence": "uae_media_council_permit",
+      "extra_sensitive_topics": ["religion", "rulers", "politics", "alcohol", "gambling", "dating", "lgbt", "immodest_images"],
+      "explicit_face_consent": true, "tone": "formal, warm"
+    },
+    "SA": {
+      "inherits": "AE", "languages": ["ar-SA", "en"], "weekend": ["fri", "sat"],
+      "paid_post_licence": "mawthooq", "data_transfer_check_before_sync": true
+    },
+    "QA": { "inherits": "AE", "languages": ["ar-QA", "en"], "weekend": ["fri", "sat"], "paid_post_licence": null },
+    "KW": { "inherits": "AE", "languages": ["ar-KW", "en"], "weekend": ["fri", "sat"], "paid_post_licence": null },
+    "BH": { "inherits": "AE", "languages": ["ar-BH", "en"], "weekend": ["fri", "sat"], "paid_post_licence": null },
+    "OM": { "inherits": "AE", "languages": ["ar-OM", "en"], "weekend": ["fri", "sat"], "paid_post_licence": null },
+    "EU_DEFAULT": {
+      "group": "EU", "languages": ["en"], "weekend": ["sat", "sun"],
+      "review_request_bases": ["consent", "double_opt_in"],
+      "sms_bases": ["consent", "double_opt_in"],
+      "dnc_check": false, "paid_ugc_label": "Ad", "ai_disclosure_required": true,
+      "review_widget_verification_note": true, "label_ai_media": true, "paid_post_licence": null,
+      "extra_sensitive_topics": [], "tone": "factual, polite"
+    },
+    "NL": { "inherits": "EU_DEFAULT", "languages": ["nl-NL", "en"], "review_request_bases": ["consent", "double_opt_in", "soft_opt_in"] },
+    "DE": { "inherits": "EU_DEFAULT", "languages": ["de-DE"], "review_request_bases": ["consent", "double_opt_in"] },
+    "FR": { "inherits": "EU_DEFAULT", "languages": ["fr-FR"], "paid_ugc_label": "Publicité" }
+  }
+}

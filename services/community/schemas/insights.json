@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/insights@1",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kpi_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "now": {
+            "type": "number"
+          },
+          "prior": {
+            "type": "number"
+          },
+          "comment": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kpi",
+          "now",
+          "prior",
+          "comment"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sentiment": {
+            "enum": [
+              "positive",
+              "negative",
+              "mixed"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+            }
+          }
+        },
+        "required": [
+          "theme",
+          "sentiment",
+          "count",
+          "quote",
+          "markets"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "product_feedback": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "anomalies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "headline",
+    "kpi_changes",
+    "themes",
+    "product_feedback",
+    "next_actions",
+    "anomalies"
+  ],
+  "additionalProperties": false
+}

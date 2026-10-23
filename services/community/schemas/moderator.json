@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/moderator@1",
+  "type": "object",
+  "properties": {
+    "label": {
+      "enum": [
+        "green",
+        "amber",
+        "red"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "action": {
+      "enum": [
+        "keep",
+        "queue",
+        "hide",
+        "hide_and_escalate"
+      ]
+    },
+    "escalation_reason": {
+      "enum": [
+        "complaint",
+        "press",
+        "regulator",
+        "crisis",
+        "legal",
+        "safety",
+        null
+      ]
+    },
+    "note_to_member": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "label",
+    "category",
+    "reasons",
+    "action",
+    "escalation_reason",
+    "note_to_member"
+  ],
+  "additionalProperties": false
+}

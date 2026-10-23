@@ -1,0 +1,118 @@
+{
+  "id": "community.ugc_reuse",
+  "version": 1,
+  "service": "community",
+  "description": "Before any service uses customer content: check every grant, moderate, and gate ad use.",
+  "trigger": {
+    "event": "svc.community/ugc.use_requested"
+  },
+  "steps": [
+    {
+      "id": "rights",
+      "type": "tool",
+      "name": "Check an active grant per person for the use, channel and market",
+      "tool": {
+        "name": "engine",
+        "action": "rights.check",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "cleared",
+      "type": "branch",
+      "name": "All people cleared?",
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.rights.output.cleared",
+            "goto": "refuse"
+          }
+        ],
+        "else": "moderate"
+      },
+      "needs": [
+        "rights"
+      ]
+    },
+    {
+      "id": "refuse",
+      "type": "emit",
+      "name": "Refuse the request with the missing grants",
+      "emit": {
+        "event": "svc.community/ugc.refused"
+      },
+      "needs": [
+        "cleared"
+      ]
+    },
+    {
+      "id": "moderate",
+      "type": "agent",
+      "name": "Moderate for the intended use",
+      "agent": {
+        "prompt_ref": "community/moderator@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "community/moderator@1"
+      },
+      "needs": [
+        "cleared"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Checks: compliance, brand",
+      "check": {
+        "kinds": [
+          "compliance",
+          "brand"
+        ]
+      },
+      "needs": [
+        "moderate"
+      ]
+    },
+    {
+      "id": "approve_use",
+      "type": "gate",
+      "name": "G4 Approve UGC in ads or an amber item",
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "skip_if": "run.input.use != 'paid_ad' && steps.moderate.output.label == 'green'"
+      },
+      "needs": [
+        "check"
+      ]
+    },
+    {
+      "id": "release",
+      "type": "emit",
+      "name": "Release the asset to the requesting service",
+      "emit": {
+        "event": "svc.community/ugc.released"
+      },
+      "needs": [
+        "approve_use"
+      ]
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Count the reuse",
+      "emit": {
+        "event": "engine/metric.recorded"
+      },
+      "needs": [
+        "release"
+      ]
+    }
+  ]
+}

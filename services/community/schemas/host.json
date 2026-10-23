@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/host@1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "enum": [
+        "reply",
+        "post",
+        "react",
+        "handover",
+        "none"
+      ]
+    },
+    "channel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "is_ai_disclosed": {
+      "type": "boolean"
+    },
+    "handover_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "handover_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "action",
+    "channel",
+    "text",
+    "is_ai_disclosed",
+    "handover_to",
+    "handover_reason"
+  ],
+  "additionalProperties": false
+}

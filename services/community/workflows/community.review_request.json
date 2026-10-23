@@ -1,0 +1,254 @@
+{
+  "id": "community.review_request",
+  "version": 1,
+  "service": "community",
+  "description": "One review request per eligible event, with 1 reminder. Approved templates with no new claims skip the copy gate.",
+  "trigger": {
+    "event": "svc.community/review.trigger"
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Resolve the contact with consent for channel, purpose and country",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "decide",
+      "type": "agent",
+      "name": "Decide skip or send time, and write the request",
+      "agent": {
+        "prompt_ref": "community/review_requester@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "community/review_requester@1"
+      },
+      "needs": [
+        "resolve"
+      ]
+    },
+    {
+      "id": "skip_or_send",
+      "type": "branch",
+      "name": "Skip?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.decide.output.action == 'skip'",
+            "goto": "log_skip"
+          }
+        ],
+        "else": "wait_send_time"
+      },
+      "needs": [
+        "decide"
+      ]
+    },
+    {
+      "id": "wait_send_time",
+      "type": "wait",
+      "name": "Wait until the send time",
+      "wait": {
+        "event": "engine/timer.fired",
+        "match": "data.at >= steps.decide.output.send_at",
+        "timeout": "30d"
+      },
+      "needs": [
+        "skip_or_send"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Checks: compliance, links, spam",
+      "check": {
+        "kinds": [
+          "compliance",
+          "links",
+          "spam"
+        ]
+      },
+      "needs": [
+        "wait_send_time"
+      ]
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "name": "Copy gate for new or changed copy only",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "skip_if": "template_approved && new_claim_ids.length == 0"
+      },
+      "needs": [
+        "check"
+      ]
+    },
+    {
+      "id": "channel",
+      "type": "branch",
+      "name": "Pick the channel",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.decide.output.channel == 'sms'",
+            "goto": "send_sms"
+          },
+          {
+            "if": "steps.decide.output.channel == 'whatsapp'",
+            "goto": "send_whatsapp"
+          }
+        ],
+        "else": "send_email"
+      },
+      "needs": [
+        "approve_copy"
+      ]
+    },
+    {
+      "id": "send_email",
+      "type": "tool",
+      "name": "Send the request by email",
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      },
+      "needs": [
+        "channel"
+      ]
+    },
+    {
+      "id": "send_sms",
+      "type": "tool",
+      "name": "Send the request by SMS",
+      "tool": {
+        "name": "sms",
+        "action": "message.send",
+        "risk": "send"
+      },
+      "needs": [
+        "channel"
+      ]
+    },
+    {
+      "id": "send_whatsapp",
+      "type": "tool",
+      "name": "Send the request by WhatsApp",
+      "tool": {
+        "name": "whatsapp",
+        "action": "message.send",
+        "risk": "send"
+      },
+      "needs": [
+        "channel"
+      ]
+    },
+    {
+      "id": "record_sent",
+      "type": "emit",
+      "name": "Record the send",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "needs": [
+        "send_email",
+        "send_sms",
+        "send_whatsapp"
+      ]
+    },
+    {
+      "id": "wait_review",
+      "type": "wait",
+      "name": "Wait 5 days for a review",
+      "wait": {
+        "event": "svc.community/review.received",
+        "match": "data.contact_id == run.input.contact_id",
+        "timeout": "5d"
+      },
+      "needs": [
+        "record_sent"
+      ]
+    },
+    {
+      "id": "reminder_needed",
+      "type": "branch",
+      "name": "Send the 1 reminder?",
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.wait_review.timed_out && !contact.opted_out && !contact.open_ticket",
+            "goto": "resolve_again"
+          }
+        ],
+        "else": "closed"
+      },
+      "needs": [
+        "wait_review"
+      ]
+    },
+    {
+      "id": "resolve_again",
+      "type": "tool",
+      "name": "Check consent again before the reminder",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      },
+      "needs": [
+        "reminder_needed"
+      ]
+    },
+    {
+      "id": "send_reminder",
+      "type": "tool",
+      "name": "Send the reminder by email (template E2); skipped if the contact has no email consent",
+      "tool": {
+        "name": "esp",
+        "action": "message.send",
+        "risk": "send"
+      },
+      "needs": [
+        "resolve_again"
+      ]
+    },
+    {
+      "id": "log_skip",
+      "type": "emit",
+      "name": "Log the skip reason",
+      "emit": {
+        "event": "svc.community/review_request.skipped"
+      },
+      "needs": [
+        "skip_or_send"
+      ]
+    },
+    {
+      "id": "closed",
+      "type": "emit",
+      "name": "Close the request",
+      "emit": {
+        "event": "svc.community/review_request.closed"
+      },
+      "needs": [
+        "reminder_needed",
+        "send_reminder"
+      ]
+    }
+  ],
+  "concurrency": {
+    "key": "event.data.contact_id",
+    "limit": 1
+  }
+}
