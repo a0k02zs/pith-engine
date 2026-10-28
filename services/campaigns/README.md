@@ -38,7 +38,7 @@ npm test
 
 ## Open item for the engine
 
-`engine spend_policies.upsert` is not in engine v0.1.0 `engine_actions` yet. The tests list it as pending. When the engine adds it (or names another action), update `PENDING_ENGINE_ACTIONS` in `test/workflows.test.ts`.
+`engine spend_policies.upsert` (risk `spend`) is added in engine PR #10. Until that merges, the tests list it in `PENDING_ENGINE_ACTIONS` in `test/workflows.test.ts`; remove it there after the merge.
 
 ## Not legal advice
 

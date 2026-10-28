@@ -170,7 +170,7 @@
       "tool": {
         "name": "engine",
         "action": "spend_policies.upsert",
-        "risk": "write_internal"
+        "risk": "spend"
       }
     },
     {

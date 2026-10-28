@@ -8,7 +8,7 @@ const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "wor
 const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
-/** Engine actions this service needs that engine v0.1.0 does not list yet. Asked for on the engine thread. */
+/** Engine actions this service needs that engine v0.1.0 does not list yet. Added in engine PR #10; remove once it merges. */
 const PENDING_ENGINE_ACTIONS = ["spend_policies.upsert"];
 const AD_PLATFORMS = ["ads_google", "ads_meta", "ads_linkedin", "ads_tiktok", "ads_snapchat"];
 
@@ -105,8 +105,9 @@ describe("campaigns workflows", () => {
       expect(byId(launch, "approve_budget").gate!.required_roles).toContain("client_finance");
     });
 
-    it("sets spend policies after the budget gate and before any spend", () => {
-      const firstSpend = launch.steps.findIndex((s) => s.tool?.risk === "spend");
+    it("sets spend policies (risk spend, engine G7 caps) after the budget gate and before any ad platform spend", () => {
+      expect(byId(launch, "set_spend_policies").tool).toMatchObject({ name: "engine", action: "spend_policies.upsert", risk: "spend" });
+      const firstSpend = launch.steps.findIndex((s) => AD_PLATFORMS.includes(s.tool?.name ?? ""));
       expect(index(launch, "approve_budget")).toBeLessThan(index(launch, "set_spend_policies"));
       expect(index(launch, "set_spend_policies")).toBeLessThan(firstSpend);
     });
