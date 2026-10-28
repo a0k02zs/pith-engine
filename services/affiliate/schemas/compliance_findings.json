@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/compliance_findings@1",
+  "title": "affiliate/compliance_findings@1",
+  "type": "object",
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partner_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "issue": {
+            "enum": [
+              "no_disclosure",
+              "weak_disclosure",
+              "unapproved_claim",
+              "brand_bidding",
+              "ai_label"
+            ]
+          },
+          "quote": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "minor",
+              "serious"
+            ]
+          },
+          "repeat": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "partner_id",
+          "issue",
+          "severity"
+        ]
+      }
+    }
+  },
+  "required": [
+    "findings"
+  ]
+}

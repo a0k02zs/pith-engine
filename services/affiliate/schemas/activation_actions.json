@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/activation_actions@1",
+  "title": "affiliate/activation_actions@1",
+  "type": "object",
+  "properties": {
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partner_id": {
+            "type": "string"
+          },
+          "action": {
+            "enum": [
+              "send_message",
+              "propose_bonus",
+              "propose_tier",
+              "mark_dormant",
+              "alert_manager"
+            ]
+          },
+          "message": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            }
+          },
+          "proposal": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "partner_id",
+          "action"
+        ]
+      }
+    }
+  },
+  "required": [
+    "actions"
+  ]
+}

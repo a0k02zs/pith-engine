@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/creative_pack@1",
+  "title": "affiliate/creative_pack@1",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "banner",
+              "copy_block",
+              "email_swipe",
+              "social_caption"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reused": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ]
+      }
+    },
+    "all_reused": {
+      "type": "boolean"
+    },
+    "new_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "items",
+    "all_reused",
+    "new_claim_ids"
+  ]
+}

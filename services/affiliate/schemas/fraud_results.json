@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "affiliate/fraud_results@1",
+  "title": "affiliate/fraud_results@1",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "conversion_id": {
+            "type": "string"
+          },
+          "partner_id": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "hold",
+              "reverse"
+            ]
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "amount_gbp": {
+            "type": "number"
+          },
+          "needs_person": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "conversion_id",
+          "partner_id",
+          "decision",
+          "rules",
+          "evidence",
+          "amount",
+          "currency",
+          "amount_gbp"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "partner_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partner_id": {
+            "type": "string"
+          },
+          "recommend_partner_review": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "partner_id",
+          "recommend_partner_review",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "results",
+    "partner_flags"
+  ],
+  "additionalProperties": false
+}
