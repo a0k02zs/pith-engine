@@ -1,0 +1,130 @@
+{
+  "id": "crm_ops.lead_capture",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W1 + W2 + W3: capture, normalize, dedupe, enrich, then upsert to the engine data layer. Both merge paths rejoin the run at enrich; a rejected fuzzy merge keeps both records.",
+  "trigger": {
+    "event": "svc.crm_ops/lead.captured"
+  },
+  "concurrency": {
+    "key": "event.data.client_id + event.data.email_lower",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "normalize",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "crm_ops/normalizer@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "crm_ops/normalized_contact@1"
+      }
+    },
+    {
+      "id": "dedupe",
+      "type": "tool",
+      "needs": [
+        "normalize"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "contacts.find_duplicates",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "dedupe_route",
+      "type": "branch",
+      "needs": [
+        "dedupe"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.dedupe.output.match_key == 'email'",
+            "goto": "auto_merge"
+          },
+          {
+            "if": "steps.dedupe.output.match_key == 'name_company'",
+            "goto": "review_merge"
+          }
+        ],
+        "else": "enrich"
+      }
+    },
+    {
+      "id": "auto_merge",
+      "type": "tool",
+      "needs": [
+        "dedupe_route"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "contacts.merge_logged",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "review_merge",
+      "type": "gate",
+      "needs": [
+        "dedupe_route"
+      ],
+      "gate": {
+        "approval_kind": "data_change",
+        "required_roles": [
+          "ops_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72
+      }
+    },
+    {
+      "id": "enrich",
+      "type": "tool",
+      "needs": [
+        "dedupe_route"
+      ],
+      "tool": {
+        "name": "enrichment",
+        "action": "enrich.person_and_company",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "upsert_engine",
+      "type": "tool",
+      "needs": [
+        "enrich"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "contacts.upsert",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record_consent",
+      "type": "tool",
+      "needs": [
+        "upsert_engine"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "contacts.consents.put",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_ready",
+      "type": "emit",
+      "needs": [
+        "record_consent"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/contact.ready"
+      }
+    }
+  ]
+}

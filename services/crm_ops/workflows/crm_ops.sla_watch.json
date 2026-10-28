@@ -1,0 +1,120 @@
+{
+  "id": "crm_ops.sla_watch",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W6: speed-to-lead SLA with 2 escalations. Hot = 5 min; warm = 4 business hours.",
+  "trigger": {
+    "event": "svc.crm_ops/lead.routed"
+  },
+  "steps": [
+    {
+      "id": "after_hours",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "!event.data.in_business_hours && event.data.grade == 'A'",
+            "goto": "resolve_recipient"
+          }
+        ],
+        "else": "wait_touch_1"
+      }
+    },
+    {
+      "id": "resolve_recipient",
+      "type": "tool",
+      "needs": [
+        "after_hours"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve(contact_ids=[event.data.contact_id], channel=email, purpose=service)",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "auto_reply_check",
+      "type": "check",
+      "needs": [
+        "resolve_recipient"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "brand"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "auto_reply",
+      "type": "tool",
+      "needs": [
+        "auto_reply_check"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "email.send_approved_template(after_hours_ack)",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "wait_touch_1",
+      "type": "wait",
+      "needs": [
+        "after_hours"
+      ],
+      "wait": {
+        "event": "svc.crm_ops/lead.touched",
+        "match": "async.data.contact_id == event.data.contact_id",
+        "timeout": "${event.data.sla_escalate_1}"
+      }
+    },
+    {
+      "id": "escalate_1",
+      "type": "tool",
+      "needs": [
+        "wait_touch_1"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "owner.notify(team_lead)",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "wait_touch_2",
+      "type": "wait",
+      "needs": [
+        "escalate_1"
+      ],
+      "wait": {
+        "event": "svc.crm_ops/lead.touched",
+        "match": "async.data.contact_id == event.data.contact_id",
+        "timeout": "${event.data.sla_escalate_2}"
+      }
+    },
+    {
+      "id": "reassign",
+      "type": "tool",
+      "needs": [
+        "wait_touch_2"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "routing.reassign_next",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_breach",
+      "type": "emit",
+      "needs": [
+        "reassign"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/lead.sla_breached"
+      }
+    }
+  ]
+}

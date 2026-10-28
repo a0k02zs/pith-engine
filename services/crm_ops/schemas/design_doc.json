@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/design_doc@1",
+  "type": "object",
+  "properties": {
+    "lifecycle_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entry_rule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "stage",
+          "entry_rule",
+          "owner"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "icp": {
+      "type": "object",
+      "properties": {
+        "size_bands": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "size_bands_adjacent": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "industries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "industries_secondary": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "buyer_functions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "technologies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sales_regions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "competitor_domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "size_bands",
+        "size_bands_adjacent",
+        "industries",
+        "industries_secondary",
+        "buyer_functions",
+        "technologies",
+        "sales_regions",
+        "competitor_domains"
+      ],
+      "additionalProperties": false
+    },
+    "routing_queues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "queue": {
+            "enum": [
+              "UK",
+              "SG",
+              "NA",
+              "GCC",
+              "EU",
+              "enterprise"
+            ]
+          },
+          "rep_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "working_days": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "Sun",
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat"
+              ]
+            },
+            "minItems": 1
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "queue",
+          "rep_ids",
+          "working_days",
+          "languages"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "nurture_tracks": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "N1",
+          "N2",
+          "N3",
+          "N4",
+          "N5",
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "newsletter"
+        ]
+      }
+    },
+    "platform": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "enum": [
+            "hubspot",
+            "salesforce"
+          ]
+        },
+        "tier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_location_note": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "tier",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changes_from_default": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": {},
+          "proposed": {},
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "item",
+          "default",
+          "proposed",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "lifecycle_stages",
+    "icp",
+    "routing_queues",
+    "nurture_tracks",
+    "platform",
+    "open_questions",
+    "changes_from_default"
+  ],
+  "additionalProperties": false
+}

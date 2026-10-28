@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/score_proposal@1",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rates": {
+      "type": "object"
+    },
+    "rule_lift": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "n_with": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sql_rate_with": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "sql_rate_without": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "rule_id",
+          "n_with",
+          "sql_rate_with",
+          "sql_rate_without"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "old": {},
+          "new": {},
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_effect": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "target",
+          "old",
+          "new",
+          "evidence",
+          "expected_effect"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "period",
+    "rates",
+    "rule_lift",
+    "changes",
+    "notes"
+  ],
+  "additionalProperties": false
+}

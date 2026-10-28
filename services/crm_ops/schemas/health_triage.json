@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/health_triage@1",
+  "type": "object",
+  "properties": {
+    "auto_fix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "enum": [
+              "exact_duplicates",
+              "mql_no_owner",
+              "hard_bounce_flag",
+              "failed_step_retry"
+            ]
+          },
+          "record_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "check",
+          "record_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "block_now": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "report": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "severity": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        },
+        "required": [
+          "check",
+          "count",
+          "severity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "digest_markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data_quality_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "auto_fix",
+    "block_now",
+    "report",
+    "digest_markdown",
+    "data_quality_score"
+  ],
+  "additionalProperties": false
+}

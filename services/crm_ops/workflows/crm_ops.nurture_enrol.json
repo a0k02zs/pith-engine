@@ -1,0 +1,30 @@
+{
+  "id": "crm_ops.nurture_enrol",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W7: pick the nurture track and hand the contact to the email service flow. crm_ops does not send nurture email itself.",
+  "trigger": {
+    "event": "svc.crm_ops/nurture.eligible"
+  },
+  "steps": [
+    {
+      "id": "pick_track",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "crm_ops/track_picker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "crm_ops/track_choice@1"
+      }
+    },
+    {
+      "id": "start_flow",
+      "type": "subflow",
+      "needs": [
+        "pick_track"
+      ],
+      "subflow": {
+        "workflow_id": "email.nurture_flow"
+      }
+    }
+  ]
+}

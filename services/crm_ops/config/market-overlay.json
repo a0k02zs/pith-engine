@@ -1,0 +1,81 @@
+{
+  "$comment": "crm_ops overlay on engine/specs/compliance-rules.json (rules_version 2026-10-21.5). Send eligibility stays in the engine; this file holds only CRM build and operations data. Planning summary, not legal advice; local counsel confirms each market before launch.",
+  "service": "crm_ops",
+  "version": "1.0.0",
+  "updated": "2026-10-21",
+  "markets": {
+    "GB": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": "en-GB",
+      "dsr_deadline": {"days": 30, "basis": "1 month", "extend": "2 months"},
+      "data_location": {"allowed": ["uk", "eu"], "other_needs": "UK IDTA or UK addendum to EU SCCs"},
+      "enrichment_requires": ["lia_on_file", "privacy_notice"],
+      "form_must_capture": ["privacy_notice_url", "consent_per_channel", "consent_wording_id"],
+      "engine_rules": ["UK-PRIVACY-URL", "UK-COOKIE", "UK-LIA"]
+    },
+    "SG": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": "en-SG",
+      "dsr_deadline": {"days": 30, "basis": "PDPC guidance: as soon as reasonably possible"},
+      "data_location": {"allowed": ["any"], "other_needs": "comparable protection by contract for overseas transfer"},
+      "form_must_capture": ["purpose_text_id", "consent_per_channel"],
+      "phone_checks": {"dnc_max_age_days": 21},
+      "engine_rules": ["SG-DNC", "SG-PURPOSE", "SG-ADV"]
+    },
+    "US": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": "en-US",
+      "dsr_deadline": {"days": 45, "basis": "CCPA/CPRA", "extend": "45 days"},
+      "data_location": {"allowed": ["any"]},
+      "form_must_capture": ["sms_prior_express_written_box_unticked", "consent_wording_id"],
+      "store_fields": ["gpc_opt_out"],
+      "engine_rules": ["US-POSTAL", "US-OPTOUT-10D", "US-GPC", "US-10DLC"]
+    },
+    "CA": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": "en-CA",
+      "dsr_deadline": {"days": 30, "basis": "PIPEDA", "extend": "30 days"},
+      "data_location": {"allowed": ["any"], "other_needs": "Quebec Law 25 transfer assessment for CA-QC"},
+      "consent_expiry": {"implied_casl_purchase_days": 730, "implied_casl_inquiry_days": 183, "warn_before_days": 30},
+      "subdivisions": {"CA-QC": {"followup_language": "fr-CA", "route": "french_speaking_rep_or_ca_queue", "dsr_deadline_days": 30}},
+      "engine_rules": ["CA-CONSENT-EXPIRY", "CA-SENDER-UNSUB", "CA-BIZ-EXEMPTION", "QC-FRENCH"]
+    },
+    "AE": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": {"b2b": "en", "b2c": "ar"},
+      "dsr_deadline": {"days": 30, "basis": "internal target; confirm with counsel"},
+      "subdivisions": {"AE-DU-DIFC": "DIFC data protection law", "AE-AZ-ADGM": "ADGM data protection law"},
+      "engine_rules": ["GCC-ARABIC-B2C", "GCC-CULTURE"]
+    },
+    "SA": {
+      "working_days": ["Sun", "Mon", "Tue", "Wed", "Thu"],
+      "followup_language": {"b2b": "en", "b2c": "ar", "government_linked": "ar"},
+      "route_preference": "arabic_speaking_rep",
+      "dsr_deadline": {"days": 30, "basis": "Saudi PDPL"},
+      "data_location": {"allowed": ["sa"], "other_needs": "counsel check before sync outside Saudi Arabia", "flag_at_gate": "G1"},
+      "engine_rules": ["SA-DATA-TRANSFER", "GCC-ARABIC-B2C", "GCC-CULTURE"]
+    },
+    "QA": {"inherits": "GCC_DEFAULT"},
+    "KW": {"inherits": "GCC_DEFAULT"},
+    "BH": {"inherits": "GCC_DEFAULT"},
+    "OM": {"inherits": "GCC_DEFAULT"},
+    "GCC_DEFAULT": {
+      "working_days": ["Sun", "Mon", "Tue", "Wed", "Thu"],
+      "followup_language": {"b2b": "en", "b2c": "ar"},
+      "dsr_deadline": {"days": 30, "basis": "internal target; confirm with counsel"},
+      "holiday_pause": {"eid_nurture_pause": "client_choice", "sla_pauses_on_public_holidays": true},
+      "engine_rules": ["GCC-ARABIC-B2C", "GCC-CULTURE"]
+    },
+    "EU_DEFAULT": {
+      "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "followup_language": "contact.language",
+      "dsr_deadline": {"days": 30, "basis": "1 month", "extend": "2 months"},
+      "data_location": {"allowed": ["eu"], "other_needs": "adequacy decision or SCCs"},
+      "enrichment_requires": ["lia_on_file", "art14_notice"],
+      "third_party_notice_days": 30,
+      "engine_rules": ["EU-ART14", "EU-COOKIE"]
+    },
+    "DE": {"inherits": "EU_DEFAULT", "hold_until": "double_opt_in_confirmed", "engine_rules": ["DE-DOI"]}
+  },
+  "resolution": "Use the contact country. A subdivision entry overrides its country. Any EU country without its own entry uses EU_DEFAULT."
+}

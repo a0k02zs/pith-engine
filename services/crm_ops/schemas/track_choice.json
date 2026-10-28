@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/track_choice@1",
+  "type": "object",
+  "properties": {
+    "track": {
+      "enum": [
+        "N1",
+        "N2",
+        "N3",
+        "N4",
+        "N5",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "newsletter"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "cta": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "n",
+          "day",
+          "goal",
+          "subjects",
+          "points",
+          "cta",
+          "claim_ids"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "track",
+    "reason",
+    "language",
+    "emails"
+  ],
+  "additionalProperties": false
+}

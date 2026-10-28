@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/import_profile@1",
+  "type": "object",
+  "properties": {
+    "rows": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "countries": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "missing_consent": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "third_party": {
+      "type": "boolean"
+    },
+    "has_eu_or_uk": {
+      "type": "boolean"
+    },
+    "no_basis_rows": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "rows",
+    "countries",
+    "missing_consent",
+    "third_party",
+    "has_eu_or_uk",
+    "no_basis_rows",
+    "flags"
+  ],
+  "additionalProperties": false
+}

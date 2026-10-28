@@ -1,0 +1,314 @@
+{
+  "model_id": "pithm.crm.lead_score.b2b",
+  "version": "1.0.0",
+  "updated": "2026-10-21",
+  "status": "default_template",
+  "note": "Pith M default values. Each client copy is approved at gate G1. Live changes need gate G3. handraise_window_days is a code default (not in the v1 design): a hand-raise counts for grade A for 90 days.",
+  "fit": {
+    "max": 50,
+    "min": 0,
+    "rules": [
+      {
+        "id": "fit.size.icp",
+        "field": "company_size_band",
+        "op": "in",
+        "value_ref": "client.icp.size_bands",
+        "points": 15
+      },
+      {
+        "id": "fit.size.adjacent",
+        "field": "company_size_band",
+        "op": "in",
+        "value_ref": "client.icp.size_bands_adjacent",
+        "points": 7
+      },
+      {
+        "id": "fit.industry.icp",
+        "field": "industry",
+        "op": "in",
+        "value_ref": "client.icp.industries",
+        "points": 10
+      },
+      {
+        "id": "fit.industry.next",
+        "field": "industry",
+        "op": "in",
+        "value_ref": "client.icp.industries_secondary",
+        "points": 5
+      },
+      {
+        "id": "fit.seniority.exec",
+        "field": "job_seniority",
+        "op": "in",
+        "value": [
+          "c_level",
+          "vp",
+          "head",
+          "director"
+        ],
+        "points": 10
+      },
+      {
+        "id": "fit.seniority.manager",
+        "field": "job_seniority",
+        "op": "eq",
+        "value": "manager",
+        "points": 6
+      },
+      {
+        "id": "fit.seniority.ic",
+        "field": "job_seniority",
+        "op": "eq",
+        "value": "individual_contributor",
+        "points": 2
+      },
+      {
+        "id": "fit.function",
+        "field": "job_function",
+        "op": "in",
+        "value_ref": "client.icp.buyer_functions",
+        "points": 8
+      },
+      {
+        "id": "fit.country",
+        "field": "country_code",
+        "op": "in",
+        "value_ref": "client.sales_regions",
+        "points": 5
+      },
+      {
+        "id": "fit.tech",
+        "field": "tech_stack",
+        "op": "intersects",
+        "value_ref": "client.icp.technologies",
+        "points": 2
+      },
+      {
+        "id": "fit.neg.free_email",
+        "field": "email_domain_type",
+        "op": "eq",
+        "value": "free",
+        "points": -10
+      }
+    ],
+    "exclusive_groups": [
+      [
+        "fit.size.icp",
+        "fit.size.adjacent"
+      ],
+      [
+        "fit.industry.icp",
+        "fit.industry.next"
+      ],
+      [
+        "fit.seniority.exec",
+        "fit.seniority.manager",
+        "fit.seniority.ic"
+      ]
+    ],
+    "disqualify_if": [
+      {
+        "field": "email_domain",
+        "op": "in",
+        "value_ref": "client.competitor_domains"
+      },
+      {
+        "field": "persona_flag",
+        "op": "in",
+        "value": [
+          "student",
+          "job_seeker"
+        ]
+      },
+      {
+        "field": "country_code",
+        "op": "not_in",
+        "value_ref": "pithm.markets.all_countries"
+      }
+    ]
+  },
+  "engagement": {
+    "max": 50,
+    "decay": {
+      "percent": 25,
+      "every_days": 30,
+      "reset_on_new_action": true
+    },
+    "rules": [
+      {
+        "id": "eng.handraise",
+        "event": "form.submitted",
+        "where": {
+          "form_type": [
+            "demo",
+            "contact_sales",
+            "pricing"
+          ]
+        },
+        "points": 30,
+        "cap_30d": null,
+        "fast_track": true
+      },
+      {
+        "id": "eng.pricing_view",
+        "event": "page.viewed",
+        "where": {
+          "page_type": "pricing"
+        },
+        "points": 10,
+        "cap_30d": 20
+      },
+      {
+        "id": "eng.webinar_attend",
+        "event": "webinar.attended",
+        "points": 10,
+        "cap_30d": 20
+      },
+      {
+        "id": "eng.webinar_register",
+        "event": "webinar.registered",
+        "where": {
+          "attended": false
+        },
+        "points": 3,
+        "cap_30d": 6
+      },
+      {
+        "id": "eng.gated_download",
+        "event": "content.downloaded",
+        "points": 8,
+        "cap_30d": 16
+      },
+      {
+        "id": "eng.product_view",
+        "event": "page.viewed",
+        "where": {
+          "page_type": [
+            "case_study",
+            "product"
+          ]
+        },
+        "points": 3,
+        "cap_30d": 12
+      },
+      {
+        "id": "eng.email_click",
+        "event": "email.clicked",
+        "points": 2,
+        "cap_30d": 10
+      },
+      {
+        "id": "eng.event_scan",
+        "event": "event.badge_scanned",
+        "points": 8,
+        "cap_30d": 16
+      },
+      {
+        "id": "eng.trial_start",
+        "event": "trial.started",
+        "points": 25,
+        "cap_30d": null
+      },
+      {
+        "id": "eng.trial_key_action",
+        "event": "product.key_action",
+        "points": 10,
+        "cap_30d": 20
+      },
+      {
+        "id": "eng.abm_intent",
+        "event": "abm.intent_surge",
+        "points": 10,
+        "cap_30d": 10
+      },
+      {
+        "id": "eng.li_leadform",
+        "event": "ads.lead_form_submitted",
+        "where": {
+          "platform": "linkedin"
+        },
+        "points": 8,
+        "cap_30d": 16
+      },
+      {
+        "id": "eng.neg.unsub",
+        "event": "email.unsubscribed_all",
+        "points": -20
+      },
+      {
+        "id": "eng.neg.careers",
+        "event": "page.viewed",
+        "where": {
+          "page_type": "careers"
+        },
+        "points": -5
+      }
+    ],
+    "reset_if": [
+      {
+        "event": "email.hard_bounced",
+        "set": 0,
+        "flag": "invalid_email"
+      }
+    ],
+    "handraise_window_days": 90
+  },
+  "account_rollup": {
+    "method": "sum_top_n",
+    "n": 3,
+    "cap": 100,
+    "field": "account_engagement_score"
+  },
+  "grades": [
+    {
+      "grade": "A",
+      "label": "hot",
+      "rule": "(handraise AND fit >= 25) OR (total >= 80 AND fit >= 40)",
+      "stage": "mql",
+      "sla_minutes": 5,
+      "escalate_minutes": [
+        15,
+        60
+      ]
+    },
+    {
+      "grade": "B",
+      "label": "warm",
+      "rule": "total >= 65 AND total < 80 AND fit >= 40",
+      "stage": "mql",
+      "sla_business_hours": 4,
+      "escalate_business_hours": [
+        8,
+        16
+      ]
+    },
+    {
+      "grade": "C",
+      "label": "nurture",
+      "rule": "(total >= 30 AND total < 65) OR (fit < 40 AND NOT handraise)",
+      "stage": "lead",
+      "track": "nurture"
+    },
+    {
+      "grade": "D",
+      "label": "cold",
+      "rule": "total < 30",
+      "stage": "lead",
+      "track": "newsletter"
+    }
+  ],
+  "tuning": {
+    "first_review_after_days": 60,
+    "cadence": "monthly",
+    "approval_gate": "G3",
+    "health": {
+      "mql_to_sql_target_range": [
+        0.25,
+        0.4
+      ],
+      "raise_thresholds_below": 0.15,
+      "lower_thresholds_above": 0.5,
+      "hot_vs_warm_ratio_min": 3
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "id": "crm_ops.score_tuning",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "Monthly score and routing review. The agent proposes; a person approves (G3); only then the model version changes.",
+  "trigger": {
+    "cron": "0 9 1 * *"
+  },
+  "steps": [
+    {
+      "id": "analyse",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "crm_ops/scoring_analyst@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "crm_ops/score_proposal@1"
+      }
+    },
+    {
+      "id": "has_changes",
+      "type": "branch",
+      "needs": [
+        "analyse"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.analyse.output.changes) > 0",
+            "goto": "approve_changes"
+          }
+        ],
+        "else": "learn"
+      }
+    },
+    {
+      "id": "approve_changes",
+      "type": "gate",
+      "needs": [
+        "has_changes"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "client_sales",
+          "client_marketing_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 120,
+        "on_changes": "analyse"
+      }
+    },
+    {
+      "id": "publish_model",
+      "type": "tool",
+      "needs": [
+        "approve_changes"
+      ],
+      "tool": {
+        "name": "crm_ops",
+        "action": "score_model.publish_version",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "needs": [
+        "has_changes"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/learn@1",
+        "model": "claude-haiku-5-5"
+      }
+    }
+  ]
+}
