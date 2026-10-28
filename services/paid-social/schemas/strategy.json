@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/strategy@1",
+  "type": "object",
+  "properties": {
+    "type": {
+      "enum": [
+        "media_plan",
+        "test_card"
+      ]
+    },
+    "media_plan": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "client_id": {
+              "type": "string"
+            },
+            "month": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "total_budget": {
+              "type": "number",
+              "minimum": 0
+            },
+            "test_share": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "market": {
+                    "type": "string"
+                  },
+                  "platform": {
+                    "enum": [
+                      "meta",
+                      "linkedin",
+                      "tiktok",
+                      "snapchat"
+                    ]
+                  },
+                  "stage": {
+                    "enum": [
+                      "prospect",
+                      "retarget",
+                      "retain",
+                      "test"
+                    ]
+                  },
+                  "budget": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "kpi": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "market",
+                  "platform",
+                  "stage",
+                  "budget",
+                  "kpi",
+                  "target"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "max_daily_move_pct": {
+              "type": "number",
+              "maximum": 20
+            },
+            "autopause_cpa_multiple": {
+              "type": "number"
+            },
+            "autopause_days": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "client_id",
+            "month",
+            "currency",
+            "total_budget",
+            "test_share",
+            "lines",
+            "max_daily_move_pct",
+            "autopause_cpa_multiple",
+            "autopause_days"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "test_card": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "test_id": {
+              "type": "string",
+              "pattern": "^T\\d{3,}$"
+            },
+            "market": {
+              "type": "string"
+            },
+            "platform": {
+              "enum": [
+                "meta",
+                "linkedin",
+                "tiktok",
+                "snapchat"
+              ]
+            },
+            "stage": {
+              "enum": [
+                "prospect",
+                "retarget",
+                "retain"
+              ]
+            },
+            "variable": {
+              "enum": [
+                "concept",
+                "format",
+                "hook",
+                "offer",
+                "copy",
+                "landing_page"
+              ]
+            },
+            "hypothesis": {
+              "type": "string",
+              "minLength": 1
+            },
+            "control_ad_id": {
+              "type": "string"
+            },
+            "variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^V\\d{2}$"
+                  },
+                  "difference": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "difference"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 20
+            },
+            "fixed_parts": {
+              "type": "string"
+            },
+            "main_kpi": {
+              "type": "string"
+            },
+            "guard_kpis": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "budget_total": {
+              "type": "number",
+              "minimum": 0
+            },
+            "budget_per_variant": {
+              "type": "number",
+              "minimum": 0
+            },
+            "end_date": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "required": [
+            "test_id",
+            "market",
+            "platform",
+            "stage",
+            "variable",
+            "hypothesis",
+            "control_ad_id",
+            "variants",
+            "fixed_parts",
+            "main_kpi",
+            "guard_kpis",
+            "budget_total",
+            "budget_per_variant",
+            "end_date"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "type",
+    "media_plan",
+    "test_card",
+    "reasons",
+    "risks",
+    "data_gaps"
+  ],
+  "additionalProperties": false
+}

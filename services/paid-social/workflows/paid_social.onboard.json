@@ -1,0 +1,196 @@
+{
+  "id": "paid_social.onboard",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Onboard a client or a new market: audit accounts and tracking, build audiences, first media plan, spend limits, launch check.",
+  "trigger": {
+    "event": "svc.paid_social/client.onboarded"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "audit_meta",
+      "type": "tool",
+      "tool": {
+        "name": "ads_meta",
+        "action": "account.audit",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit_linkedin",
+      "type": "tool",
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "account.audit",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit_tiktok",
+      "type": "tool",
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "account.audit",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit_snapchat",
+      "type": "tool",
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "account.audit",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audiences",
+      "type": "agent",
+      "needs": [
+        "audit_meta",
+        "audit_linkedin",
+        "audit_tiktok",
+        "audit_snapchat"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/audience_builder@1",
+        "output_schema": "paid_social/audiences@1"
+      }
+    },
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Customer lists: only contacts eligible for channel paid_ad, purpose marketing",
+      "needs": [
+        "audiences"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "resolve"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/strategist@1",
+        "output_schema": "paid_social/strategy@1"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "client_finance",
+          "performance_marketer"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "set_caps_meta",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "account.set_spend_limit",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "set_caps_linkedin",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "account.set_spend_limit",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "set_caps_tiktok",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "account.set_spend_limit",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "set_caps_snapchat",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "account.set_spend_limit",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "launch_check",
+      "type": "agent",
+      "needs": [
+        "set_caps_meta",
+        "set_caps_linkedin",
+        "set_caps_tiktok",
+        "set_caps_snapchat"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/launch_checker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "paid_social/launch_check@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "launch_check"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "goto",
+        "on_changes": "launch_check"
+      }
+    },
+    {
+      "id": "live",
+      "type": "emit",
+      "needs": [
+        "approve_go_live"
+      ],
+      "emit": {
+        "event": "svc.paid_social/plan.applied"
+      }
+    }
+  ]
+}

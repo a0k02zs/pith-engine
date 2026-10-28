@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/optimizer_actions@1",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "moves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "enum": [
+              "campaign",
+              "ad_set"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "from": {
+            "type": "number",
+            "minimum": 0
+          },
+          "to": {
+            "type": "number",
+            "minimum": 0
+          },
+          "change_pct": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "needs_approval": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "level",
+          "id",
+          "from",
+          "to",
+          "change_pct",
+          "reason",
+          "needs_approval"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "enum": [
+              "ad",
+              "ad_set"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "rule": {
+            "enum": [
+              "kill",
+              "autopause",
+              "policy"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "level",
+          "id",
+          "rule",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fatigue_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ad_id": {
+            "type": "string"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "ctr_drop",
+                "cpa_rise",
+                "frequency"
+              ]
+            },
+            "minItems": 2
+          }
+        },
+        "required": [
+          "ad_id",
+          "signals"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recommendations_for_people": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "no_action_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "date",
+    "moves",
+    "pauses",
+    "fatigue_flags",
+    "recommendations_for_people",
+    "no_action_reason"
+  ],
+  "additionalProperties": false
+}

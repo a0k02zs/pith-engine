@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/variants@1",
+  "type": "object",
+  "properties": {
+    "test_id": {
+      "type": "string"
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^V\\d{2}$"
+          },
+          "platform": {
+            "enum": [
+              "meta",
+              "linkedin",
+              "tiktok",
+              "snapchat"
+            ]
+          },
+          "market": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "img11",
+              "img45",
+              "car",
+              "vid915",
+              "vid11",
+              "vid45",
+              "doc",
+              "ugc"
+            ]
+          },
+          "angle": {
+            "type": "string"
+          },
+          "hook": {
+            "type": "string"
+          },
+          "primary_text": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cta": {
+            "type": "string"
+          },
+          "script": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "t": {
+                      "type": "string"
+                    },
+                    "visual": {
+                      "type": "string"
+                    },
+                    "on_screen_text": {
+                      "type": "string"
+                    },
+                    "voice": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "t",
+                    "visual",
+                    "on_screen_text",
+                    "voice"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asset_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "new_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "derived_from_approved": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "object",
+            "properties": {
+              "ai_generated": {
+                "type": "boolean"
+              },
+              "creator_content": {
+                "type": "boolean"
+              },
+              "special_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "restricted_product": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "ai_generated",
+              "creator_content",
+              "special_category",
+              "restricted_product"
+            ],
+            "additionalProperties": false
+          },
+          "ad_name": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+_[a-z0-9-]+_[a-z0-9-]+_[a-z0-9-]+_[a-z0-9-]+$"
+          }
+        },
+        "required": [
+          "id",
+          "platform",
+          "market",
+          "lang",
+          "format",
+          "angle",
+          "hook",
+          "primary_text",
+          "headline",
+          "description",
+          "cta",
+          "script",
+          "asset_refs",
+          "claim_ids",
+          "new_claims",
+          "derived_from_approved",
+          "flags",
+          "ad_name"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "notes_for_reviewer": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "test_id",
+    "variants",
+    "notes_for_reviewer"
+  ],
+  "additionalProperties": false
+}

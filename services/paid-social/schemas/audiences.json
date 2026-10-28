@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/audiences@1",
+  "type": "object",
+  "properties": {
+    "audiences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "meta",
+              "linkedin",
+              "tiktok",
+              "snapchat"
+            ]
+          },
+          "market": {
+            "type": "string"
+          },
+          "stage": {
+            "enum": [
+              "prospect",
+              "retarget",
+              "retain"
+            ]
+          },
+          "type": {
+            "enum": [
+              "broad",
+              "lookalike",
+              "interest",
+              "job",
+              "matched_list",
+              "website",
+              "engagement",
+              "video_view"
+            ]
+          },
+          "definition": {
+            "type": "object"
+          },
+          "estimated_size": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "resolve_request": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "channel": {
+                    "const": "paid_ad"
+                  },
+                  "purpose": {
+                    "const": "marketing"
+                  },
+                  "markets": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "filter": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "channel",
+                  "purpose",
+                  "markets",
+                  "filter"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclusions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "special_category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "platform",
+          "market",
+          "stage",
+          "type",
+          "definition",
+          "estimated_size",
+          "resolve_request",
+          "exclusions",
+          "special_category"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "audiences",
+    "reasons",
+    "risks"
+  ],
+  "additionalProperties": false
+}
