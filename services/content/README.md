@@ -14,7 +14,7 @@ It builds against the shared engine contracts v0.1.0 (service code `content`).
 | `src/` | Registry (load workflows, prompts, schemas; validate agent output), market rules, prompt builder, rule functions |
 | `test/` | Workflow, schema and rule tests |
 | `docs/` | Playbook, market rules, templates, agent prompt notes, engine integration |
-| `vendor/engine-v0.1.0/` | Copy of the engine workflow schema and enums that the tests check against. Replace with the engine package when it is in this repo. |
+| `../../engine/contracts/` | The tests check the workflows against the engine workflow schema and enums in this repo. |
 
 ## Run
 
