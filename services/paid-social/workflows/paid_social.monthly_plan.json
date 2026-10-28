@@ -1,0 +1,114 @@
+{
+  "id": "paid_social.monthly_plan",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Next month's media plan and budget, approved by client finance and the performance marketer, then applied per platform.",
+  "trigger": {
+    "cron": "0 9 25 * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "results",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "query.paid_social_month",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "results"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/strategist@1",
+        "output_schema": "paid_social/strategy@1"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "client_finance",
+          "performance_marketer"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "apply_meta",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "budgets.apply_plan",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "apply_linkedin",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "budgets.apply_plan",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "apply_tiktok",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "budgets.apply_plan",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "apply_snapchat",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "budgets.apply_plan",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "needs": [
+        "apply_meta",
+        "apply_linkedin",
+        "apply_tiktok",
+        "apply_snapchat"
+      ],
+      "emit": {
+        "event": "svc.paid_social/plan.applied"
+      }
+    }
+  ]
+}

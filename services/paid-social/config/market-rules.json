@@ -1,0 +1,489 @@
+{
+  "$comment": "Paid social rules per market. Planning summary, not legal advice; a local lawyer confirms each market before launch. Engine rule ids are in engine/specs/compliance-rules.json.",
+  "global": {
+    "rule_ids": [
+      "G-LIST-UPLOAD",
+      "G-SENSITIVE-TARGETING",
+      "G-MINOR-TARGETING",
+      "G-POLITICAL",
+      "G-RESTRICTED-PRODUCT",
+      "G-PAID-DISCLOSURE",
+      "G-AI-IMAGE-LABEL",
+      "G-CLAIM-APPROVED"
+    ],
+    "platforms": [
+      "meta",
+      "linkedin",
+      "tiktok",
+      "snapchat"
+    ],
+    "list_upload": {
+      "channel": "paid_ad",
+      "purpose": "marketing"
+    },
+    "political_ads": false
+  },
+  "eu_default": {
+    "group": "EU",
+    "currency": "EUR",
+    "weekend": [
+      "sat",
+      "sun"
+    ],
+    "platforms_b2b": [
+      "linkedin"
+    ],
+    "platforms_b2c": [
+      "meta",
+      "tiktok",
+      "snapchat"
+    ],
+    "pixel_needs_consent": true,
+    "special_ad_category": false,
+    "alcohol_banned": false,
+    "creator_licence": null,
+    "x_allowed": false,
+    "no_profiling_of_minors": true,
+    "rule_ids": [
+      "EU-COOKIE",
+      "EU-AI-LABEL"
+    ]
+  },
+  "markets": {
+    "GB": {
+      "group": "UK",
+      "currency": "GBP",
+      "languages": [
+        "en"
+      ],
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin",
+        "meta"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": true,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "hfss_online_ban_from": "2026-01-05",
+      "rule_ids": [
+        "UK-COOKIE",
+        "UK-HFSS"
+      ]
+    },
+    "SG": {
+      "group": "SG",
+      "currency": "SGD",
+      "languages": [
+        "en",
+        "zh",
+        "ms",
+        "ta"
+      ],
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin",
+        "meta"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok"
+      ],
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "rule_ids": []
+    },
+    "US": {
+      "group": "NA",
+      "currency": "USD",
+      "languages": [
+        "en"
+      ],
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin",
+        "meta"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": false,
+      "special_ad_category": true,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "rule_ids": [
+        "US-SPECIAL-AD"
+      ]
+    },
+    "CA": {
+      "group": "NA",
+      "currency": "CAD",
+      "languages": [
+        "en",
+        "fr"
+      ],
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin",
+        "meta"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": false,
+      "special_ad_category": true,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "rule_ids": [
+        "CA-SPECIAL-AD"
+      ]
+    },
+    "CA-QC": {
+      "group": "NA",
+      "currency": "CAD",
+      "languages": [
+        "fr"
+      ],
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin",
+        "meta"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": false,
+      "special_ad_category": true,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "required_language": "fr",
+      "rule_ids": [
+        "CA-SPECIAL-AD",
+        "QC-FRENCH"
+      ]
+    },
+    "AE": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": "AE-INFLUENCER-LICENCE",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": false,
+      "currency": "AED",
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C",
+        "AE-INFLUENCER-LICENCE"
+      ]
+    },
+    "SA": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": true,
+      "creator_licence": "SA-INFLUENCER-LICENCE",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": true,
+      "currency": "SAR",
+      "weekend": [
+        "fri",
+        "sat"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "snapchat",
+        "meta",
+        "tiktok"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C",
+        "SA-INFLUENCER-LICENCE",
+        "GCC-ALCOHOL"
+      ]
+    },
+    "QA": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": true,
+      "creator_licence": null,
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": false,
+      "currency": "QAR",
+      "weekend": [
+        "fri",
+        "sat"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C",
+        "GCC-ALCOHOL"
+      ]
+    },
+    "KW": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": true,
+      "creator_licence": null,
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": true,
+      "currency": "KWD",
+      "weekend": [
+        "fri",
+        "sat"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C",
+        "GCC-ALCOHOL"
+      ]
+    },
+    "BH": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": false,
+      "currency": "BHD",
+      "weekend": [
+        "fri",
+        "sat"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C"
+      ]
+    },
+    "OM": {
+      "group": "GCC",
+      "pixel_needs_consent": false,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "x_allowed": false,
+      "currency": "OMR",
+      "weekend": [
+        "fri",
+        "sat"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "rule_ids": [
+        "GCC-ARABIC-B2C"
+      ]
+    },
+    "NL": {
+      "group": "EU",
+      "currency": "EUR",
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": true,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "no_profiling_of_minors": true,
+      "rule_ids": [
+        "EU-COOKIE",
+        "EU-AI-LABEL"
+      ],
+      "languages": [
+        "nl",
+        "en"
+      ]
+    },
+    "DE": {
+      "group": "EU",
+      "currency": "EUR",
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": true,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "no_profiling_of_minors": true,
+      "rule_ids": [
+        "EU-COOKIE",
+        "EU-AI-LABEL"
+      ],
+      "languages": [
+        "de"
+      ]
+    },
+    "FR": {
+      "group": "EU",
+      "currency": "EUR",
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": true,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "no_profiling_of_minors": true,
+      "rule_ids": [
+        "EU-COOKIE",
+        "EU-AI-LABEL"
+      ],
+      "languages": [
+        "fr"
+      ]
+    },
+    "ES": {
+      "group": "EU",
+      "currency": "EUR",
+      "weekend": [
+        "sat",
+        "sun"
+      ],
+      "platforms_b2b": [
+        "linkedin"
+      ],
+      "platforms_b2c": [
+        "meta",
+        "tiktok",
+        "snapchat"
+      ],
+      "pixel_needs_consent": true,
+      "special_ad_category": false,
+      "alcohol_banned": false,
+      "creator_licence": null,
+      "x_allowed": false,
+      "no_profiling_of_minors": true,
+      "rule_ids": [
+        "EU-COOKIE",
+        "EU-AI-LABEL"
+      ],
+      "languages": [
+        "es"
+      ]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/test_result@1",
+  "type": "object",
+  "properties": {
+    "test_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "running",
+        "complete"
+      ]
+    },
+    "verdicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant_id": {
+            "type": "string"
+          },
+          "verdict": {
+            "enum": [
+              "win",
+              "lose",
+              "no_result",
+              "pending"
+            ]
+          },
+          "p_beat_control": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "cpa": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "roas": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "variant_id",
+          "verdict",
+          "p_beat_control",
+          "cpa",
+          "roas"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "promote": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lesson": {
+      "type": "string"
+    },
+    "next_test_idea": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "test_id",
+    "status",
+    "verdicts",
+    "promote",
+    "lesson",
+    "next_test_idea"
+  ],
+  "additionalProperties": false
+}

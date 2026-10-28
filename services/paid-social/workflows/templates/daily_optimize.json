@@ -1,0 +1,177 @@
+{
+  "id": "paid_social.daily_optimize_{{platform}}",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Daily optimisation on {{platform}}: pull results, record KPIs, code guardrails, optimizer agent, moves inside spend_policies, bigger moves to a person, fatigue.",
+  "trigger": {
+    "cron": "0 7 * * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "pull",
+      "type": "tool",
+      "tool": {
+        "name": "{{tool}}",
+        "action": "insights.pull_1_3_7_28d",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "metrics",
+      "type": "emit",
+      "needs": [
+        "pull"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "guardrails",
+      "type": "tool",
+      "name": "Run src/guardrails.ts: kill rule, auto-pause, spend spike, silent tracking, fatigue",
+      "needs": [
+        "pull"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "paid_social.guardrails",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "tracking_ok",
+      "type": "branch",
+      "needs": [
+        "guardrails"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.guardrails.output.silent_tracking",
+            "goto": "escalate"
+          }
+        ],
+        "else": "decide"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "needs": [
+        "tracking_ok"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "decide",
+      "type": "agent",
+      "needs": [
+        "tracking_ok"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/optimizer@1",
+        "output_schema": "paid_social/optimizer_actions@1"
+      }
+    },
+    {
+      "id": "classify",
+      "type": "tool",
+      "name": "Run src/guardrails.ts classifyMoves: over 20% or a higher total needs a person",
+      "needs": [
+        "decide"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "paid_social.classify_moves",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "split",
+      "type": "branch",
+      "needs": [
+        "classify"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.exists(m, !m.auto)",
+            "goto": "approve_big_moves"
+          }
+        ],
+        "else": "apply_small"
+      }
+    },
+    {
+      "id": "apply_small",
+      "type": "tool",
+      "name": "Apply moves inside spend_policies (20% or less, total unchanged)",
+      "needs": [
+        "split"
+      ],
+      "tool": {
+        "name": "{{tool}}",
+        "action": "budgets.apply_moves",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "approve_big_moves",
+      "type": "gate",
+      "needs": [
+        "split"
+      ],
+      "gate": {
+        "approval_kind": "budget_change",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 4,
+        "on_reject": "goto",
+        "on_changes": "decide"
+      }
+    },
+    {
+      "id": "apply_big",
+      "type": "tool",
+      "needs": [
+        "approve_big_moves"
+      ],
+      "tool": {
+        "name": "{{tool}}",
+        "action": "budgets.apply_moves",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "pause",
+      "type": "tool",
+      "name": "Pause ads and ad sets that hit the kill or auto-pause rule",
+      "needs": [
+        "guardrails"
+      ],
+      "tool": {
+        "name": "{{tool}}",
+        "action": "ads.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "fatigue",
+      "type": "emit",
+      "needs": [
+        "decide"
+      ],
+      "emit": {
+        "event": "svc.paid_social/creative.fatigued"
+      }
+    }
+  ]
+}

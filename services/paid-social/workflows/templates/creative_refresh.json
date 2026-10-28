@@ -1,0 +1,67 @@
+{
+  "id": "paid_social.creative_refresh_{{platform}}",
+  "version": 1,
+  "service": "paid_social",
+  "description": "New ads on {{platform}} from the same winning angle when an ad is tired; swap them in.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "variants",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "paid_social/creative_writer@1",
+        "output_schema": "paid_social/variants@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "variants"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead"
+        ],
+        "sla_hours": 24,
+        "skip_if": "steps.variants.output.variants.all(v, v.derived_from_approved && size(v.new_claims) == 0)",
+        "on_changes": "variants"
+      }
+    },
+    {
+      "id": "swap",
+      "type": "tool",
+      "name": "Swap the new ads in; budget unchanged",
+      "needs": [
+        "approve_creative"
+      ],
+      "tool": {
+        "name": "{{tool}}",
+        "action": "ads.swap",
+        "risk": "write_external"
+      }
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": "paid_social.rights_pause",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Pause every live ad that uses a rights grant that is no longer active (risk remove, never blocked).",
+  "trigger": {
+    "event": "engine/rights.changed"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "relevant",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "event.data.status != 'active'",
+            "goto": "find"
+          }
+        ],
+        "else": "skip"
+      }
+    },
+    {
+      "id": "find",
+      "type": "tool",
+      "name": "Run src/rights.ts adsToPause over live ads",
+      "needs": [
+        "relevant"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "paid_social.ads_by_grant",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "pause_meta",
+      "type": "tool",
+      "needs": [
+        "find"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "ads.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "pause_linkedin",
+      "type": "tool",
+      "needs": [
+        "find"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "ads.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "pause_tiktok",
+      "type": "tool",
+      "needs": [
+        "find"
+      ],
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "ads.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "pause_snapchat",
+      "type": "tool",
+      "needs": [
+        "find"
+      ],
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "ads.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "paused",
+      "type": "emit",
+      "needs": [
+        "pause_meta",
+        "pause_linkedin",
+        "pause_tiktok",
+        "pause_snapchat"
+      ],
+      "emit": {
+        "event": "svc.paid_social/ads.paused_rights"
+      }
+    },
+    {
+      "id": "skip",
+      "type": "emit",
+      "needs": [
+        "relevant"
+      ],
+      "emit": {
+        "event": "svc.paid_social/rights.ignored"
+      }
+    }
+  ]
+}

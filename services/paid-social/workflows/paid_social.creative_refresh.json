@@ -1,0 +1,90 @@
+{
+  "id": "paid_social.creative_refresh",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Route a creative.fatigued event to the refresh workflow for the ad's platform.",
+  "trigger": {
+    "event": "svc.paid_social/creative.fatigued"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "route",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "event.data.platform == 'meta'",
+            "goto": "run_meta"
+          },
+          {
+            "if": "event.data.platform == 'linkedin'",
+            "goto": "run_linkedin"
+          },
+          {
+            "if": "event.data.platform == 'tiktok'",
+            "goto": "run_tiktok"
+          },
+          {
+            "if": "event.data.platform == 'snapchat'",
+            "goto": "run_snapchat"
+          }
+        ],
+        "else": "unsupported"
+      }
+    },
+    {
+      "id": "run_meta",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creative_refresh_meta"
+      }
+    },
+    {
+      "id": "run_linkedin",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creative_refresh_linkedin"
+      }
+    },
+    {
+      "id": "run_tiktok",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creative_refresh_tiktok"
+      }
+    },
+    {
+      "id": "run_snapchat",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creative_refresh_snapchat"
+      }
+    },
+    {
+      "id": "unsupported",
+      "type": "emit",
+      "needs": [
+        "route"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/report@1",
+  "type": "object",
+  "properties": {
+    "markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "headline_kpi": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "target": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "value",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "markdown",
+    "headline_kpi",
+    "open_questions"
+  ],
+  "additionalProperties": false
+}

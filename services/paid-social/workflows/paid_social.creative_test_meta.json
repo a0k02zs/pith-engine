@@ -1,0 +1,208 @@
+{
+  "id": "paid_social.creative_test_meta",
+  "version": 1,
+  "service": "paid_social",
+  "description": "1 creative test on meta: test card, variants, render, checks, approvals, launch inside the approved test budget, verdict, promote, learn.",
+  "trigger": {
+    "cron": "0 9 * * 2",
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "test_card",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "paid_social/strategist@1",
+        "output_schema": "paid_social/strategy@1"
+      }
+    },
+    {
+      "id": "variants",
+      "type": "agent",
+      "needs": [
+        "test_card"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/creative_writer@1",
+        "output_schema": "paid_social/variants@1"
+      }
+    },
+    {
+      "id": "render",
+      "type": "subflow",
+      "needs": [
+        "variants"
+      ],
+      "subflow": {
+        "workflow_id": "video.ad_variants",
+        "per": "variant"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "render"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead"
+        ],
+        "sla_hours": 24,
+        "skip_if": "steps.variants.output.variants.all(v, v.derived_from_approved && size(v.new_claims) == 0)",
+        "on_changes": "variants"
+      }
+    },
+    {
+      "id": "has_new_claims",
+      "type": "branch",
+      "needs": [
+        "approve_creative"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.variants.output.variants.exists(v, size(v.new_claims) > 0)",
+            "goto": "approve_claims"
+          }
+        ],
+        "else": "launch_check"
+      }
+    },
+    {
+      "id": "approve_claims",
+      "type": "gate",
+      "needs": [
+        "has_new_claims"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_changes": "variants"
+      }
+    },
+    {
+      "id": "launch_check",
+      "type": "agent",
+      "needs": [
+        "has_new_claims"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/launch_checker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "paid_social/launch_check@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "launch_check"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "launch_check"
+      }
+    },
+    {
+      "id": "launch",
+      "type": "tool",
+      "name": "Launch the variants inside the test budget that the monthly budget gate approved",
+      "needs": [
+        "approve_go_live"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "ads.create_in_test_campaign",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "started",
+      "type": "emit",
+      "needs": [
+        "launch"
+      ],
+      "emit": {
+        "event": "svc.paid_social/test.launched"
+      }
+    },
+    {
+      "id": "run_test",
+      "type": "wait",
+      "needs": [
+        "started"
+      ],
+      "wait": {
+        "event": "svc.paid_social/test.decided",
+        "match": "async.data.test_id == steps.test_card.output.test_card.test_id",
+        "timeout": "14d"
+      }
+    },
+    {
+      "id": "read",
+      "type": "agent",
+      "needs": [
+        "run_test"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/test_analyst@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "paid_social/test_result@1"
+      }
+    },
+    {
+      "id": "promote",
+      "type": "tool",
+      "name": "Copy winning ads into the prospect campaign (budget unchanged)",
+      "needs": [
+        "read"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "ads.promote_winners",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "read"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

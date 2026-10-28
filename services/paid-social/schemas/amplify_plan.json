@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "paid_social/amplify_plan@1",
+  "type": "object",
+  "properties": {
+    "ads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "meta",
+              "linkedin",
+              "tiktok",
+              "snapchat"
+            ]
+          },
+          "ad_type": {
+            "enum": [
+              "spark",
+              "partnership",
+              "whitelisted"
+            ]
+          },
+          "stage": {
+            "enum": [
+              "prospect",
+              "retarget"
+            ]
+          },
+          "audience_ref": {
+            "type": "string"
+          },
+          "budget": {
+            "type": "number",
+            "minimum": 0
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "cta": {
+            "type": "string"
+          },
+          "rights_grant_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "new_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "market",
+          "platform",
+          "ad_type",
+          "stage",
+          "audience_ref",
+          "budget",
+          "start_date",
+          "end_date",
+          "headline",
+          "cta",
+          "rights_grant_ids",
+          "claim_ids",
+          "new_claims"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "excluded_markets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "market",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "earliest_expiry": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "ads",
+    "excluded_markets",
+    "earliest_expiry"
+  ],
+  "additionalProperties": false
+}

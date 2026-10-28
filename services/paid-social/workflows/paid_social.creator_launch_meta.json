@@ -1,0 +1,117 @@
+{
+  "id": "paid_social.creator_launch_meta",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Plan, check, approve and launch 1 creator post as an ad on meta.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "paid_social/creator_amplify@1",
+        "output_schema": "paid_social/amplify_plan@1"
+      }
+    },
+    {
+      "id": "end_dates",
+      "type": "tool",
+      "name": "Run src/rights.ts: ad type allowed by the grants, end date 2 days before the earliest expiry",
+      "needs": [
+        "plan"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "paid_social.check_creator_plan",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "end_dates"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "launch_check",
+      "type": "agent",
+      "needs": [
+        "approve_budget"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/launch_checker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "paid_social/launch_check@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "launch_check"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "launch_check"
+      }
+    },
+    {
+      "id": "launch",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "ads.create_creator_ad",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "launched",
+      "type": "emit",
+      "needs": [
+        "launch"
+      ],
+      "emit": {
+        "event": "svc.paid_social/creator_ad.launched"
+      }
+    }
+  ]
+}

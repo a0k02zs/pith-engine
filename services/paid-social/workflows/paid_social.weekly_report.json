@@ -1,0 +1,76 @@
+{
+  "id": "paid_social.weekly_report",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Weekly report: data, reporter agent, fact and compliance check, approval, publish to the client portal.",
+  "trigger": {
+    "cron": "0 6 * * 1"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "data",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "query.paid_social_week",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "write",
+      "type": "agent",
+      "needs": [
+        "data"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/reporter@1",
+        "output_schema": "paid_social/report@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "write"
+      ],
+      "check": {
+        "kinds": [
+          "fact",
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 8,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "name": "Store the approved report for the client portal",
+      "needs": [
+        "approve_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

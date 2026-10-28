@@ -1,0 +1,158 @@
+{
+  "id": "paid_social.creator_amplify",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Subflow for the influencer service (6): check the rights grants, then plan and launch the creator ad on the post's platform.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "party_id": {
+        "type": "string"
+      },
+      "platform": {
+        "enum": [
+          "meta",
+          "linkedin",
+          "tiktok",
+          "snapchat"
+        ]
+      },
+      "post_url": {
+        "type": "string"
+      },
+      "artifact_id": {
+        "type": "string"
+      },
+      "rights_grant_ids": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      },
+      "budget": {
+        "type": "number"
+      },
+      "currency": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "budget_approval_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "client_id",
+      "party_id",
+      "platform",
+      "rights_grant_ids",
+      "budget",
+      "currency",
+      "markets"
+    ]
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "rights",
+      "type": "tool",
+      "tool": {
+        "name": "engine",
+        "action": "rights.check",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "rights"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.platform == 'meta'",
+            "goto": "run_meta"
+          },
+          {
+            "if": "input.platform == 'linkedin'",
+            "goto": "run_linkedin"
+          },
+          {
+            "if": "input.platform == 'tiktok'",
+            "goto": "run_tiktok"
+          },
+          {
+            "if": "input.platform == 'snapchat'",
+            "goto": "run_snapchat"
+          }
+        ],
+        "else": "unsupported"
+      }
+    },
+    {
+      "id": "run_meta",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creator_launch_meta"
+      }
+    },
+    {
+      "id": "run_linkedin",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creator_launch_linkedin"
+      }
+    },
+    {
+      "id": "run_tiktok",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creator_launch_tiktok"
+      }
+    },
+    {
+      "id": "run_snapchat",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.creator_launch_snapchat"
+      }
+    },
+    {
+      "id": "unsupported",
+      "type": "emit",
+      "needs": [
+        "route"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    }
+  ]
+}
