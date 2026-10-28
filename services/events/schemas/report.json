@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/report@1",
+  "type": "object",
+  "properties": {
+    "report_type": {
+      "enum": [
+        "e7",
+        "e30",
+        "e90"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 3000
+    },
+    "vs_target": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "number"
+          },
+          "target": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "met",
+              "missed",
+              "no_target"
+            ]
+          }
+        },
+        "required": [
+          "kpi",
+          "value",
+          "target",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "worked": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "did_not_work": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "score_weight_change": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "signal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {
+          "type": "number"
+        },
+        "to": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "signal",
+        "from",
+        "to",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "brain_lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 3
+    }
+  },
+  "required": [
+    "report_type",
+    "summary",
+    "vs_target",
+    "worked",
+    "did_not_work",
+    "actions",
+    "score_weight_change",
+    "brain_lessons"
+  ],
+  "additionalProperties": false
+}

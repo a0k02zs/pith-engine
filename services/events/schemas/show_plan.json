@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/show_plan@1",
+  "type": "object",
+  "properties": {
+    "ranking": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "string",
+            "minLength": 1
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "icp_share": {
+            "type": "string"
+          },
+          "abm_accounts_expected": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "total_cost": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verify": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "show",
+          "score",
+          "icp_share",
+          "abm_accounts_expected",
+          "total_cost",
+          "reason",
+          "verify"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pre_show_plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target_accounts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "meeting_goal": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "invites": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "channel": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "angle": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "offset",
+                "channel",
+                "angle"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "field_event": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "show",
+          "target_accounts",
+          "meeting_goal",
+          "invites",
+          "field_event"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 3
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "ranking",
+    "pre_show_plans",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

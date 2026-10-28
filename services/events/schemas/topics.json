@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/topics@1",
+  "type": "object",
+  "properties": {
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 70
+          },
+          "buyer_problem": {
+            "type": "string",
+            "minLength": 1
+          },
+          "problem_source": {
+            "enum": [
+              "sales_questions",
+              "search_clusters",
+              "top_content"
+            ]
+          },
+          "learning_outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "speaker_profile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "enum": [
+              "panel",
+              "how_to",
+              "customer_story",
+              "demo",
+              "research_launch"
+            ]
+          },
+          "registration_forecast": {
+            "type": "object",
+            "properties": {
+              "low": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "high": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "basis": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "low",
+              "high",
+              "basis"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "rank",
+          "title",
+          "buyer_problem",
+          "problem_source",
+          "learning_outcomes",
+          "speaker_profile",
+          "format",
+          "registration_forecast"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "rank_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "new_claim_requests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "topics",
+    "rank_reason",
+    "new_claim_requests",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

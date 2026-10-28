@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/sales_brief@1",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "brief": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "next_step": {
+      "type": "string",
+      "minLength": 1
+    },
+    "consent_note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "contact_id",
+    "brief",
+    "next_step",
+    "consent_note"
+  ],
+  "additionalProperties": false
+}
