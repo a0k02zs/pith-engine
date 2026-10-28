@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/chat@1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "enum": [
+        "reply",
+        "handoff",
+        "opt_out",
+        "template_needed"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "buttons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 20
+      },
+      "maxItems": 3
+    },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "enum": [
+            "asked_for_person",
+            "angry_or_complaint",
+            "refund",
+            "damaged_or_missing",
+            "legal_or_press",
+            "safety",
+            "no_answer",
+            "language",
+            "too_many_turns",
+            "sensitive_data"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "reason",
+        "summary"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "reply"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "properties": {
+          "text": true
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "handoff"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "properties": {
+          "text": true,
+          "handoff": true
+        },
+        "required": [
+          "handoff",
+          "text"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/report@1",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scorecard": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "this_week": {
+            "type": "string",
+            "minLength": 1
+          },
+          "change": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kpi",
+          "this_week",
+          "change",
+          "target"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "worked": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "did_not": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommendation": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "question",
+          "recommendation"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "next_week": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "markdown": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "headline",
+    "scorecard",
+    "worked",
+    "did_not",
+    "decisions",
+    "next_week",
+    "markdown"
+  ],
+  "additionalProperties": false
+}

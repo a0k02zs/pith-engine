@@ -1,0 +1,147 @@
+{
+  "id": "messaging.opt_out",
+  "version": 1,
+  "service": "messaging",
+  "description": "Record an opt-out from SMS, WhatsApp or push at once, sync it to every tool, and send 1 confirmation. No gate and no LLM.",
+  "trigger": {
+    "event": "svc.messaging/optout.received"
+  },
+  "steps": [
+    {
+      "id": "record_consent",
+      "type": "tool",
+      "name": "PUT consent withdrawn (channel, purpose marketing, evidence = inbound message id)",
+      "tool": {
+        "name": "engine",
+        "action": "contacts.consents.withdraw",
+        "risk": "write_internal"
+      },
+      "retry": {
+        "attempts": 5,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "route_sync",
+      "type": "branch",
+      "name": "Suppress on the provider of the channel the word arrived on",
+      "needs": [
+        "record_consent"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.channel == 'sms'",
+            "goto": "suppress_sms"
+          },
+          {
+            "if": "input.channel == 'whatsapp'",
+            "goto": "suppress_whatsapp"
+          }
+        ],
+        "else": "suppress_push"
+      }
+    },
+    {
+      "id": "suppress_sms",
+      "type": "tool",
+      "name": "Add the number to the SMS provider suppression list",
+      "needs": [
+        "route_sync"
+      ],
+      "tool": {
+        "name": "sms",
+        "action": "contacts.suppress",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "suppress_whatsapp",
+      "type": "tool",
+      "name": "Add the number to the WhatsApp marketing suppression list",
+      "needs": [
+        "route_sync"
+      ],
+      "tool": {
+        "name": "whatsapp",
+        "action": "contacts.suppress",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "suppress_push",
+      "type": "tool",
+      "name": "Turn off marketing push for the device tokens",
+      "needs": [
+        "route_sync"
+      ],
+      "tool": {
+        "name": "push",
+        "action": "contacts.suppress",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "cancel_pending",
+      "type": "tool",
+      "name": "Cancel queued marketing sends for this contact and channel",
+      "needs": [
+        "record_consent"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "client.pause_scheduled",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "confirm_check",
+      "type": "check",
+      "name": "The confirmation has no marketing content",
+      "needs": [
+        "record_consent"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "confirm_route",
+      "type": "branch",
+      "name": "SMS: send S-STOP once. WhatsApp: confirm only if the user typed a message. Push: no confirmation",
+      "needs": [
+        "confirm_check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.channel == 'sms' || (input.channel == 'whatsapp' && !input.button_payload)",
+            "goto": "confirm"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "confirm",
+      "type": "subflow",
+      "name": "Send the confirmation (utility purpose)",
+      "needs": [
+        "confirm_route"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "name": "engine/outbound.recorded type=unsubscribed",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    }
+  ]
+}

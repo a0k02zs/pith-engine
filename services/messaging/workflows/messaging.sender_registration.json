@@ -1,0 +1,65 @@
+{
+  "id": "messaging.sender_registration",
+  "version": 1,
+  "service": "messaging",
+  "description": "Register the sender for 1 market (rules in market-rules.yaml, sender.registration) and store it on the provider.",
+  "trigger": {
+    "event": "svc.messaging/sender.registration.requested"
+  },
+  "concurrency": {
+    "key": "event.data.client_id + ':' + event.data.market",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "read_brain",
+      "type": "tool",
+      "name": "Read the legal name, address and brand from the client brain (sender_identity)",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "register",
+      "type": "task",
+      "name": "Submit the sender registration for the market and record the result",
+      "needs": [
+        "read_brain"
+      ],
+      "task": {
+        "title": "Register the SMS and WhatsApp sender for this market (see market-rules.yaml sender.registration)",
+        "assignee_roles": [
+          "ops_lead"
+        ],
+        "due_hours": 720,
+        "done_output_schema": "messaging/sender@1"
+      }
+    },
+    {
+      "id": "configure",
+      "type": "tool",
+      "name": "Store the approved sender ID, number or short code on the SMS provider",
+      "needs": [
+        "register"
+      ],
+      "tool": {
+        "name": "sms",
+        "action": "senders.configure",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "registered",
+      "type": "emit",
+      "name": "Sender registered",
+      "needs": [
+        "configure"
+      ],
+      "emit": {
+        "event": "svc.messaging/sender.registered"
+      }
+    }
+  ]
+}

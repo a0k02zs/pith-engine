@@ -1,0 +1,175 @@
+{
+  "id": "messaging.two_way_chat",
+  "version": 1,
+  "service": "messaging",
+  "description": "Handle an inbound message: keywords with no LLM, an AI answer from the approved list, or a handoff to a person.",
+  "trigger": {
+    "event": "svc.messaging/inbound.received"
+  },
+  "concurrency": {
+    "key": "event.data.client_id + ':' + event.data.from_e164",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "keywords",
+      "type": "branch",
+      "name": "STOP, HELP and START words, or the Stop promotions button (messaging.classifyInbound)",
+      "branch": {
+        "cases": [
+          {
+            "if": "messaging.classifyInbound(event.data.text, market, event.data.button_payload) == 'opt_out'",
+            "goto": "opt_out"
+          },
+          {
+            "if": "messaging.classifyInbound(event.data.text, market, event.data.button_payload) == 'help'",
+            "goto": "help_check"
+          }
+        ],
+        "else": "classify"
+      }
+    },
+    {
+      "id": "opt_out",
+      "type": "subflow",
+      "name": "Opt-out workflow",
+      "needs": [
+        "keywords"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.opt_out"
+      }
+    },
+    {
+      "id": "help_check",
+      "type": "check",
+      "name": "Compliance check of the S-HELP template (cached per market)",
+      "needs": [
+        "keywords"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "help_reply",
+      "type": "subflow",
+      "name": "Send the S-HELP template",
+      "needs": [
+        "help_check"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "classify",
+      "type": "agent",
+      "name": "Classify intent; complaint, press, legal, regulator or safety go to a person (engine G4)",
+      "needs": [
+        "keywords"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/chat@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "messaging/chat@1"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Escalate or answer",
+      "needs": [
+        "classify"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.action == 'handoff'",
+            "goto": "escalate"
+          },
+          {
+            "if": "steps.classify.output.action == 'opt_out'",
+            "goto": "opt_out"
+          }
+        ],
+        "else": "answer"
+      }
+    },
+    {
+      "id": "answer",
+      "type": "agent",
+      "name": "Chat agent answers from the approved answers only; tools for order and booking lookups",
+      "needs": [
+        "route"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/chat@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "messaging/chat@1",
+        "tools": [
+          "get_order",
+          "get_booking",
+          "create_booking_change_request",
+          "create_lead",
+          "opt_out",
+          "handoff"
+        ]
+      }
+    },
+    {
+      "id": "reply_check",
+      "type": "check",
+      "name": "The reply has only approved answers, with no new price or claim",
+      "needs": [
+        "answer"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "fact"
+        ]
+      }
+    },
+    {
+      "id": "reply",
+      "type": "subflow",
+      "name": "Send the reply (free text only inside the WhatsApp 24 h window, else a utility template)",
+      "needs": [
+        "reply_check"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "name": "engine/escalation.raised to the people inbox (1 h for complaints, press, legal)",
+      "needs": [
+        "route"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "gate_human",
+      "type": "gate",
+      "name": "G5 a person replies, or approves the AI draft reply",
+      "needs": [
+        "escalate"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail"
+      }
+    }
+  ]
+}

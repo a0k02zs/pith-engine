@@ -1,0 +1,185 @@
+{
+  "id": "messaging.broadcast",
+  "version": 1,
+  "service": "messaging",
+  "description": "Check, approve and send 1 broadcast to a segment in 1 market, with a holdout and an A/B test cell.",
+  "trigger": {
+    "event": "svc.messaging/broadcast.requested"
+  },
+  "steps": [
+    {
+      "id": "templates",
+      "type": "subflow",
+      "name": "Get approved templates (reuse or create)",
+      "subflow": {
+        "workflow_id": "messaging.template_lifecycle"
+      }
+    },
+    {
+      "id": "resolve_audience",
+      "type": "tool",
+      "name": "Resolve the eligible audience (snapshot valid 24 h)",
+      "needs": [
+        "templates"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "precheck",
+      "type": "agent",
+      "name": "Pre-check the audience, the window per time zone, caps and state rules",
+      "needs": [
+        "resolve_audience"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/precheck@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "messaging/precheck@1"
+      }
+    },
+    {
+      "id": "compliance",
+      "type": "check",
+      "name": "Engine compliance gate with audience_id and send_at",
+      "needs": [
+        "precheck"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links",
+          "brand"
+        ]
+      }
+    },
+    {
+      "id": "gate_broadcast",
+      "type": "gate",
+      "name": "G3 approve the broadcast (audience size, cost, time, content)",
+      "needs": [
+        "compliance"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "templates"
+      }
+    },
+    {
+      "id": "cost_gate",
+      "type": "branch",
+      "name": "Message cost over the client's monthly messaging budget: ask for budget",
+      "needs": [
+        "gate_broadcast"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "estimate.cost > budget.remaining",
+            "goto": "gate_budget"
+          }
+        ],
+        "else": "send_test_cell"
+      }
+    },
+    {
+      "id": "gate_budget",
+      "type": "gate",
+      "name": "Budget for the extra message spend",
+      "needs": [
+        "cost_gate"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "strategist",
+          "client_finance"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "send_test_cell",
+      "type": "subflow",
+      "name": "Hold out 10% (min 1000) with messaging.splitAudience(), then send variants A and B to a 20% test cell",
+      "needs": [
+        "gate_broadcast"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "wait_test",
+      "type": "wait",
+      "name": "Wait 2 h, or until 100 clicks per variant",
+      "needs": [
+        "send_test_cell"
+      ],
+      "wait": {
+        "event": "svc.messaging/test.ready",
+        "timeout": "2h"
+      }
+    },
+    {
+      "id": "pick_winner",
+      "type": "agent",
+      "name": "Optimizer picks the winner (conversion per delivered, opt-out guardrail)",
+      "needs": [
+        "wait_test"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/optimize@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "messaging/optimize@1"
+      }
+    },
+    {
+      "id": "window_check",
+      "type": "check",
+      "name": "Check the send window and consent again before the main send",
+      "needs": [
+        "pick_winner"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "send_rest",
+      "type": "subflow",
+      "name": "Send the winner to the rest of the audience inside the window; stop if the opt-out rate is over 2% in the first 10000",
+      "needs": [
+        "window_check"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Broadcast finished",
+      "needs": [
+        "send_rest"
+      ],
+      "emit": {
+        "event": "svc.messaging/broadcast.completed"
+      }
+    }
+  ]
+}
