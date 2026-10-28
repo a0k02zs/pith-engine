@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/comment_suggestions@1",
+  "title": "Suggested comments; the executive posts by hand (WF-6)",
+  "type": "object",
+  "properties": {
+    "executive_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "post_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "post_url",
+          "text",
+          "source_ref"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 5
+    }
+  },
+  "required": [
+    "executive_id",
+    "comments"
+  ],
+  "additionalProperties": false
+}

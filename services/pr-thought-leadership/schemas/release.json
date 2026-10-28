@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/release@1",
+  "title": "Press release, fact sheet or 'pitch only' advice (WF-3, WF-5)",
+  "type": "object",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "recommend": {
+          "const": "pitch_only"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fact_sheet": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "recommend",
+        "reason",
+        "fact_sheet"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "markets": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "headline": {
+                "type": "string",
+                "minLength": 1
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1
+              },
+              "quotes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "speaker": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "needs_external_approval": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "speaker",
+                    "text",
+                    "needs_external_approval"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "headline",
+              "body",
+              "quotes"
+            ],
+            "additionalProperties": false
+          },
+          "minProperties": 1
+        },
+        "fact_sheet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "translated_markets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          },
+          "minItems": 0
+        },
+        "approvals_needed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "new_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "embargo_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "markets",
+        "fact_sheet",
+        "translated_markets",
+        "approvals_needed",
+        "new_claim_ids",
+        "embargo_at"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

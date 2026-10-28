@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/send_log@1",
+  "title": "What a person sent from their own mailbox (task output)",
+  "type": "object",
+  "properties": {
+    "sent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "edited": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "party_id",
+          "message_ref",
+          "sent_at",
+          "edited"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "not_sent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "party_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "sent",
+    "not_sent"
+  ],
+  "additionalProperties": false
+}

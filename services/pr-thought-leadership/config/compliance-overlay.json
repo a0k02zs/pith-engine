@@ -1,0 +1,16 @@
+{
+  "$comment": "Service overlay for compliance-rules.json service_overlays.pr. The engine gate merges these rules for service pr. src/overlay.ts implements the same checks for tests and local pre-checks.",
+  "service": "pr",
+  "rules_version": "0.1.0",
+  "rules": [
+    { "id": "PR-OPTOUT-LINE", "channels": ["press_pitch"], "markets": "*", "severity": "block", "message": "Every pitch has a 1-line opt-out." },
+    { "id": "PR-SENDER-IDENTITY", "channels": ["press_pitch"], "markets": "*", "severity": "block", "message": "Sender name and company are in the footer; US and CA also need a postal address." },
+    { "id": "PR-LISTED-LEGAL", "channels": ["press_pitch", "social_post", "web_page"], "markets": "*", "severity": "block", "when": "client.is_listed && item.price_sensitive", "message": "Price-sensitive content for a listed client needs a client_legal claim approval." },
+    { "id": "PR-CASL-BASIS", "channels": ["press_pitch"], "markets": ["CA"], "severity": "block", "message": "Canadian journalists need basis casl_business_exemption, express_casl or implied_casl." },
+    { "id": "PR-QC-FRENCH", "channels": ["press_pitch"], "markets": ["CA-QC"], "severity": "warn", "message": "French-language outlets in Quebec get French pitches." },
+    { "id": "PR-SENSITIVE-TOPIC", "channels": ["press_pitch", "social_post"], "markets": ["SG", "GCC"], "severity": "block", "message": "Politics, religion and similar topics need client_legal approval." },
+    { "id": "PR-AI-EDITOR-NAMED", "channels": ["press_pitch", "social_post", "web_page"], "markets": ["EU"], "severity": "block", "message": "Published text names a human editor (EU AI Act Article 50 editorial-responsibility exemption)." },
+    { "id": "PR-UNAPPROVED-CLAIM", "channels": ["press_pitch", "social_post", "web_page"], "markets": "*", "severity": "block", "message": "Every claim id is in the approved claims for the market. Same effect as engine G-CLAIM-APPROVED." },
+    { "id": "PR-RECENTLY-PITCHED", "channels": ["press_pitch"], "markets": "*", "severity": "warn", "message": "The journalist was pitched by a Pith client in the last 14 days." }
+  ]
+}

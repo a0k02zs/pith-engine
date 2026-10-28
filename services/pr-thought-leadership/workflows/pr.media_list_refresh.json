@@ -1,0 +1,107 @@
+{
+  "id": "pr.media_list_refresh",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-1. Build and refresh journalist and podcast lists per client, market and topic. Monthly, and on demand for a new angle.",
+  "trigger": {
+    "cron": "0 6 1 * *",
+    "event": "svc.pr/media_list.requested"
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "pull_db",
+      "type": "tool",
+      "name": "Search the media database by beat, market and language",
+      "tool": {
+        "name": "pr",
+        "action": "journalists.search",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "pull_articles",
+      "type": "tool",
+      "name": "Last 20 articles per journalist",
+      "needs": [
+        "pull_db"
+      ],
+      "tool": {
+        "name": "pr",
+        "action": "articles.recent",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "name": "Score fit and tier; write media records (T2)",
+      "needs": [
+        "pull_articles"
+      ],
+      "agent": {
+        "prompt_ref": "pr/media_researcher@1",
+        "output_schema": "pr/media_list@1"
+      }
+    },
+    {
+      "id": "upsert",
+      "type": "tool",
+      "name": "Upsert journalists as parties (kind journalist); never clears do_not_contact",
+      "needs": [
+        "research"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "parties.upsert",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "new_tier1",
+      "type": "branch",
+      "needs": [
+        "upsert"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.research.output.new_tier1_count > 0",
+            "goto": "approve_list"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "approve_list",
+      "type": "gate",
+      "name": "PR lead approves new tier 1 names",
+      "needs": [
+        "new_tier1"
+      ],
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "pr_lead"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "research"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "needs": [
+        "new_tier1"
+      ],
+      "emit": {
+        "event": "svc.pr/media_list.refreshed"
+      }
+    }
+  ]
+}

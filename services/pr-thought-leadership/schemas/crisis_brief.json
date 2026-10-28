@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/crisis_brief@1",
+  "title": "Crisis triage brief (WF-8)",
+  "type": "object",
+  "properties": {
+    "crisis_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "level_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "what_happened": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 0
+    },
+    "known": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "unknown": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "reach": {
+      "type": "string"
+    },
+    "deciders": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "pause_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "crisis_id",
+    "level",
+    "level_reason",
+    "what_happened",
+    "sources",
+    "known",
+    "unknown",
+    "reach",
+    "deciders",
+    "pause_list"
+  ],
+  "additionalProperties": false
+}

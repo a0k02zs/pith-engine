@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/pitches@1",
+  "title": "Pitch or follow-up drafts (WF-3)",
+  "type": "object",
+  "properties": {
+    "angle_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "price_sensitive": {
+      "type": "boolean"
+    },
+    "pitches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          },
+          "references_article_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "new_claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "follow_up": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "party_id",
+          "subject",
+          "body",
+          "language",
+          "market",
+          "references_article_url",
+          "claim_ids",
+          "new_claim_ids",
+          "follow_up"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 30
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "angle_id",
+    "price_sensitive",
+    "pitches",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

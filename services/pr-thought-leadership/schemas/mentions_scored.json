@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/mentions_scored@1",
+  "title": "Scored mentions (WF-7)",
+  "type": "object",
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "outlet": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "tier_estimated": {
+            "type": "boolean"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z]{2})?$"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "feature",
+              "news",
+              "quote",
+              "mention",
+              "podcast",
+              "broadcast",
+              "list"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "enum": [
+              "client",
+              "competitor"
+            ]
+          },
+          "spokesperson_quoted": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sentiment": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "neutral",
+              "negative"
+            ]
+          },
+          "messages_pulled_through": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "backlink": {
+            "type": "string",
+            "enum": [
+              "follow",
+              "nofollow",
+              "none"
+            ]
+          },
+          "crisis_level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "angle_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reach_estimate": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "required": [
+          "url",
+          "outlet",
+          "tier",
+          "tier_estimated",
+          "market",
+          "language",
+          "published_at",
+          "type",
+          "subject",
+          "sentiment",
+          "messages_pulled_through",
+          "backlink",
+          "crisis_level"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "max_crisis_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "crisis_items": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "records",
+    "max_crisis_level",
+    "crisis_items"
+  ],
+  "additionalProperties": false
+}

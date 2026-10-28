@@ -1,0 +1,79 @@
+{
+  "id": "pr.monitor",
+  "version": 1,
+  "service": "pr",
+  "description": "WF-7. Coverage, sentiment and share of voice every 15 minutes; level 2 or 3 starts the crisis workflow.",
+  "trigger": {
+    "cron": "*/15 * * * *"
+  },
+  "steps": [
+    {
+      "id": "mentions",
+      "type": "tool",
+      "tool": {
+        "name": "pr",
+        "action": "mentions.search",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "classify",
+      "type": "agent",
+      "name": "Coverage records (T11), sentiment, tier, crisis level",
+      "needs": [
+        "mentions"
+      ],
+      "agent": {
+        "prompt_ref": "pr/monitor@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "pr/mentions_scored@1"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "classify"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.max_crisis_level >= 2",
+            "goto": "escalate"
+          }
+        ],
+        "else": "record"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "subflow",
+      "needs": [
+        "route"
+      ],
+      "subflow": {
+        "workflow_id": "pr.crisis"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "route"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    },
+    {
+      "id": "coverage",
+      "type": "emit",
+      "needs": [
+        "record"
+      ],
+      "emit": {
+        "event": "svc.pr/coverage.found"
+      }
+    }
+  ]
+}

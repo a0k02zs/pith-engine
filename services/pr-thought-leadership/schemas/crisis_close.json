@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/crisis_close@1",
+  "title": "A person closes the issue (task output)",
+  "type": "object",
+  "properties": {
+    "crisis_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "closed_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "statement_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    }
+  },
+  "required": [
+    "crisis_id",
+    "closed_by",
+    "summary",
+    "statement_url"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr/exec_posts@1",
+  "title": "Executive LinkedIn drafts (WF-6)",
+  "type": "object",
+  "properties": {
+    "executive_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pillar": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "story",
+              "lesson_list",
+              "contrarian_view",
+              "data_point",
+              "behind_the_scenes",
+              "news_comment",
+              "carousel",
+              "article"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "new_claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0,
+            "maxItems": 3
+          },
+          "post_at_local": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "needs_legal": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "pillar",
+          "format",
+          "text",
+          "source_refs",
+          "claim_ids",
+          "new_claim_ids",
+          "hashtags",
+          "post_at_local",
+          "needs_legal"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 4
+    },
+    "new_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "needs_more_input": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "executive_id",
+    "posts",
+    "new_claim_ids",
+    "needs_more_input"
+  ],
+  "additionalProperties": false
+}
