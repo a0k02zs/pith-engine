@@ -71,7 +71,7 @@ describe("output schemas", () => {
   });
 
   it("needs a rights grant on every amplification pick", () => {
-    const pick = { party_id: "pty_1", post_url: "https://tiktok.com/@sam/video/1", artifact_id: null, rights_grant_ids: ["rg_1"], rights_end: "2027-02-01", markets: ["GB"], budget: 300, currency: "GBP", reason: "Lowest CPA" };
+    const pick = { party_id: "pty_1", platform: "tiktok", post_url: "https://tiktok.com/@sam/video/1", artifact_id: null, rights_grant_ids: ["rg_1"], rights_end: "2027-02-01", markets: ["GB"], budget: 300, currency: "GBP", reason: "Lowest CPA" };
     const rep = { kpis: [{ scope: "creator", key: "pty_1", name: "roas", value: null, inputs: {} }], amplify: [pick], learn: [], flags: [], summary: "Good week.", missing_data: [] };
     expect(validateOutput("influencer/weekly_report@1", rep).valid).toBe(true);
     expect(validateOutput("influencer/weekly_report@1", { ...rep, amplify: [{ ...pick, rights_grant_ids: [] }] }).valid).toBe(false);

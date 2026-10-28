@@ -142,14 +142,14 @@ describe("influencer workflows", () => {
       expect(wfById("influencer.payout").trigger).toEqual({ event: "svc.influencer/deal.delivered" });
     });
 
-    it("hands approved posts to paid social with the budget approval, after a budget gate", () => {
+    it("hands approved posts to paid social with the platform and the budget approval, after a budget gate", () => {
       const wf = wfById("influencer.weekly");
       const amplify = byId(wf, "amplify") as WorkflowStep & { subflow: { workflow_id: string; input: Record<string, string> } };
       expect(amplify.needs).toEqual(["approve_amplify"]);
       expect(byId(wf, "approve_amplify").gate?.approval_kind).toBe("budget");
       expect(amplify.subflow.workflow_id).toBe("paid_social.creator_amplify");
       expect(Object.keys(amplify.subflow.input).sort()).toEqual(
-        ["artifact_id", "budget", "budget_approval_id", "client_id", "currency", "markets", "party_id", "post_url", "rights_grant_ids"],
+        ["artifact_id", "budget", "budget_approval_id", "client_id", "currency", "markets", "party_id", "platform", "post_url", "rights_grant_ids"],
       );
     });
   });

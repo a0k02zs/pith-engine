@@ -33,7 +33,7 @@ npm test
 - A creator's "no" stops contact with risk `remove`, so it is never blocked (engine G10).
 - The plan, shortlist, contract and content gates need the influencer lead and the client. Payout needs client finance. No gate here can be skipped.
 - The creator licence (AE, SA) and the deal terms are checked before the contract gate.
-- Paid amplification goes to `paid_social.creator_amplify` only after a `budget` gate, with the budget approval id.
+- Paid amplification goes to `paid_social.creator_amplify` only after a `budget` gate, with the ad platform. Paid social runs its own budget gate per creator ad; the budget approval id goes along as context.
 - Every engine disclosure label is accepted, except where a stricter market rule narrows it: Germany treats a bare `#ad` as a weak tag, and France accepts only "Publicité" or "Collaboration commerciale" (engine rule `FR-INFLUENCER-LAW`).
 
 ## Pending in the engine

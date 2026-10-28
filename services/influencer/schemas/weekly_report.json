@@ -57,6 +57,14 @@
             "type": "string",
             "minLength": 1
           },
+          "platform": {
+            "enum": [
+              "meta",
+              "linkedin",
+              "tiktok",
+              "snapchat"
+            ]
+          },
           "post_url": {
             "type": "string",
             "format": "uri"
@@ -107,6 +115,7 @@
         },
         "required": [
           "party_id",
+          "platform",
           "post_url",
           "artifact_id",
           "rights_grant_ids",

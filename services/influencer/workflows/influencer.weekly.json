@@ -94,13 +94,14 @@
       "needs": [
         "approve_amplify"
       ],
-      "name": "Paid social skips its own budget gate when it gets budget_approval_id",
+      "name": "Paid social runs its own budget gate per creator ad (budget gates never skip); budget_approval_id is context only",
       "subflow": {
         "workflow_id": "paid_social.creator_amplify",
         "per": "post",
         "input": {
           "client_id": "input.client_id",
           "party_id": "item.party_id",
+          "platform": "item.platform",
           "post_url": "item.post_url",
           "artifact_id": "item.artifact_id",
           "rights_grant_ids": "item.rights_grant_ids",
