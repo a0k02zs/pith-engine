@@ -2,7 +2,7 @@
 
 Pith M organic social: listening, a monthly content calendar, posts, the community inbox, escalation and weekly learning. It is built on the shared engine contracts v0.1.0. Paid social and boosting are service 11 and are not here.
 
-Status: draft. The design pack is at `docs/`. The project owner has not yet confirmed the packages (Starter, Growth, Scale) or the starting KPI targets.
+Status: draft. The design pack is at `docs/`. The Starter, Growth and Scale packages and the starting KPI targets were adopted on 28 Oct 2026 as the v1 defaults (`config/packages.json`). Pith sets the final names and prices.
 
 ## What is here
 
@@ -11,6 +11,7 @@ Status: draft. The design pack is at `docs/`. The project owner has not yet conf
 | `workflows/` | 8 workflow definitions that the engine runs (`social.onboard`, `social.listen_daily`, `social.plan_monthly`, `social.create_post`, `social.reactive_post`, `social.engage_inbox`, `social.escalate`, `social.weekly_report`) |
 | `prompts/` | 10 agent prompts plus the shared preamble. Each file has a `ref` and a `model` header. |
 | `schemas/` | 10 output schemas (JSON Schema 2020-12), 1 per agent output, by `$id` such as `social/post@1` |
+| `config/packages.json` | Default packages (platforms, feed posts per week, community hours, markets) and starting KPI targets |
 | `config/market-rules.json` | Social rules per market: platforms, paid post labels, work days, no-post windows, native editor languages, caption limits, hashtag ranges |
 | `src/` | Loaders, the system prompt builder and the rule functions (post checks, schedule checks, final decision, calendar checks, inbox routing, crisis actions, KPIs) |
 | `test/` | Workflow, schema and rule tests |

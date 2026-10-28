@@ -48,7 +48,7 @@ Default pillar sets:
 
 ## 4. Cadence (default per package)
 
-These are proposed service packages. Pith sets the final names and prices.
+These are the v1 default packages, adopted on 28 Oct 2026 (`config/packages.json`). Pith sets the final names and prices.
 
 | Package | Platforms | Feed posts / week / platform | Stories / week | Community hours | Markets included |
 |---------|-----------|------------------------------|----------------|-----------------|------------------|
