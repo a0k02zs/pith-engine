@@ -496,7 +496,8 @@
     "artifacts.create": "write_internal",
     "artifacts.brand_score": "read",
     "parties.upsert": "write_internal: create or update a party (same as POST /parties)",
-    "metrics.query": "read: read KPI values (same as GET /metrics)"
+    "metrics.query": "read: read KPI values (same as GET /metrics)",
+    "rights.create": "write_internal: record a rights grant, such as paid_usage or whitelisting after a signed contract (same as POST /clients/{client_id}/rights)"
   },
   "conversion_kinds": [
     "purchase",
