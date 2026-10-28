@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/guidelines@1",
+  "title": "brand guidelines output",
+  "type": "object",
+  "properties": {
+    "sections": {
+      "type": "array",
+      "minItems": 14,
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 14
+          },
+          "title": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "title",
+          "markdown"
+        ]
+      }
+    },
+    "image_placeholders": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "sections"
+  ]
+}

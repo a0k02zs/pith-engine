@@ -1,0 +1,475 @@
+{
+  "id": "brand.build",
+  "version": 1,
+  "service": "brand",
+  "description": "Service 13 brand strategy and design. Builds positioning, verbal and visual identity, guidelines, and the client brain. Packages A (brand-to-brain), B (refresh), C (full build). See 02-pipeline.md.",
+  "trigger": {
+    "event": "svc.brand/intake.submitted",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "intake_form_id"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "intake_form_id": {
+        "type": "string"
+      },
+      "package_override": {
+        "enum": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "naming_in_scope": {
+        "type": "boolean",
+        "default": false
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "intake",
+      "type": "agent",
+      "name": "Scope the brief",
+      "agent": {
+        "prompt_ref": "brand/intake@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "brand/scoped_brief@1"
+      }
+    },
+    {
+      "id": "collect_assets",
+      "type": "tool",
+      "name": "Crawl site, social, ads and decks",
+      "needs": [
+        "intake"
+      ],
+      "tool": {
+        "name": "asset_crawler",
+        "action": "inventory",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "name": "Audit the current brand",
+      "needs": [
+        "collect_assets"
+      ],
+      "agent": {
+        "prompt_ref": "brand/auditor@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "brand/audit@1"
+      }
+    },
+    {
+      "id": "route_package",
+      "type": "branch",
+      "name": "Package A skips strategy and design",
+      "needs": [
+        "audit"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "coalesce(inputs.package_override, steps.intake.output.package) == 'A'",
+            "goto": "verbal_identity"
+          }
+        ],
+        "else": "research"
+      }
+    },
+    {
+      "id": "research",
+      "type": "subflow",
+      "name": "Competitor and voice-of-customer research per market",
+      "needs": [
+        "route_package"
+      ],
+      "subflow": {
+        "workflow_id": "brand.research",
+        "per": "market"
+      }
+    },
+    {
+      "id": "interviews",
+      "type": "wait",
+      "name": "Strategist uploads interview transcripts",
+      "needs": [
+        "route_package"
+      ],
+      "wait": {
+        "event": "svc.brand/interviews.uploaded",
+        "match": "data.client_id == event.data.client_id",
+        "timeout": "21d"
+      }
+    },
+    {
+      "id": "interview_synthesis",
+      "type": "agent",
+      "name": "Synthesize interviews",
+      "needs": [
+        "interviews"
+      ],
+      "agent": {
+        "prompt_ref": "brand/interview_synthesizer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/interviews@1"
+      }
+    },
+    {
+      "id": "insights",
+      "type": "agent",
+      "name": "Insight brief",
+      "needs": [
+        "research",
+        "interview_synthesis"
+      ],
+      "agent": {
+        "prompt_ref": "brand/insight_synthesizer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/insights@1"
+      }
+    },
+    {
+      "id": "positioning",
+      "type": "agent",
+      "name": "Draft 3 positioning routes",
+      "needs": [
+        "insights"
+      ],
+      "agent": {
+        "prompt_ref": "brand/positioning_strategist@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/routes@1"
+      }
+    },
+    {
+      "id": "approve_positioning",
+      "type": "gate",
+      "name": "Positioning workshop",
+      "needs": [
+        "positioning"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "strategist",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 120,
+        "on_reject": "goto",
+        "on_changes": "positioning"
+      }
+    },
+    {
+      "id": "verbal_identity",
+      "type": "agent",
+      "name": "Messaging house and voice",
+      "needs": [
+        "approve_positioning"
+      ],
+      "agent": {
+        "prompt_ref": "brand/messaging_and_voice@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/verbal_identity@1"
+      }
+    },
+    {
+      "id": "propose_claims",
+      "type": "tool",
+      "name": "Propose new claims to the claims register",
+      "needs": [
+        "verbal_identity"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "POST /clients/{client_id}/claims",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "route_naming",
+      "type": "branch",
+      "name": "Naming or new tagline in scope?",
+      "needs": [
+        "verbal_identity"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "inputs.naming_in_scope || size(steps.verbal_identity.output.new_taglines) > 0",
+            "goto": "name_screen"
+          }
+        ],
+        "else": "route_design"
+      }
+    },
+    {
+      "id": "name_screen",
+      "type": "agent",
+      "name": "Generate and screen names and taglines",
+      "needs": [
+        "route_naming"
+      ],
+      "agent": {
+        "prompt_ref": "brand/naming_and_screen@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/name_screen@1"
+      }
+    },
+    {
+      "id": "approve_name",
+      "type": "gate",
+      "name": "Name and tagline legal screen",
+      "needs": [
+        "name_screen"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal"
+        ],
+        "required_count": 1,
+        "sla_hours": 240,
+        "on_reject": "goto",
+        "on_changes": "name_screen"
+      }
+    },
+    {
+      "id": "route_design",
+      "type": "branch",
+      "name": "Package A skips visual design",
+      "needs": [
+        "verbal_identity"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "coalesce(inputs.package_override, steps.intake.output.package) == 'A'",
+            "goto": "guidelines"
+          }
+        ],
+        "else": "territories"
+      }
+    },
+    {
+      "id": "territories",
+      "type": "agent",
+      "name": "3 visual territories and mood boards",
+      "needs": [
+        "route_design"
+      ],
+      "agent": {
+        "prompt_ref": "brand/moodboard_director@1",
+        "model": "claude-opus-5-5",
+        "tools": [
+          "image_generation_moodboard_only"
+        ],
+        "output_schema": "brand/territories@1"
+      }
+    },
+    {
+      "id": "approve_territory",
+      "type": "gate",
+      "name": "Territory choice",
+      "needs": [
+        "territories"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "goto",
+        "on_changes": "territories"
+      }
+    },
+    {
+      "id": "identity_design",
+      "type": "wait",
+      "name": "Designer delivers identity files in Figma",
+      "needs": [
+        "approve_territory"
+      ],
+      "wait": {
+        "event": "svc.brand/identity.delivered",
+        "match": "data.client_id == event.data.client_id",
+        "timeout": "30d"
+      }
+    },
+    {
+      "id": "design_qa",
+      "type": "check",
+      "name": "Contrast, logo set, files, font licences",
+      "needs": [
+        "identity_design"
+      ],
+      "check": {
+        "kinds": [
+          "accessibility",
+          "brand"
+        ]
+      }
+    },
+    {
+      "id": "market_adaptation",
+      "type": "subflow",
+      "name": "Arabic, Quebec French and other locales; culture check",
+      "needs": [
+        "design_qa"
+      ],
+      "subflow": {
+        "workflow_id": "brand.market_adaptation",
+        "per": "locale"
+      }
+    },
+    {
+      "id": "approve_identity",
+      "type": "gate",
+      "name": "Approve identity",
+      "needs": [
+        "market_adaptation"
+      ],
+      "gate": {
+        "approval_kind": "design",
+        "required_roles": [
+          "client_approver",
+          "client_executive"
+        ],
+        "required_count": 2,
+        "sla_hours": 120,
+        "on_reject": "goto",
+        "on_changes": "identity_design"
+      }
+    },
+    {
+      "id": "guidelines",
+      "type": "agent",
+      "name": "Write guidelines; designer builds Figma library and Canva kit",
+      "needs": [
+        "approve_identity",
+        "route_design"
+      ],
+      "agent": {
+        "prompt_ref": "brand/guidelines_writer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/guidelines@1"
+      }
+    },
+    {
+      "id": "compile_brain",
+      "type": "agent",
+      "name": "Compile the brand profile (status draft)",
+      "needs": [
+        "guidelines"
+      ],
+      "agent": {
+        "prompt_ref": "brand/brain_compiler@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "brand/brain_bundle@1"
+      }
+    },
+    {
+      "id": "save_draft",
+      "type": "tool",
+      "name": "Save draft profile, banned terms and chunks",
+      "needs": [
+        "compile_brain"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "PUT /clients/{client_id}/brain",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "calibrate_scorer",
+      "type": "check",
+      "name": "Brand scorer calibration (18 of 20 each way)",
+      "needs": [
+        "save_draft"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_brain",
+      "type": "gate",
+      "name": "Brain go-live",
+      "needs": [
+        "calibrate_scorer"
+      ],
+      "gate": {
+        "approval_kind": "design",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "goto",
+        "on_changes": "compile_brain"
+      }
+    },
+    {
+      "id": "brain_live",
+      "type": "emit",
+      "name": "Tell other services the brain is ready",
+      "needs": [
+        "approve_brain"
+      ],
+      "emit": {
+        "event": "svc.brand/brain.live"
+      }
+    },
+    {
+      "id": "measure",
+      "type": "emit",
+      "name": "Record delivery KPIs",
+      "needs": [
+        "brain_live"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "name": "Record learnings",
+      "needs": [
+        "measure"
+      ],
+      "agent": {
+        "prompt_ref": "brand/learn@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "brand/learning@1"
+      }
+    }
+  ]
+}

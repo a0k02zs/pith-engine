@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brand/health_note@1",
+  "title": "brand health_note output",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "change": {
+            "type": "number"
+          },
+          "market": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "value"
+        ]
+      }
+    },
+    "lowest_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "cause": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "score"
+        ]
+      }
+    },
+    "drift_months": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "drift_alerts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3
+    }
+  },
+  "required": [
+    "summary",
+    "metrics",
+    "drift_months",
+    "actions"
+  ]
+}
