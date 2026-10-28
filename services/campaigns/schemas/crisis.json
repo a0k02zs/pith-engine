@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns/crisis@1",
+  "type": "object",
+  "properties": {
+    "what_happened": {
+      "type": "string",
+      "minLength": 1
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "paused": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "risk": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "action",
+          "risk"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recommended": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    }
+  },
+  "required": [
+    "what_happened",
+    "markets",
+    "paused",
+    "options",
+    "recommended"
+  ],
+  "additionalProperties": false
+}

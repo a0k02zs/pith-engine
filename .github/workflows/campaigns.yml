@@ -1,0 +1,21 @@
+name: campaigns
+on:
+  pull_request:
+    paths: ["services/campaigns/**"]
+  push:
+    branches: [main]
+    paths: ["services/campaigns/**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/campaigns
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test

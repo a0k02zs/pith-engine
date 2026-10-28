@@ -1,0 +1,72 @@
+{
+  "id": "campaigns.crisis",
+  "version": 1,
+  "service": "campaigns",
+  "description": "Plan service 2, gate G6. On an escalation for a live campaign, pause first (engine client.pause_scheduled, risk remove, never blocked by G10), then ask a person. Spend alerts route here through the engine.",
+  "trigger": {
+    "event": "engine/escalation.raised"
+  },
+  "steps": [
+    {
+      "id": "pause",
+      "type": "tool",
+      "name": "Pause scheduled sends, posts and ad sets for the client",
+      "tool": {
+        "name": "engine",
+        "action": "client.pause_scheduled",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "summarize",
+      "type": "agent",
+      "needs": [
+        "pause"
+      ],
+      "agent": {
+        "prompt_ref": "campaigns/crisis_summary@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "campaigns/crisis@1"
+      }
+    },
+    {
+      "id": "approve_action",
+      "type": "gate",
+      "name": "G6 Crisis",
+      "needs": [
+        "summarize"
+      ],
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "resume",
+      "type": "tool",
+      "needs": [
+        "approve_action"
+      ],
+      "name": "Restart only when the account lead approves",
+      "tool": {
+        "name": "engine",
+        "action": "client.resume_scheduled",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_resumed",
+      "type": "emit",
+      "needs": [
+        "resume"
+      ],
+      "emit": {
+        "event": "svc.campaigns/market.resumed"
+      }
+    }
+  ]
+}

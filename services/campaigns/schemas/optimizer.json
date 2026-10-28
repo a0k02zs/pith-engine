@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns/optimizer@1",
+  "type": "object",
+  "properties": {
+    "moves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "amount": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "type": {
+            "enum": [
+              "auto",
+              "needs_g5"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "amount",
+          "type",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ad_set": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "enum": [
+              "cpa_drift",
+              "spend_spike",
+              "fatigue",
+              "policy"
+            ]
+          }
+        },
+        "required": [
+          "ad_set",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fatigue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ad_set": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ctr_drop": {
+            "type": "number"
+          },
+          "frequency": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "ad_set",
+          "ctr_drop",
+          "frequency"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "moves",
+    "pauses",
+    "fatigue",
+    "summary"
+  ],
+  "additionalProperties": false
+}
