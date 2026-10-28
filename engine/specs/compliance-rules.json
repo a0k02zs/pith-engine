@@ -1,0 +1,1325 @@
+{
+  "rules_version": "2026-10-21.8",
+  "$comment": "Planning summary taken from the Pith M Automation Plan market sections. Not legal advice. A local lawyer confirms each market before launch. Rule ids are stable; services may cite them.",
+  "global": [
+    {
+      "id": "G-CONSENT-RECORD",
+      "channels": [
+        "email",
+        "sms",
+        "whatsapp",
+        "push",
+        "phone_call"
+      ],
+      "purpose": "marketing",
+      "severity": "block",
+      "check": "every recipient comes from /audiences/resolve and has an eligible consent for its own country",
+      "message": "Recipient has no consent record valid for their country."
+    },
+    {
+      "id": "G-SUPPRESSED",
+      "channels": [
+        "*"
+      ],
+      "severity": "block",
+      "check": "contact.suppressed == false",
+      "message": "Contact is suppressed (bounce, complaint, erasure, DNC)."
+    },
+    {
+      "id": "G-CLAIM-APPROVED",
+      "channels": [
+        "*"
+      ],
+      "severity": "block",
+      "check": "every claim, price, health, finance or legal statement matches an approved claim for each market",
+      "message": "New or unapproved claim. Open a claim approval."
+    },
+    {
+      "id": "G-BANNED-TERM",
+      "channels": [
+        "*"
+      ],
+      "severity": "block",
+      "check": "no banned term for the client or market",
+      "message": "Banned term found."
+    },
+    {
+      "id": "G-UNSUB",
+      "channels": [
+        "email"
+      ],
+      "purpose": "marketing",
+      "severity": "block",
+      "check": "working unsubscribe link and List-Unsubscribe header",
+      "message": "Email needs an unsubscribe link and header."
+    },
+    {
+      "id": "G-SENDER-ID",
+      "channels": [
+        "email",
+        "sms",
+        "whatsapp"
+      ],
+      "severity": "block",
+      "check": "sender legal name present; sender identity matches brand.sender_identity",
+      "message": "Sender identity missing."
+    },
+    {
+      "id": "G-PAID-DISCLOSURE",
+      "channels": [
+        "influencer_post",
+        "social_post",
+        "video",
+        "affiliate_link"
+      ],
+      "when": "paid.is_paid_partnership",
+      "severity": "block",
+      "check": "market disclosure label present (see market.disclosure_labels)",
+      "message": "Paid content needs the ad disclosure label for this market."
+    },
+    {
+      "id": "G-RIGHTS",
+      "channels": [
+        "*"
+      ],
+      "when": "media.people not empty or music or stock used",
+      "severity": "block",
+      "check": "active rights_grants for each person, scope and market; licence refs present",
+      "message": "Missing likeness, voice, music or stock rights."
+    },
+    {
+      "id": "G-NO-FAKE-REVIEWS",
+      "channels": [
+        "review_request",
+        "social_post",
+        "web_page"
+      ],
+      "severity": "block",
+      "check": "no incentive tied to positive reviews, no review gating, no fabricated reviews",
+      "message": "Fake, bought or gated reviews are not allowed in any market."
+    },
+    {
+      "id": "G-SENSITIVE-TOPIC",
+      "channels": [
+        "*"
+      ],
+      "severity": "warn",
+      "check": "content touches brand.sensitive_topics, religion, politics",
+      "message": "Sensitive topic. A person must review."
+    },
+    {
+      "id": "G-SEND-WINDOW",
+      "channels": [
+        "sms",
+        "whatsapp",
+        "phone_call",
+        "push"
+      ],
+      "severity": "block",
+      "check": "send_at inside market.send_window in recipient local time",
+      "message": "Outside allowed local send hours."
+    },
+    {
+      "id": "G-AI-IMAGE-LABEL",
+      "channels": [
+        "web_page",
+        "landing_page",
+        "paid_ad",
+        "social_post",
+        "video"
+      ],
+      "when": "media.ai_generated",
+      "severity": "warn",
+      "message": "AI-generated media: add the platform AI label. Required (block) in EU markets by EU-AI-LABEL."
+    },
+    {
+      "id": "G-LIST-UPLOAD",
+      "channels": [
+        "paid_ad"
+      ],
+      "when": "paid.targeting.custom_list_audience_id",
+      "severity": "block",
+      "check": "audience built by /audiences/resolve with channel=paid_ad; each contact basis in eligible_bases.paid_ad; gpc_opt_out excluded",
+      "message": "Customer list upload needs an eligible basis for ad matching."
+    },
+    {
+      "id": "G-SENSITIVE-TARGETING",
+      "channels": [
+        "paid_ad"
+      ],
+      "when": "paid.targeting.uses_sensitive_categories",
+      "severity": "block",
+      "message": "No targeting on sensitive categories (legal ban in the EU under the DSA; Pith policy elsewhere)."
+    },
+    {
+      "id": "G-MINOR-TARGETING",
+      "channels": [
+        "paid_ad",
+        "social_post",
+        "influencer_post"
+      ],
+      "when": "paid.targeting.min_age < 18",
+      "severity": "block",
+      "message": "No targeted ads to minors."
+    },
+    {
+      "id": "G-POLITICAL",
+      "channels": [
+        "*"
+      ],
+      "when": "paid.political",
+      "severity": "block",
+      "message": "Political ads are out of scope for Pith M."
+    },
+    {
+      "id": "G-RESTRICTED-PRODUCT",
+      "channels": [
+        "paid_ad",
+        "social_post",
+        "influencer_post",
+        "video"
+      ],
+      "when": "paid.product_category not in [general]",
+      "severity": "warn",
+      "message": "Restricted product: check platform and market rules."
+    },
+    {
+      "id": "G-DO-NOT-CONTACT",
+      "channels": [
+        "press_pitch",
+        "email",
+        "linkedin_message"
+      ],
+      "when": "recipient is a party",
+      "severity": "block",
+      "check": "party.do_not_contact == false",
+      "message": "This person opted out of contact from Pith (all clients)."
+    },
+    {
+      "id": "G-DARK-PATTERN",
+      "channels": [
+        "web_page",
+        "landing_page",
+        "email"
+      ],
+      "severity": "block",
+      "message": "No dark patterns: fake countdowns, fake scarcity, pre-ticked consent, confirmshaming, hidden fees."
+    }
+  ],
+  "markets": {
+    "GB": {
+      "group": "UK",
+      "locale": "en-GB",
+      "currency": "GBP",
+      "laws": [
+        "UK GDPR",
+        "Data Protection Act 2018",
+        "PECR",
+        "Data (Use and Access) Act 2025",
+        "CAP Code / ASA",
+        "CMA (fake reviews)"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in",
+            "legitimate_interest",
+            "corporate_subscriber"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in",
+          "soft_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in",
+          "soft_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "Ad"
+      ],
+      "rules": [
+        {
+          "id": "UK-PRIVACY-URL",
+          "channels": [
+            "email"
+          ],
+          "severity": "block",
+          "message": "Privacy notice URL required."
+        },
+        {
+          "id": "UK-COOKIE",
+          "channels": [
+            "web_page",
+            "landing_page"
+          ],
+          "severity": "block",
+          "message": "Cookie consent before any tracking, including A/B test, heatmap and session-recording tools."
+        },
+        {
+          "id": "UK-LIA",
+          "channels": [
+            "email",
+            "linkedin_message"
+          ],
+          "when": "basis == legitimate_interest",
+          "severity": "warn",
+          "message": "Legitimate interest assessment must be on file for cold B2B email."
+        },
+        {
+          "id": "UK-VAT-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "when": "segment == b2c and price_mentions not empty",
+          "severity": "block",
+          "message": "UK B2C prices must include VAT."
+        },
+        {
+          "id": "UK-HFSS",
+          "channels": [
+            "paid_ad",
+            "social_post",
+            "influencer_post",
+            "video",
+            "web_page"
+          ],
+          "when": "paid.product_category == less_healthy_food",
+          "severity": "block",
+          "message": "UK: paid online ads for less healthy food and drink are banned from 5 January 2026."
+        },
+        {
+          "id": "UK-DRIP-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "severity": "block",
+          "message": "No drip pricing: mandatory fees must be in the headline price (DMCC Act 2024)."
+        }
+      ],
+      "send_window": {
+        "from": "08:00",
+        "to": "21:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ]
+      }
+    },
+    "SG": {
+      "group": "SG",
+      "locale": "en-SG",
+      "currency": "SGD",
+      "laws": [
+        "PDPA 2012",
+        "Do Not Call Registry",
+        "Spam Control Act",
+        "ASAS Code of Advertising Practice"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "#ad",
+        "Sponsored",
+        "Paid partnership"
+      ],
+      "rules": [
+        {
+          "id": "SG-DNC",
+          "channels": [
+            "sms",
+            "phone_call",
+            "whatsapp"
+          ],
+          "severity": "block",
+          "check": "contact.dnc_checked_at within 21 days and dnc_listed == false",
+          "message": "Check the Singapore DNC Registry before marketing SMS or calls."
+        },
+        {
+          "id": "SG-ADV",
+          "channels": [
+            "email"
+          ],
+          "when": "bulk and unsolicited",
+          "severity": "block",
+          "check": "subject starts with <ADV>",
+          "message": "Bulk unsolicited email needs the <ADV> label, sender details and an unsubscribe."
+        },
+        {
+          "id": "SG-PURPOSE",
+          "channels": [
+            "email",
+            "sms",
+            "whatsapp"
+          ],
+          "severity": "warn",
+          "message": "PDPA: purpose of use must be notified at collection."
+        },
+        {
+          "id": "SG-GST-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "when": "segment == b2c and price_mentions not empty",
+          "severity": "block",
+          "message": "Singapore B2C prices must include GST."
+        }
+      ],
+      "send_window": {
+        "from": "09:00",
+        "to": "21:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ]
+      }
+    },
+    "US": {
+      "group": "NA",
+      "locale": "en-US",
+      "currency": "USD",
+      "laws": [
+        "CAN-SPAM",
+        "TCPA",
+        "CCPA/CPRA and state privacy laws",
+        "FTC Endorsement Guides",
+        "FTC fake reviews rule"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in",
+            "opt_out_regime"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "opt_out_regime",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in",
+            "opt_out_regime"
+          ]
+        },
+        "sms": [
+          "prior_express_written"
+        ],
+        "whatsapp": [
+          "prior_express_written",
+          "consent"
+        ],
+        "phone_call": [
+          "prior_express_written"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in",
+          "opt_out_regime",
+          "prior_express_written"
+        ]
+      },
+      "disclosure_labels": [
+        "#ad",
+        "Paid partnership",
+        "Sponsored"
+      ],
+      "rules": [
+        {
+          "id": "US-POSTAL",
+          "channels": [
+            "email"
+          ],
+          "severity": "block",
+          "message": "CAN-SPAM: physical postal address in every commercial email."
+        },
+        {
+          "id": "US-OPTOUT-10D",
+          "channels": [
+            "email"
+          ],
+          "severity": "info",
+          "message": "Opt-outs must be done within 10 business days (engine does it at once)."
+        },
+        {
+          "id": "US-GPC",
+          "channels": [
+            "paid_ad",
+            "tracking"
+          ],
+          "severity": "block",
+          "check": "exclude contacts with gpc_opt_out from ad audience sync and sale/share",
+          "message": "Honour Global Privacy Control opt-outs."
+        },
+        {
+          "id": "US-10DLC",
+          "channels": [
+            "sms"
+          ],
+          "severity": "block",
+          "message": "SMS sender must be a registered 10DLC or toll-free number."
+        },
+        {
+          "id": "US-SPECIAL-AD",
+          "channels": [
+            "paid_ad"
+          ],
+          "when": "paid.special_ad_category != none",
+          "severity": "warn",
+          "message": "Special ad category (housing, employment, credit): targeting limits apply."
+        },
+        {
+          "id": "US-FAKE-TESTIMONIAL",
+          "channels": [
+            "video",
+            "paid_ad",
+            "web_page",
+            "social_post"
+          ],
+          "severity": "block",
+          "message": "FTC rule: no fake or AI-invented testimonials or reviews; testimonials must be real and typical or disclosed."
+        }
+      ],
+      "send_window": {
+        "from": "08:00",
+        "to": "21:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ]
+      }
+    },
+    "CA": {
+      "group": "NA",
+      "locale": "en-CA",
+      "currency": "CAD",
+      "laws": [
+        "CASL",
+        "PIPEDA",
+        "Quebec Law 25",
+        "Charter of the French Language",
+        "Ad Standards"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "express_casl",
+            "implied_casl",
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "express_casl",
+            "implied_casl",
+            "casl_business_exemption",
+            "double_opt_in"
+          ],
+          "b2b_personal": [
+            "express_casl",
+            "implied_casl",
+            "double_opt_in"
+          ]
+        },
+        "sms": [
+          "express_casl",
+          "implied_casl"
+        ],
+        "whatsapp": [
+          "express_casl",
+          "implied_casl"
+        ],
+        "paid_ad": [
+          "express_casl",
+          "implied_casl",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "#ad",
+        "#sponsored",
+        "Paid partnership"
+      ],
+      "rules": [
+        {
+          "id": "CA-CONSENT-EXPIRY",
+          "channels": [
+            "email",
+            "sms",
+            "whatsapp"
+          ],
+          "severity": "block",
+          "check": "implied_casl consent has expires_at in the future",
+          "message": "CASL implied consent has expired."
+        },
+        {
+          "id": "CA-SENDER-UNSUB",
+          "channels": [
+            "email",
+            "sms"
+          ],
+          "severity": "block",
+          "message": "CASL: sender identity, contact details and an unsubscribe done within 10 business days."
+        },
+        {
+          "id": "CA-BIZ-EXEMPTION",
+          "channels": [
+            "email"
+          ],
+          "when": "basis == casl_business_exemption",
+          "severity": "warn",
+          "message": "Business address must be published with no 'no spam' note, and the message must be relevant to the role."
+        },
+        {
+          "id": "CA-SPECIAL-AD",
+          "channels": [
+            "paid_ad"
+          ],
+          "when": "paid.special_ad_category != none",
+          "severity": "warn",
+          "message": "Special ad category (housing, employment, credit): targeting limits apply."
+        },
+        {
+          "id": "CA-DRIP-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "severity": "block",
+          "message": "No drip pricing: the advertised price must include all mandatory fees (Competition Act)."
+        }
+      ],
+      "subdivisions": {
+        "CA-QC": {
+          "locale": "fr-CA",
+          "rules": [
+            {
+              "id": "QC-FRENCH",
+              "channels": [
+                "*"
+              ],
+              "severity": "block",
+              "check": "content.locale starts with fr",
+              "message": "Marketing in Quebec must be in French."
+            },
+            {
+              "id": "QC-FRENCH-MASTER",
+              "channels": [
+                "video"
+              ],
+              "severity": "block",
+              "message": "Quebec: a French version of the video (not only subtitles of an English master) is required."
+            },
+            {
+              "id": "QC-TRACKING-OFF",
+              "channels": [
+                "web_page",
+                "landing_page"
+              ],
+              "severity": "block",
+              "message": "Quebec Law 25: tracking and profiling technologies are off by default until the person turns them on."
+            }
+          ]
+        }
+      },
+      "send_window": {
+        "from": "09:00",
+        "to": "21:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ]
+      }
+    },
+    "AE": {
+      "group": "GCC",
+      "locale": "ar-AE",
+      "currency": "AED",
+      "weekend": [
+        "Sat",
+        "Sun"
+      ],
+      "laws": [
+        "UAE PDPL (Decree-Law 45 of 2021)",
+        "DIFC and ADGM data laws",
+        "UAE Media Council advertiser permit",
+        "TDRA SMS rules"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "إعلان",
+        "Ad"
+      ],
+      "rules": [
+        {
+          "id": "AE-INFLUENCER-LICENCE",
+          "channels": [
+            "influencer_post"
+          ],
+          "severity": "block",
+          "check": "creator party has licence type uae_media_council, not expired",
+          "message": "UAE creator needs a Media Council advertiser permit."
+        },
+        {
+          "id": "AE-SMS-SENDER",
+          "channels": [
+            "sms"
+          ],
+          "severity": "block",
+          "message": "Registered SMS sender ID required."
+        },
+        {
+          "id": "GCC-CULTURE",
+          "channels": [
+            "*"
+          ],
+          "severity": "warn",
+          "message": "Content must respect religion, culture and public morals. A person reviews."
+        },
+        {
+          "id": "GCC-ARABIC-B2C",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad",
+            "social_post"
+          ],
+          "when": "segment == b2c",
+          "severity": "warn",
+          "message": "GCC B2C content needs an Arabic version (right-to-left layout)."
+        },
+        {
+          "id": "AE-FILM-CONSENT",
+          "channels": [
+            "video"
+          ],
+          "when": "media.people not empty",
+          "severity": "block",
+          "message": "UAE: written consent to film and publish each identifiable person."
+        },
+        {
+          "id": "GCC-VAT-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "when": "segment == b2c and price_mentions not empty and market in [AE,SA,BH,OM]",
+          "severity": "block",
+          "message": "Show VAT-inclusive prices to consumers (AE, SA, BH, OM)."
+        }
+      ],
+      "send_window": {
+        "from": "09:00",
+        "to": "21:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat",
+          "Sun"
+        ],
+        "$comment": "Confirm with TDRA rules before launch."
+      }
+    },
+    "SA": {
+      "group": "GCC",
+      "locale": "ar-SA",
+      "currency": "SAR",
+      "weekend": [
+        "Fri",
+        "Sat"
+      ],
+      "laws": [
+        "Saudi PDPL (SDAIA)",
+        "Mawthooq licence",
+        "CST SMS rules"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "إعلان",
+        "Ad"
+      ],
+      "data_residency": "Check limits on transfer of personal data out of Saudi Arabia before sync to a cloud tool outside the country.",
+      "rules": [
+        {
+          "id": "SA-INFLUENCER-LICENCE",
+          "channels": [
+            "influencer_post"
+          ],
+          "severity": "block",
+          "check": "creator party has licence type mawthooq, not expired",
+          "message": "Saudi creator needs a Mawthooq licence."
+        },
+        {
+          "id": "SA-DATA-TRANSFER",
+          "channels": [
+            "*"
+          ],
+          "when": "client.data_region != sa",
+          "severity": "warn",
+          "message": "Saudi personal data outside the country: check the transfer rule."
+        },
+        {
+          "id": "SA-SMS-SENDER",
+          "channels": [
+            "sms"
+          ],
+          "severity": "block",
+          "message": "Registered SMS sender ID required."
+        },
+        {
+          "id": "GCC-CULTURE",
+          "channels": [
+            "*"
+          ],
+          "severity": "warn",
+          "message": "Content must respect religion, culture and public morals. Saudi Arabia is more conservative."
+        },
+        {
+          "id": "GCC-ARABIC-B2C",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad",
+            "social_post"
+          ],
+          "when": "segment == b2c",
+          "severity": "warn",
+          "message": "GCC B2C content needs an Arabic version (right-to-left layout)."
+        },
+        {
+          "id": "GCC-ALCOHOL",
+          "channels": [
+            "*"
+          ],
+          "when": "paid.product_category == alcohol",
+          "severity": "block",
+          "message": "Alcohol marketing is not allowed in this market."
+        },
+        {
+          "id": "GCC-VAT-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "when": "segment == b2c and price_mentions not empty and market in [AE,SA,BH,OM]",
+          "severity": "block",
+          "message": "Show VAT-inclusive prices to consumers (AE, SA, BH, OM)."
+        }
+      ],
+      "send_window": {
+        "from": "09:00",
+        "to": "21:00",
+        "days": [
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ],
+        "$comment": "Confirm with CST rules before launch."
+      }
+    },
+    "QA": {
+      "group": "GCC",
+      "locale": "ar-QA",
+      "currency": "QAR",
+      "weekend": [
+        "Fri",
+        "Sat"
+      ],
+      "laws": [
+        "Qatar PDPPL (Law 13 of 2016)"
+      ],
+      "inherits": "GCC_DEFAULT",
+      "rules": [
+        {
+          "id": "GCC-ALCOHOL",
+          "channels": [
+            "*"
+          ],
+          "when": "paid.product_category == alcohol",
+          "severity": "block",
+          "message": "Alcohol marketing is not allowed in this market."
+        }
+      ]
+    },
+    "KW": {
+      "group": "GCC",
+      "locale": "ar-KW",
+      "currency": "KWD",
+      "weekend": [
+        "Fri",
+        "Sat"
+      ],
+      "laws": [
+        "Kuwait data privacy regulation (CITRA)"
+      ],
+      "inherits": "GCC_DEFAULT",
+      "rules": [
+        {
+          "id": "GCC-ALCOHOL",
+          "channels": [
+            "*"
+          ],
+          "when": "paid.product_category == alcohol",
+          "severity": "block",
+          "message": "Alcohol marketing is not allowed in this market."
+        }
+      ]
+    },
+    "BH": {
+      "group": "GCC",
+      "locale": "ar-BH",
+      "currency": "BHD",
+      "weekend": [
+        "Fri",
+        "Sat"
+      ],
+      "laws": [
+        "Bahrain PDPL (Law 30 of 2018)"
+      ],
+      "inherits": "GCC_DEFAULT"
+    },
+    "OM": {
+      "group": "GCC",
+      "locale": "ar-OM",
+      "currency": "OMR",
+      "weekend": [
+        "Fri",
+        "Sat"
+      ],
+      "laws": [
+        "Oman PDPL (Royal Decree 6 of 2022)"
+      ],
+      "inherits": "GCC_DEFAULT"
+    },
+    "GCC_DEFAULT": {
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "إعلان",
+        "Ad"
+      ],
+      "rules": [
+        {
+          "id": "GCC-SMS-SENDER",
+          "channels": [
+            "sms"
+          ],
+          "severity": "block",
+          "message": "Registered SMS sender ID and telecom send-time limits."
+        },
+        {
+          "id": "GCC-CULTURE",
+          "channels": [
+            "*"
+          ],
+          "severity": "warn",
+          "message": "Content must respect religion, culture and public morals."
+        },
+        {
+          "id": "GCC-ARABIC-B2C",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad",
+            "social_post"
+          ],
+          "when": "segment == b2c",
+          "severity": "warn",
+          "message": "GCC B2C content needs an Arabic version (right-to-left layout)."
+        },
+        {
+          "id": "GCC-VAT-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad"
+          ],
+          "when": "segment == b2c and price_mentions not empty and market in [AE,SA,BH,OM]",
+          "severity": "block",
+          "message": "Show VAT-inclusive prices to consumers (AE, SA, BH, OM)."
+        }
+      ],
+      "send_window": {
+        "from": "09:00",
+        "to": "21:00",
+        "days": [
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ]
+      }
+    },
+    "EU_DEFAULT": {
+      "group": "EU",
+      "currency": "EUR",
+      "laws": [
+        "GDPR",
+        "ePrivacy (national)",
+        "Unfair Commercial Practices Directive",
+        "EU AI Act Art. 50 (from 2 Aug 2026)",
+        "Digital Services Act",
+        "European Accessibility Act"
+      ],
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in"
+          ],
+          "b2b_corporate": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in",
+            "legitimate_interest"
+          ],
+          "b2b_personal": [
+            "consent",
+            "double_opt_in",
+            "soft_opt_in"
+          ]
+        },
+        "sms": [
+          "consent",
+          "double_opt_in"
+        ],
+        "whatsapp": [
+          "consent",
+          "double_opt_in"
+        ],
+        "paid_ad": [
+          "consent",
+          "double_opt_in"
+        ]
+      },
+      "disclosure_labels": [
+        "Ad",
+        "Advertentie",
+        "Werbung",
+        "Publicité",
+        "Collaboration commerciale"
+      ],
+      "rules": [
+        {
+          "id": "EU-ART14",
+          "channels": [
+            "email",
+            "linkedin_message",
+            "phone_call"
+          ],
+          "when": "contact.source_is_third_party",
+          "severity": "block",
+          "check": "art14_notice_sent_at is set (or sent in this first message)",
+          "message": "Article 14 privacy notice needed for data from a third party (for example Apollo)."
+        },
+        {
+          "id": "EU-COOKIE",
+          "channels": [
+            "web_page",
+            "landing_page"
+          ],
+          "severity": "block",
+          "message": "Cookie consent before any tracking, including A/B test, heatmap and session-recording tools."
+        },
+        {
+          "id": "EU-AI-LABEL",
+          "channels": [
+            "video",
+            "social_post",
+            "paid_ad",
+            "influencer_post",
+            "web_page"
+          ],
+          "when": "media.ai_generated or media.ai_manipulated_real_person",
+          "severity": "block",
+          "check": "label 'AI-generated' (or local equivalent) present",
+          "message": "EU AI Act Art. 50: label AI-generated or manipulated content."
+        },
+        {
+          "id": "EU-DSA-AD",
+          "channels": [
+            "paid_ad"
+          ],
+          "severity": "info",
+          "message": "DSA ad transparency: platform shows advertiser and targeting."
+        },
+        {
+          "id": "EU-ACCESSIBILITY",
+          "channels": [
+            "web_page",
+            "landing_page"
+          ],
+          "severity": "warn",
+          "message": "European Accessibility Act: check WCAG conformance."
+        },
+        {
+          "id": "EU-OMNIBUS-PRICE",
+          "channels": [
+            "web_page",
+            "landing_page",
+            "paid_ad",
+            "email"
+          ],
+          "when": "price reduction announced",
+          "severity": "block",
+          "message": "Omnibus Directive: show the lowest price of the prior 30 days next to a price reduction."
+        }
+      ],
+      "send_window": {
+        "from": "08:00",
+        "to": "20:00",
+        "days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ]
+      }
+    },
+    "DE": {
+      "inherits": "EU_DEFAULT",
+      "locale": "de-DE",
+      "eligible_bases": {
+        "email": {
+          "b2c": [
+            "double_opt_in"
+          ],
+          "b2b_corporate": [
+            "double_opt_in",
+            "consent"
+          ],
+          "b2b_personal": [
+            "double_opt_in"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "DE-DOI",
+          "channels": [
+            "email"
+          ],
+          "severity": "block",
+          "message": "Germany: double opt-in expected for marketing email."
+        }
+      ]
+    },
+    "FR": {
+      "inherits": "EU_DEFAULT",
+      "locale": "fr-FR",
+      "rules": [
+        {
+          "id": "FR-INFLUENCER-LAW",
+          "channels": [
+            "influencer_post"
+          ],
+          "severity": "block",
+          "check": "label 'Publicité' or 'Collaboration commerciale'; AI image label where used",
+          "message": "French influencer law 2023 disclosure."
+        },
+        {
+          "id": "FR-IMAGE-LABEL",
+          "channels": [
+            "influencer_post",
+            "social_post",
+            "paid_ad",
+            "video"
+          ],
+          "when": "media.ai_generated or retouched body image",
+          "severity": "block",
+          "message": "France: label 'Image virtuelle' (AI) or 'Image retouchée' (retouched body shape)."
+        }
+      ]
+    },
+    "NL": {
+      "inherits": "EU_DEFAULT",
+      "locale": "nl-NL"
+    }
+  },
+  "resolution": "A market not listed uses its group default (EU members -> EU_DEFAULT). A market entry merges over its 'inherits' entry; rules lists are joined; eligible_bases replaces per channel.",
+  "channel_overlays": {
+    "sms": "services/messaging/market-rules.yaml",
+    "whatsapp": "services/messaging/market-rules.yaml",
+    "push": "services/messaging/market-rules.yaml",
+    "$comment": "Owned by the Messaging thread (service 10). For these channels the overlay wins on send window, quiet days, sender registration, DNC freshness, opt-out keywords, required message parts and pre-send checks. Items with verify: true stay 'warn' until local counsel or the aggregator confirms. The email overlay is owned by the Email thread (service 1): footer fields, SG <ADV>, CASL expiry, deliverability stop limits.",
+    "email": "services/email-marketing/config/email-market-rules.json"
+  },
+  "service_overlays": {
+    "$comment": "Service-owned extra rules, merged by the gate for that service. The service thread owns its file; ids use the service prefix.",
+    "abm": "services/abm/markets/rules.json",
+    "pr": "services/pr-thought-leadership/06-market-rules.md#7",
+    "paid_social": "services/paid-social/02-market-rules.md#4",
+    "video": "services/video-production/05-market-rules.md"
+  }
+}

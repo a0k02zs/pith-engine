@@ -1,0 +1,836 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/brand-profile.json",
+  "title": "Client brain: brand profile (one approved version per client)",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "approved",
+        "superseded"
+      ]
+    },
+    "positioning": {
+      "type": "string"
+    },
+    "voice": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "do": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dont": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "good": {
+                "type": "string"
+              },
+              "bad": {
+                "type": "string"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "by_market": {
+          "type": "object",
+          "description": "market ISO code -> tone notes, spelling (en-GB/en-US), formality",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "tone": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string",
+                "description": "BCP 47, e.g. en-GB, fr-CA, ar-AE"
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tone_by_situation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "situation": {
+                "type": "string"
+              },
+              "formal": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "playful": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "expert": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "bold": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "style_rules": {
+          "type": "object",
+          "description": "locale -> rules",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "summary"
+      ]
+    },
+    "sender_identity": {
+      "type": "object",
+      "description": "Used in email footers and SMS sender IDs",
+      "properties": {
+        "legal_name": {
+          "type": "string"
+        },
+        "trading_name": {
+          "type": "string"
+        },
+        "postal_address": {
+          "type": "string"
+        },
+        "privacy_notice_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "from_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sms_sender_ids": {
+          "type": "object",
+          "description": "market -> registered sender ID",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "whatsapp_numbers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "legal_name",
+        "postal_address",
+        "privacy_notice_url"
+      ]
+    },
+    "personas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "segment": {
+            "enum": [
+              "b2b",
+              "b2c"
+            ]
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "pains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "objections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "prices": {
+            "type": "object",
+            "description": "currency -> price",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
+    },
+    "offers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "terms_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text"
+        ]
+      }
+    },
+    "approved_claims": {
+      "type": "array",
+      "description": "Mirror of the claims table, status=approved",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "evidence_url": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "markets"
+        ]
+      }
+    },
+    "banned_terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "term"
+        ]
+      }
+    },
+    "required_disclaimers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    "visual": {
+      "type": "object",
+      "properties": {
+        "colors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logo_urls": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "canva_brand_kit_id": {
+          "type": "string"
+        },
+        "figma_file": {
+          "type": "string"
+        },
+        "imagery_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logo_rules": {
+          "type": "object",
+          "properties": {
+            "clear_space": {
+              "type": "string"
+            },
+            "min_size": {
+              "type": "string"
+            },
+            "misuse": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string"
+              },
+              "tool": {
+                "type": "string"
+              },
+              "id_or_url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "color_roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "text_pairs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "media_rules": {
+      "type": "object",
+      "description": "Video and audio rules",
+      "properties": {
+        "music_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "talent_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ai_avatar_allowed": {
+          "type": "boolean"
+        },
+        "voice_clone_allowed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "description": "ISO 3166-1 alpha-2"
+            }
+          }
+        }
+      }
+    },
+    "sensitive_topics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approved_answers": {
+      "type": "array",
+      "description": "FAQ answers agents may send without review (social replies, chat)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string",
+            "description": "BCP 47, e.g. en-GB, fr-CA, ar-AE"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "answer"
+        ]
+      }
+    },
+    "past_results": {
+      "type": "array",
+      "description": "Top learnings, newest first (full list via /learnings)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "service code from enums.json services"
+          },
+          "market": {
+            "type": "string"
+          },
+          "insight": {
+            "type": "string"
+          },
+          "confidence": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      }
+    },
+    "locales": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "BCP 47, e.g. en-GB, fr-CA, ar-AE"
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "organization": {
+      "type": "object",
+      "description": "Entity data for schema markup and GEO",
+      "properties": {
+        "legal_name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "same_as": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "Official profiles: LinkedIn, Wikipedia, Crunchbase, social"
+        }
+      }
+    },
+    "messaging": {
+      "type": "object",
+      "properties": {
+        "promise": {
+          "type": "string"
+        },
+        "pillars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "proof_points": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "persona_messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "persona_id": {
+                "type": "string"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "objections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objection": {
+                "type": "string"
+              },
+              "answer": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "boilerplate": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          },
+          "words_50": {
+            "type": "string"
+          },
+          "words_100": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "taglines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "approved",
+              "retired"
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    "social": {
+      "type": "object",
+      "properties": {
+        "autonomy_level": {
+          "enum": [
+            "draft_only",
+            "approved_answers",
+            "auto_publish_approved_calendar"
+          ]
+        },
+        "pillars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "share": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string"
+              },
+              "handle": {
+                "type": "string"
+              },
+              "market": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "time_windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "market": {
+                "type": "string"
+              },
+              "platform": {
+                "type": "string"
+              },
+              "days": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pause_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date_or_event": {
+                "type": "string"
+              },
+              "markets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "native_editor_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "client_id",
+    "version",
+    "status",
+    "voice",
+    "sender_identity"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,398 @@
+openapi: 3.1.0
+info:
+  title: Pith M shared engine API
+  version: 0.1.0
+  description: |
+    The HTTP API that the 18 service threads and the client portal use.
+    Every response has the header Pith-Contract-Version. Object schemas live in ./schemas.
+    Auth: a bearer token per service (machine) or per user (portal). The token carries the client ids it may touch.
+servers:
+  - url: https://engine.pith.marketing/v0
+security:
+  - bearer: []
+tags:
+  - name: brain
+  - name: data
+  - name: workflow
+  - name: approvals
+  - name: compliance
+  - name: measurement
+
+paths:
+  /clients/{client_id}/brain:
+    get:
+      tags: [brain]
+      summary: Read the approved brand profile. Every agent calls this before it writes.
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+        - name: market
+          in: query
+          description: Filter claims, offers, disclaimers and voice notes to one market (ISO code).
+          schema: { type: string }
+        - name: version
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Brand profile
+          content: { application/json: { schema: { $ref: './schemas/brand-profile.json' } } }
+    put:
+      tags: [brain]
+      summary: Save a draft version. Approval goes through the inbox (kind=design or claim).
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody:
+        content: { application/json: { schema: { $ref: './schemas/brand-profile.json' } } }
+      responses:
+        '201': { description: Draft saved, content: { application/json: { schema: { $ref: './schemas/brand-profile.json' } } } }
+
+  /clients/{client_id}/brain/search:
+    post:
+      tags: [brain]
+      summary: Semantic search over the brain (guidelines, learnings, past assets).
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string }
+                sources: { type: array, items: { enum: [profile, guideline, learning, asset] } }
+                locale: { type: string }
+                k: { type: integer, default: 8 }
+      responses:
+        '200':
+          description: Matching chunks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties: { source: { type: string }, source_ref: { type: string }, content: { type: string }, score: { type: number } }
+
+  /clients/{client_id}/claims:
+    get:
+      tags: [brain]
+      summary: List claims. Default status=approved.
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+        - { name: market, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { enum: [proposed, approved, retired] } }
+      responses: { '200': { description: Claims } }
+    post:
+      tags: [brain]
+      summary: Propose a new claim. This always opens an approval (kind=claim). Agents cannot approve claims.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      responses: { '202': { description: Proposed; approval opened } }
+
+  /clients/{client_id}/learnings:
+    get:
+      tags: [brain]
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+        - { name: service, in: query, schema: { type: string } }
+        - { name: market, in: query, schema: { type: string } }
+      responses: { '200': { description: Learnings, newest first } }
+    post:
+      tags: [brain]
+      summary: Record a result in the brain. Sends engine/learning.recorded.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service, insight, confidence]
+              properties:
+                service: { type: string }
+                market: { type: string }
+                insight: { type: string }
+                evidence: { type: object }
+                confidence: { enum: [low, medium, high] }
+                run_id: { type: string, format: uuid }
+      responses: { '201': { description: Recorded } }
+
+  /clients/{client_id}/contacts:
+    post:
+      tags: [data]
+      summary: Upsert contacts (match on email, then phone, then external id). Max 1000 per call.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contacts: { type: array, maxItems: 1000, items: { $ref: './schemas/contact.json' } }
+      responses: { '200': { description: Upsert result with ids } }
+
+  /clients/{client_id}/contacts/{contact_id}:
+    get:
+      tags: [data]
+      parameters: [ { $ref: '#/components/parameters/ClientId' }, { $ref: '#/components/parameters/ContactId' } ]
+      responses:
+        '200': { description: Contact with consents, content: { application/json: { schema: { $ref: './schemas/contact.json' } } } }
+    delete:
+      tags: [data]
+      summary: Right to erasure. Clears PII, keeps counts, sends engine/contact.erased.
+      parameters: [ { $ref: '#/components/parameters/ClientId' }, { $ref: '#/components/parameters/ContactId' } ]
+      responses: { '202': { description: Erasure started } }
+
+  /clients/{client_id}/contacts/{contact_id}/consents:
+    put:
+      tags: [data]
+      summary: Record a consent change with evidence. Sends engine/consent.changed.
+      parameters: [ { $ref: '#/components/parameters/ClientId' }, { $ref: '#/components/parameters/ContactId' } ]
+      requestBody:
+        content: { application/json: { schema: { $ref: './schemas/consent.json' } } }
+      responses: { '200': { description: Saved } }
+
+  /clients/{client_id}/audiences/resolve:
+    post:
+      tags: [data]
+      summary: |
+        The only way a service gets recipients. Returns contacts that may receive this channel and purpose
+        in their own country today, with the reason for each exclusion. The country rules come from specs/compliance-rules.json.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [channel, purpose]
+              properties:
+                channel: { type: string }
+                purpose: { enum: [marketing, transactional, service] }
+                filter:
+                  type: object
+                  description: Segment filter. Fields of contact.json, with ops eq, in, gte, lte, exists.
+                markets: { type: array, items: { type: string } }
+                contact_ids: { type: array, items: { type: string, format: uuid } }
+                party_ids: { type: array, items: { type: string, format: uuid }, description: Partners, affiliates or creators to contact (recruitment email). Same consent rules, using the party's consents and country. }
+                send_at: { type: string, format: date-time }
+                page_size: { type: integer, default: 1000 }
+                cursor: { type: string }
+      responses:
+        '200':
+          description: Eligible contacts and exclusion counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audience_id: { type: string, description: Snapshot id, valid 24 hours. Pass it to the compliance gate. }
+                  eligible: { type: array, items: { $ref: './schemas/contact.json' } }
+                  excluded_by_reason: { type: object, additionalProperties: { type: integer } }
+                  send_window: { type: object, description: 'Allowed local send hours per market, same shape as compliance-check-result.send_window', additionalProperties: { type: object } }
+                  next_cursor: { type: [string, 'null'] }
+
+  /parties:
+    get:
+      tags: [data]
+      summary: Search creators, talent, journalists, partners, affiliates, experts.
+      parameters:
+        - { name: client_id, in: query, schema: { type: string, format: uuid } }
+        - { name: kind, in: query, schema: { type: string } }
+        - { name: country, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+      responses: { '200': { description: Parties } }
+    post:
+      tags: [data]
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/party.json' } } } }
+      responses: { '201': { description: Created } }
+
+  /clients/{client_id}/rights:
+    get:
+      tags: [data]
+      summary: Rights grants. Filter by party, contact, scope, market, active_on date.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      responses: { '200': { description: Grants } }
+    post:
+      tags: [data]
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/rights-grant.json' } } } }
+      responses: { '201': { description: Created } }
+
+  /clients/{client_id}/events:
+    post:
+      tags: [data]
+      summary: Ingest behavioural events (page_view, form_submit, purchase, ...). Max 500 per call.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      responses: { '202': { description: Accepted } }
+
+  /workflows:
+    post:
+      tags: [workflow]
+      summary: Register or update a workflow definition (new version). Validated against the guardrails in specs/workflow.md.
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/workflow-definition.json' } } } }
+      responses:
+        '201': { description: Registered }
+        '422': { description: Definition breaks a guardrail (for example a send step with no compliance check before it) }
+
+  /runs:
+    post:
+      tags: [workflow]
+      summary: Start a run.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_id, workflow_id]
+              properties:
+                client_id: { type: string, format: uuid }
+                workflow_id: { type: string }
+                version: { type: integer }
+                markets: { type: array, items: { type: string } }
+                input: { type: object }
+                parent_run_id: { type: string, format: uuid }
+      responses: { '202': { description: Run id } }
+    get:
+      tags: [workflow]
+      parameters:
+        - { name: client_id, in: query, schema: { type: string, format: uuid } }
+        - { name: service, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+      responses: { '200': { description: Runs } }
+
+  /runs/{run_id}:
+    get:
+      tags: [workflow]
+      parameters: [ { name: run_id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses: { '200': { description: Run with step runs, artifacts and the action log } }
+
+  /runs/{run_id}/cancel:
+    post:
+      tags: [workflow]
+      parameters: [ { name: run_id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses: { '202': { description: Cancelling } }
+
+  /artifacts:
+    post:
+      tags: [workflow]
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/artifact.json' } } } }
+      responses: { '201': { description: Created } }
+
+  /artifacts/{artifact_id}/brand-score:
+    post:
+      tags: [workflow]
+      summary: Score a draft against the brain (0 to 100) with reasons. A score under the step minimum sends the draft back to the agent.
+      parameters: [ { name: artifact_id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200':
+          description: Score
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score: { type: number }
+                  reasons: { type: array, items: { type: object, properties: { dimension: { enum: [voice, terminology, claims, banned_terms, visual, locale] }, score: { type: number }, note: { type: string } } } }
+
+  /approvals:
+    post:
+      tags: [approvals]
+      summary: Open an inbox item. Usually done by a gate step, not by hand.
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/approval-item.json' } } } }
+      responses: { '201': { description: Created; sends engine/approval.requested } }
+    get:
+      tags: [approvals]
+      summary: The inbox. Filters client_id, status, kind, service, role, assignee=me, overdue.
+      responses: { '200': { description: Items } }
+
+  /approvals/{approval_id}:
+    get:
+      tags: [approvals]
+      parameters: [ { $ref: '#/components/parameters/ApprovalId' } ]
+      responses: { '200': { description: Item, content: { application/json: { schema: { $ref: './schemas/approval-item.json' } } } } }
+
+  /approvals/{approval_id}/decisions:
+    post:
+      tags: [approvals]
+      summary: Decide. Only a user (never a service token) can call this. Sends engine/approval.decided when required_count is met.
+      parameters: [ { $ref: '#/components/parameters/ApprovalId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { enum: [approved, rejected, changes_requested] }
+                comment: { type: string }
+                edits: { type: object }
+      responses:
+        '200': { description: Recorded }
+        '403': { description: User lacks a required role for this client }
+
+  /compliance/check:
+    post:
+      tags: [compliance]
+      summary: Check one outbound item for every target market. Required before any send, post, publish or ad launch.
+      requestBody: { content: { application/json: { schema: { $ref: './schemas/compliance-check-request.json' } } } }
+      responses:
+        '200': { description: Result, content: { application/json: { schema: { $ref: './schemas/compliance-check-result.json' } } } }
+
+  /compliance/checks/{check_id}/override:
+    post:
+      tags: [compliance]
+      summary: A person accepts a warn result with a reason. A block result cannot be overridden.
+      parameters: [ { name: check_id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        content: { application/json: { schema: { type: object, required: [reason], properties: { reason: { type: string } } } } }
+      responses: { '200': { description: Overridden }, '409': { description: Outcome is block } }
+
+  /compliance/rules:
+    get:
+      tags: [compliance]
+      summary: The current rule set (specs/compliance-rules.json) and its version.
+      parameters: [ { name: market, in: query, schema: { type: string } } ]
+      responses: { '200': { description: Rules } }
+
+  /metrics:
+    post:
+      tags: [measurement]
+      summary: HTTP fallback for engine/outbound.recorded and engine/metric.recorded. Max 1000 per call.
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { items: { type: array, items: { $ref: './schemas/metric-event.json' } } } }
+      responses: { '202': { description: Accepted } }
+    get:
+      tags: [measurement]
+      summary: Query daily KPIs.
+      parameters:
+        - { name: client_id, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: kpi, in: query, schema: { type: array, items: { type: string } } }
+        - { name: service, in: query, schema: { type: string } }
+        - { name: market, in: query, schema: { type: string } }
+        - { name: campaign_id, in: query, schema: { type: string } }
+        - { name: from, in: query, required: true, schema: { type: string, format: date } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date } }
+        - { name: group_by, in: query, schema: { type: array, items: { enum: [date, week, service, market, channel, campaign_id] } } }
+      responses: { '200': { description: Rows } }
+
+  /conversions:
+    post:
+      tags: [measurement]
+      responses: { '202': { description: Accepted; sends engine/conversion.recorded } }
+
+  /clients/{client_id}/reports/weekly:
+    get:
+      tags: [measurement]
+      summary: The latest weekly AI report (after strategist review), as structured sections and a portal URL.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      responses: { '200': { description: Report } }
+
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer }
+  parameters:
+    ClientId: { name: client_id, in: path, required: true, schema: { type: string, format: uuid } }
+    ContactId: { name: contact_id, in: path, required: true, schema: { type: string, format: uuid } }
+    ApprovalId: { name: approval_id, in: path, required: true, schema: { type: string, format: uuid } }

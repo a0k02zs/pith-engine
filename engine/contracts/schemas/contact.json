@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/contact.json",
+  "title": "Contact with consent (as returned by the data layer)",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "kind": {
+      "enum": [
+        "b2b",
+        "b2c"
+      ]
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "email_type": {
+      "enum": [
+        "personal",
+        "corporate",
+        "unknown",
+        null
+      ]
+    },
+    "phone_e164": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\+[1-9][0-9]{6,14}$"
+    },
+    "first_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2"
+    },
+    "subdivision": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 3166-2, e.g. CA-QC"
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timezone": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "company": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "size_band": {
+          "type": "string"
+        }
+      }
+    },
+    "job_title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lifecycle_stage": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_is_third_party": {
+      "type": "boolean"
+    },
+    "art14_notice_sent_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "gpc_opt_out": {
+      "type": "boolean"
+    },
+    "dnc_listed": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "dnc_checked_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "suppressed": {
+      "type": "boolean"
+    },
+    "suppression_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "consents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "purpose": {
+            "enum": [
+              "marketing",
+              "transactional",
+              "service",
+              "profiling",
+              "tracking"
+            ]
+          },
+          "status": {
+            "enum": [
+              "granted",
+              "withdrawn",
+              "expired",
+              "unknown"
+            ]
+          },
+          "basis": {
+            "enum": [
+              "consent",
+              "double_opt_in",
+              "soft_opt_in",
+              "legitimate_interest",
+              "corporate_subscriber",
+              "express_casl",
+              "implied_casl",
+              "casl_business_exemption",
+              "prior_express_written",
+              "opt_out_regime",
+              "none"
+            ]
+          },
+          "captured_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          },
+          "evidence_ref": {
+            "type": "string"
+          },
+          "wording": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "channel",
+          "purpose",
+          "status",
+          "basis"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "external_ids": {
+      "type": "object"
+    },
+    "attributes": {
+      "type": "object"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "whatsapp_window_open_until": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "End of the 24 h WhatsApp customer service window"
+    },
+    "push_tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ]
+          },
+          "app_id": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "token",
+          "platform"
+        ]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "client_id",
+    "kind",
+    "country",
+    "consents",
+    "suppressed"
+  ],
+  "additionalProperties": false
+}

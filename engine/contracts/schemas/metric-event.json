@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/metric-event.json",
+  "title": "Payload of engine/metric.recorded and engine/outbound.recorded",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "service": {
+      "type": "string",
+      "description": "service code from enums.json services"
+    },
+    "kind": {
+      "enum": [
+        "outbound",
+        "kpi"
+      ],
+      "description": "outbound = one thing happened to one item (sent, clicked). kpi = an aggregate value for a day."
+    },
+    "type": {
+      "type": "string",
+      "description": "outbound: enums.outbound_event_types"
+    },
+    "kpi": {
+      "type": "string",
+      "description": "kpi: enums.kpis code"
+    },
+    "value": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string"
+    },
+    "market": {
+      "type": "string"
+    },
+    "contact_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "artifact_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "campaign_id": {
+      "type": "string"
+    },
+    "flow_id": {
+      "type": "string"
+    },
+    "variant_id": {
+      "type": "string"
+    },
+    "utm": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "medium": {
+          "type": "string"
+        },
+        "campaign": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "term": {
+          "type": "string"
+        }
+      }
+    },
+    "props": {
+      "type": "object"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "string",
+      "description": "engine, ga4, meta_ads, crm, ..."
+    }
+  },
+  "required": [
+    "client_id",
+    "service",
+    "kind",
+    "occurred_at"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "outbound"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "type",
+          "channel"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "kpi"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "kpi",
+          "value",
+          "date"
+        ]
+      }
+    }
+  ]
+}

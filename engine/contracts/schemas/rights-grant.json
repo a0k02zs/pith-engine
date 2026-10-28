@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/contracts/v0/rights-grant.json",
+  "title": "Likeness, voice or content-usage rights for a person",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "client_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "party_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "contact_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "likeness",
+          "voice_clone",
+          "avatar",
+          "ugc_reuse",
+          "paid_usage",
+          "whitelisting",
+          "music",
+          "stock"
+        ]
+      },
+      "minItems": 1
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$",
+        "description": "ISO 3166-1 alpha-2"
+      }
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "starts_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "evidence_ref": {
+      "type": "string"
+    },
+    "voice_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "BCP 47 languages the voice may be used or dubbed in"
+    },
+    "edit_scope": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "cut",
+          "translate_captions",
+          "dub",
+          "ai_alter",
+          "resize"
+        ]
+      }
+    },
+    "fee": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "flat",
+            "per_use",
+            "per_period",
+            "none"
+          ]
+        }
+      }
+    },
+    "guardian_evidence_ref": {
+      "type": "string",
+      "description": "Guardian consent for a minor"
+    }
+  },
+  "required": [
+    "id",
+    "client_id",
+    "scope",
+    "markets",
+    "starts_at",
+    "evidence_ref"
+  ],
+  "additionalProperties": false
+}
