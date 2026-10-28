@@ -497,7 +497,8 @@
     "artifacts.brand_score": "read",
     "parties.upsert": "write_internal: create or update a party (same as POST /parties)",
     "metrics.query": "read: read KPI values (same as GET /metrics)",
-    "rights.create": "write_internal: record a rights grant, such as paid_usage or whitelisting after a signed contract (same as POST /clients/{client_id}/rights)"
+    "rights.create": "write_internal: record a rights grant, such as paid_usage or whitelisting after a signed contract (same as POST /clients/{client_id}/rights)",
+    "spend_policies.upsert": "spend: write the daily and total caps that a budget or budget_change gate approved; G1 needs that gate earlier in the same run, and set_by is the person who approved it"
   },
   "conversion_kinds": [
     "purchase",
