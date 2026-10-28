@@ -1,0 +1,216 @@
+{
+  "id": "campaigns.optimize_daily",
+  "version": 1,
+  "service": "campaigns",
+  "description": "Plan service 2, stage 8. Runs at 07:00 market time for each live campaign. Moves inside spend_policies need no gate; anything else goes to a budget_change gate (engine guardrail G1).",
+  "trigger": {
+    "cron": "0 7 * * *"
+  },
+  "concurrency": {
+    "key": "event.data.campaign_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "pull_metrics",
+      "type": "tool",
+      "name": "Yesterday's KPIs per channel, ad set and market",
+      "tool": {
+        "name": "analytics",
+        "action": "metrics.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "optimize",
+      "type": "agent",
+      "needs": [
+        "pull_metrics"
+      ],
+      "agent": {
+        "prompt_ref": "campaigns/optimizer@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "campaigns/optimizer@1"
+      }
+    },
+    {
+      "id": "auto_google",
+      "type": "tool",
+      "needs": [
+        "optimize"
+      ],
+      "name": "Moves of 20% or less inside the caps, and pauses (ads_google; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_google",
+        "action": "budgets.apply_within_policy",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "auto_meta",
+      "type": "tool",
+      "needs": [
+        "optimize"
+      ],
+      "name": "Moves of 20% or less inside the caps, and pauses (ads_meta; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_meta",
+        "action": "budgets.apply_within_policy",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "auto_linkedin",
+      "type": "tool",
+      "needs": [
+        "optimize"
+      ],
+      "name": "Moves of 20% or less inside the caps, and pauses (ads_linkedin; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "budgets.apply_within_policy",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "auto_tiktok",
+      "type": "tool",
+      "needs": [
+        "optimize"
+      ],
+      "name": "Moves of 20% or less inside the caps, and pauses (ads_tiktok; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "budgets.apply_within_policy",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "auto_snapchat",
+      "type": "tool",
+      "needs": [
+        "optimize"
+      ],
+      "name": "Moves of 20% or less inside the caps, and pauses (ads_snapchat; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "budgets.apply_within_policy",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "auto_google",
+        "auto_meta",
+        "auto_linkedin",
+        "auto_tiktok",
+        "auto_snapchat"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.optimize.output.moves.filter(m, m.type == 'needs_g5')) > 0",
+            "goto": "approve_budget_change"
+          }
+        ],
+        "else": "record"
+      }
+    },
+    {
+      "id": "approve_budget_change",
+      "type": "gate",
+      "name": "G5 Budget change",
+      "needs": [
+        "route"
+      ],
+      "gate": {
+        "approval_kind": "budget_change",
+        "required_roles": [
+          "strategist",
+          "performance_marketer"
+        ],
+        "sla_hours": 8,
+        "on_reject": "goto",
+        "on_changes": "optimize"
+      }
+    },
+    {
+      "id": "approved_google",
+      "type": "tool",
+      "needs": [
+        "approve_budget_change"
+      ],
+      "name": "Apply the moves the G5 gate approved (ads_google; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_google",
+        "action": "budgets.apply",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "approved_meta",
+      "type": "tool",
+      "needs": [
+        "approve_budget_change"
+      ],
+      "name": "Apply the moves the G5 gate approved (ads_meta; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_meta",
+        "action": "budgets.apply",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "approved_linkedin",
+      "type": "tool",
+      "needs": [
+        "approve_budget_change"
+      ],
+      "name": "Apply the moves the G5 gate approved (ads_linkedin; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "budgets.apply",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "approved_tiktok",
+      "type": "tool",
+      "needs": [
+        "approve_budget_change"
+      ],
+      "name": "Apply the moves the G5 gate approved (ads_tiktok; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "budgets.apply",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "approved_snapchat",
+      "type": "tool",
+      "needs": [
+        "approve_budget_change"
+      ],
+      "name": "Apply the moves the G5 gate approved (ads_snapchat; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "budgets.apply",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "route"
+      ],
+      "name": "Daily KPIs for the campaign",
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}

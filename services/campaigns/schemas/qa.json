@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns/qa@1",
+  "type": "object",
+  "properties": {
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "n/a"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "status",
+          "evidence",
+          "owner",
+          "fix"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "ready_for_g4": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "lines",
+    "ready_for_g4"
+  ],
+  "additionalProperties": false
+}

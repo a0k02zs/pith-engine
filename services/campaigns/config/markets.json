@@ -1,0 +1,15 @@
+{
+  "$comment": "Campaign rules per market group (docs/markets.md). Planning summary, not legal advice. Ramadan dates move each year, so callers pass them in.",
+  "groups": {
+    "UK": { "weekend": ["sat", "sun"], "currencies": { "GB": "GBP" }, "ramadan_rules": false },
+    "SG": { "weekend": ["sat", "sun"], "currencies": { "SG": "SGD" }, "ramadan_rules": false },
+    "NA": { "weekend": ["sat", "sun"], "currencies": { "US": "USD", "CA": "CAD" }, "ramadan_rules": false, "required_language": { "CA-QC": "fr-CA" } },
+    "GCC": {
+      "weekend": ["fri", "sat"], "weekend_by_country": { "AE": ["sat", "sun"] },
+      "currencies": { "AE": "AED", "SA": "SAR", "QA": "QAR", "KW": "KWD", "BH": "BHD", "OM": "OMR" },
+      "ramadan_rules": true, "ramadan_no_launch_last_days": 10, "first_countries": ["AE", "SA"]
+    },
+    "EU": { "weekend": ["sat", "sun"], "currencies": { "*": "EUR" }, "ramadan_rules": false, "max_lead_countries": 2 }
+  },
+  "usd_rates_for_thresholds": { "$comment": "Set by finance each month; used only to test the holdout threshold." }
+}

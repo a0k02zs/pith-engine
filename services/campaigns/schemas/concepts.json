@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns/concepts@1",
+  "type": "object",
+  "properties": {
+    "concepts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idea": {
+            "type": "string",
+            "minLength": 1
+          },
+          "key_message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+            },
+            "minItems": 1
+          },
+          "budget": {
+            "type": "object",
+            "properties": {
+              "total_budget": {
+                "type": "number",
+                "minimum": 0
+              },
+              "channels": {
+                "type": "object",
+                "propertyNames": {
+                  "enum": [
+                    "paid_social",
+                    "search",
+                    "video",
+                    "influencer",
+                    "messaging",
+                    "content",
+                    "abm",
+                    "email",
+                    "social",
+                    "affiliate",
+                    "events",
+                    "pr",
+                    "cro",
+                    "community"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "test_reserve": {
+                "type": "number",
+                "minimum": 0
+              },
+              "holdout_share": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "total_budget",
+              "channels",
+              "test_reserve",
+              "holdout_share"
+            ],
+            "additionalProperties": false
+          },
+          "forecast": {
+            "type": "object",
+            "properties": {
+              "kpi": {
+                "type": "string",
+                "minLength": 1
+              },
+              "low": {
+                "type": "number",
+                "minimum": 0
+              },
+              "mid": {
+                "type": "number",
+                "minimum": 0
+              },
+              "high": {
+                "type": "number",
+                "minimum": 0
+              },
+              "method": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "kpi",
+              "low",
+              "mid",
+              "high",
+              "method"
+            ],
+            "additionalProperties": false
+          },
+          "changes_from_default": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "name",
+          "idea",
+          "key_message",
+          "claim_ids",
+          "markets",
+          "budget",
+          "forecast",
+          "changes_from_default"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recommended": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "missing": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "concepts",
+    "recommended",
+    "reason",
+    "missing"
+  ],
+  "additionalProperties": false
+}

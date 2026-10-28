@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns/master_brief@1",
+  "type": "object",
+  "properties": {
+    "master_brief": {
+      "type": "object"
+    },
+    "channel_briefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "enum": [
+              "paid_social",
+              "search",
+              "video",
+              "influencer",
+              "messaging",
+              "content",
+              "abm",
+              "email",
+              "social",
+              "affiliate",
+              "events",
+              "pr",
+              "cro",
+              "community"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "budget": {
+            "type": "number",
+            "minimum": 0
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "service",
+          "channel",
+          "markets",
+          "budget",
+          "deliverables",
+          "due_date"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "utm_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "enum": [
+              "paid_social",
+              "search",
+              "video",
+              "influencer",
+              "messaging",
+              "content",
+              "abm",
+              "email",
+              "social",
+              "affiliate",
+              "events",
+              "pr",
+              "cro",
+              "community"
+            ]
+          },
+          "market": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "utm_campaign=\\d{4}-"
+          }
+        },
+        "required": [
+          "service",
+          "market",
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "master_brief",
+    "channel_briefs",
+    "utm_links"
+  ],
+  "additionalProperties": false
+}

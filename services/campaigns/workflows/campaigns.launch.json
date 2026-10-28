@@ -1,0 +1,437 @@
+{
+  "id": "campaigns.launch",
+  "version": 1,
+  "service": "campaigns",
+  "description": "Plan service 2: brief to launch to final report. Fans out to channel services with subflow steps. Built on engine contract v0.1.0.",
+  "trigger": {
+    "event": "svc.campaigns/brief.submitted"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "campaign_id",
+      "brief"
+    ],
+    "properties": {
+      "campaign_id": {
+        "type": "string",
+        "description": "<yyyy>-<slug>, also used as utm_campaign"
+      },
+      "brief": {
+        "type": "object",
+        "description": "templates/campaign-brief.md as JSON"
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 3
+  },
+  "steps": [
+    {
+      "id": "intake",
+      "type": "agent",
+      "name": "Check the brief for gaps and risks",
+      "agent": {
+        "prompt_ref": "campaigns/intake@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "campaigns/intake@1"
+      }
+    },
+    {
+      "id": "brief_complete",
+      "type": "branch",
+      "needs": [
+        "intake"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.intake.output.ready_for_g1 == false",
+            "goto": "wait_brief_update"
+          }
+        ],
+        "else": "approve_brief"
+      }
+    },
+    {
+      "id": "wait_brief_update",
+      "type": "wait",
+      "needs": [
+        "brief_complete"
+      ],
+      "wait": {
+        "event": "svc.campaigns/brief.updated",
+        "match": "async.data.campaign_id == input.campaign_id",
+        "timeout": "5d"
+      }
+    },
+    {
+      "id": "approve_brief",
+      "type": "gate",
+      "name": "G1 Brief accepted",
+      "needs": [
+        "brief_complete"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 24,
+        "on_changes": "intake"
+      }
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "needs": [
+        "approve_brief"
+      ],
+      "agent": {
+        "prompt_ref": "campaigns/research@1",
+        "output_schema": "campaigns/research@1",
+        "model": "claude-opus-5-5"
+      }
+    },
+    {
+      "id": "strategy",
+      "type": "agent",
+      "needs": [
+        "research"
+      ],
+      "name": "3 concepts with channel mix, budget split, forecast",
+      "agent": {
+        "prompt_ref": "campaigns/strategy@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "campaigns/concepts@1"
+      }
+    },
+    {
+      "id": "check_concepts",
+      "type": "check",
+      "needs": [
+        "strategy"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_concept",
+      "type": "gate",
+      "name": "G2a Concept",
+      "needs": [
+        "check_concepts"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "strategist",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_changes": "strategy"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "name": "G2b Budget",
+      "needs": [
+        "approve_concept"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "strategist",
+          "client_finance",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "strategy"
+      }
+    },
+    {
+      "id": "set_spend_policies",
+      "type": "tool",
+      "needs": [
+        "approve_budget"
+      ],
+      "name": "Write daily and total caps per platform from the approved budget (engine G1 spend_policies)",
+      "tool": {
+        "name": "engine",
+        "action": "spend_policies.upsert",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_concept_approved",
+      "type": "emit",
+      "needs": [
+        "set_spend_policies"
+      ],
+      "emit": {
+        "event": "svc.campaigns/concept.approved"
+      }
+    },
+    {
+      "id": "brief_split",
+      "type": "agent",
+      "needs": [
+        "set_spend_policies"
+      ],
+      "name": "Master brief, channel briefs, UTM links",
+      "agent": {
+        "prompt_ref": "campaigns/brief@1",
+        "output_schema": "campaigns/master_brief@1",
+        "model": "claude-sonnet-5-5"
+      }
+    },
+    {
+      "id": "channel_assets",
+      "type": "subflow",
+      "needs": [
+        "brief_split"
+      ],
+      "name": "Each channel builds its part and runs its own creative/copy gate",
+      "subflow": {
+        "workflow_id": "<service>.campaign_assets",
+        "per": "steps.brief_split.output.channel_briefs"
+      },
+      "timeout": "6d"
+    },
+    {
+      "id": "tracking",
+      "type": "subflow",
+      "needs": [
+        "brief_split"
+      ],
+      "name": "Tracking plan, UTMs, holdout",
+      "subflow": {
+        "workflow_id": "analytics.campaign_tracking",
+        "per": "input.brief.markets"
+      },
+      "timeout": "5d"
+    },
+    {
+      "id": "launch_qa",
+      "type": "agent",
+      "needs": [
+        "channel_assets",
+        "tracking"
+      ],
+      "name": "Launch checklist with evidence",
+      "agent": {
+        "prompt_ref": "campaigns/qa@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "campaigns/qa@1"
+      }
+    },
+    {
+      "id": "launch_compliance",
+      "type": "check",
+      "needs": [
+        "launch_qa"
+      ],
+      "name": "Every asset x channel x market",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "name": "G4 Go-live",
+      "needs": [
+        "launch_compliance"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "account_lead",
+          "strategist"
+        ],
+        "sla_hours": 24,
+        "on_changes": "launch_qa"
+      }
+    },
+    {
+      "id": "activate_google",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Turn on the approved budget in the first market (ads_google; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_google",
+        "action": "campaigns.activate",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "activate_meta",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Turn on the approved budget in the first market (ads_meta; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_meta",
+        "action": "campaigns.activate",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "activate_linkedin",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Turn on the approved budget in the first market (ads_linkedin; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "campaigns.activate",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "activate_tiktok",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Turn on the approved budget in the first market (ads_tiktok; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "campaigns.activate",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "activate_snapchat",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Turn on the approved budget in the first market (ads_snapchat; no-op when the platform has no approved budget)",
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "campaigns.activate",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "emit_launched",
+      "type": "emit",
+      "needs": [
+        "activate_google",
+        "activate_meta",
+        "activate_linkedin",
+        "activate_tiktok",
+        "activate_snapchat"
+      ],
+      "name": "Channels publish only after this event, per market",
+      "emit": {
+        "event": "svc.campaigns/market.launched"
+      }
+    },
+    {
+      "id": "start_optimizer",
+      "type": "emit",
+      "needs": [
+        "emit_launched"
+      ],
+      "emit": {
+        "event": "svc.campaigns/flight.started"
+      }
+    },
+    {
+      "id": "wait_flight_end",
+      "type": "wait",
+      "needs": [
+        "start_optimizer"
+      ],
+      "wait": {
+        "event": "svc.campaigns/flight.ended",
+        "match": "async.data.campaign_id == input.campaign_id",
+        "timeout": "120d"
+      }
+    },
+    {
+      "id": "settle",
+      "type": "wait",
+      "needs": [
+        "wait_flight_end"
+      ],
+      "name": "Let conversions and the holdout settle",
+      "wait": {
+        "timeout": "5d"
+      }
+    },
+    {
+      "id": "final_report",
+      "type": "agent",
+      "needs": [
+        "settle"
+      ],
+      "agent": {
+        "prompt_ref": "campaigns/report_final@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "campaigns/report@1"
+      }
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "name": "G7 Final report",
+      "needs": [
+        "final_report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 48,
+        "on_changes": "final_report"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "approve_report"
+      ],
+      "name": "Write the approved lessons to the client brain",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_closed",
+      "type": "emit",
+      "needs": [
+        "learn"
+      ],
+      "emit": {
+        "event": "svc.campaigns/campaign.closed"
+      }
+    }
+  ]
+}
