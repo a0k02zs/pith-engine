@@ -1,0 +1,431 @@
+{
+  "id": "events.trade_show",
+  "version": 1,
+  "service": "events",
+  "description": "Trade show or field event: show selection, budget and contracts, pre-show outreach, booth content, nightly triage, 24-hour follow-up, sales hand-off, report. docs/02-pipeline.md section 2.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "event_id",
+      "markets"
+    ],
+    "properties": {
+      "event_id": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "budget": {
+        "type": "number",
+        "minimum": 0
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 3
+  },
+  "steps": [
+    {
+      "id": "show_selection",
+      "type": "agent",
+      "name": "Rank shows and plan pre-show outreach",
+      "agent": {
+        "prompt_ref": "events/trade_show_planner@1",
+        "output_schema": "events/show_plan@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "name": "Choose the shows",
+      "needs": [
+        "show_selection"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "required_count": 2,
+        "on_changes": "show_selection"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "name": "Show budget",
+      "needs": [
+        "approve_plan"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "account_lead",
+          "client_finance"
+        ],
+        "sla_hours": 72,
+        "required_count": 2
+      }
+    },
+    {
+      "id": "approve_contract",
+      "type": "gate",
+      "name": "Booth, sponsorship or venue contract; event permits for GCC field events",
+      "needs": [
+        "approve_budget"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 120,
+        "required_count": 2
+      }
+    },
+    {
+      "id": "sign_contract",
+      "type": "tool",
+      "name": "Send the approved contract for signature",
+      "needs": [
+        "approve_contract"
+      ],
+      "tool": {
+        "name": "esign",
+        "action": "envelope.send",
+        "risk": "sign"
+      }
+    },
+    {
+      "id": "target_list",
+      "type": "subflow",
+      "name": "Target accounts and buying committees near the show",
+      "needs": [
+        "approve_contract"
+      ],
+      "subflow": {
+        "workflow_id": "abm.account_list"
+      }
+    },
+    {
+      "id": "pre_show_outreach",
+      "type": "subflow",
+      "name": "Meeting and booth invites from T-30d",
+      "needs": [
+        "target_list"
+      ],
+      "subflow": {
+        "workflow_id": "abm.invite_sequence"
+      }
+    },
+    {
+      "id": "booth_content",
+      "type": "agent",
+      "name": "Demo script, talk track, prepared answers and follow-up templates",
+      "agent": {
+        "prompt_ref": "events/run_of_show_writer@1",
+        "output_schema": "events/run_of_show@1"
+      },
+      "needs": [
+        "approve_contract"
+      ]
+    },
+    {
+      "id": "booth_templates",
+      "type": "agent",
+      "name": "Follow-up templates per segment",
+      "agent": {
+        "prompt_ref": "events/promo_brief_writer@1",
+        "output_schema": "events/promo_pack@1"
+      },
+      "needs": [
+        "booth_content"
+      ]
+    },
+    {
+      "id": "check_booth",
+      "type": "check",
+      "name": "Brand, compliance and fact check on booth content, lead form text and templates",
+      "needs": [
+        "booth_templates"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_booth",
+      "type": "gate",
+      "name": "Booth claims, handouts, lead form consent text and follow-up templates",
+      "needs": [
+        "check_booth"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "booth_content"
+      }
+    },
+    {
+      "id": "show_start",
+      "type": "wait",
+      "name": "Show starts",
+      "needs": [
+        "approve_booth",
+        "pre_show_outreach"
+      ],
+      "wait": {
+        "event": "svc.events/session.started",
+        "timeout": "180d",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "nightly_triage",
+      "type": "agent",
+      "name": "Each show night: mark hand-raises from booth notes for the next-day meeting list",
+      "agent": {
+        "prompt_ref": "events/signal_classifier@1",
+        "output_schema": "events/signals@1",
+        "model": "claude-haiku-5-5"
+      },
+      "needs": [
+        "show_start"
+      ]
+    },
+    {
+      "id": "show_end",
+      "type": "wait",
+      "name": "Show ends (E)",
+      "needs": [
+        "show_start"
+      ],
+      "wait": {
+        "event": "svc.events/session.ended",
+        "timeout": "10d",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "final_sync",
+      "type": "wait",
+      "name": "Final lead app sync",
+      "needs": [
+        "show_end"
+      ],
+      "wait": {
+        "event": "svc.events/booth.synced",
+        "timeout": "12h",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "classify_signals",
+      "type": "agent",
+      "name": "Mark hand-raises from all booth notes",
+      "agent": {
+        "prompt_ref": "events/signal_classifier@1",
+        "output_schema": "events/signals@1",
+        "model": "claude-haiku-5-5"
+      },
+      "needs": [
+        "final_sync"
+      ]
+    },
+    {
+      "id": "score",
+      "type": "tool",
+      "name": "Score booth leads and write the fields to the CRM",
+      "needs": [
+        "classify_signals"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "event_scores.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "follow_up_audience",
+      "type": "tool",
+      "name": "Booth leads with a valid basis per market (src/rules.ts boothFollowUpScope)",
+      "needs": [
+        "score"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "fill_follow_up",
+      "type": "agent",
+      "name": "Fill the approved follow-up template for each lead",
+      "agent": {
+        "prompt_ref": "events/follow_up_writer@1",
+        "output_schema": "events/follow_up@1"
+      },
+      "needs": [
+        "follow_up_audience"
+      ]
+    },
+    {
+      "id": "check_follow_up",
+      "type": "check",
+      "name": "Compliance and links check on each filled email",
+      "needs": [
+        "fill_follow_up"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "approve_follow_up",
+      "type": "gate",
+      "name": "Copy gate; skipped when only approved merge fields changed",
+      "needs": [
+        "check_follow_up"
+      ],
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 4,
+        "skip_if": "steps.fill_follow_up.output.template_approved && steps.fill_follow_up.output.only_merge_fields_changed && size(steps.fill_follow_up.output.new_claim_requests) == 0",
+        "on_changes": "fill_follow_up"
+      }
+    },
+    {
+      "id": "send_follow_up",
+      "type": "tool",
+      "name": "Send inside E+24h at the local send time",
+      "needs": [
+        "approve_follow_up"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "transactional.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "sales_briefs",
+      "type": "agent",
+      "name": "A brief for each A-fit or hand-raise lead",
+      "agent": {
+        "prompt_ref": "events/sales_brief_writer@1",
+        "output_schema": "events/sales_brief@1"
+      },
+      "needs": [
+        "score"
+      ]
+    },
+    {
+      "id": "hand_off",
+      "type": "gate",
+      "name": "Sales accepts or rejects each lead with a reason",
+      "needs": [
+        "sales_briefs"
+      ],
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "client_sales"
+        ],
+        "sla_hours": 8
+      }
+    },
+    {
+      "id": "record_sqls",
+      "type": "emit",
+      "name": "Accepted leads as SQL conversions",
+      "needs": [
+        "hand_off"
+      ],
+      "emit": {
+        "event": "engine/conversion.recorded"
+      }
+    },
+    {
+      "id": "day_14",
+      "type": "wait",
+      "name": "Wait to E+14d",
+      "needs": [
+        "send_follow_up",
+        "record_sqls"
+      ],
+      "wait": {
+        "event": "engine/clock.tick",
+        "timeout": "14d"
+      }
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "name": "Show report",
+      "agent": {
+        "prompt_ref": "events/report_writer@1",
+        "output_schema": "events/report@1"
+      },
+      "needs": [
+        "day_14"
+      ]
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "name": "Strategist checks the show report",
+      "needs": [
+        "report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 24,
+        "on_changes": "report"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "name": "Lessons and go or no-go for next year",
+      "needs": [
+        "approve_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

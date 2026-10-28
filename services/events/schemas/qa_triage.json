@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/qa_triage@1",
+  "type": "object",
+  "properties": {
+    "class": {
+      "enum": [
+        "product",
+        "pricing",
+        "technical",
+        "how_to",
+        "off_topic",
+        "hand_raise",
+        "complaint",
+        "press",
+        "legal_or_regulatory",
+        "abuse"
+      ]
+    },
+    "escalate": {
+      "type": "boolean"
+    },
+    "hand_raise": {
+      "type": "boolean"
+    },
+    "matched_prepared_answer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "draft_answer": {
+      "type": "string",
+      "maxLength": 600
+    },
+    "needs_live_speaker": {
+      "type": "boolean"
+    },
+    "priority": {
+      "enum": [
+        "high",
+        "normal",
+        "low"
+      ]
+    }
+  },
+  "required": [
+    "class",
+    "escalate",
+    "hand_raise",
+    "matched_prepared_answer",
+    "draft_answer",
+    "needs_live_speaker",
+    "priority"
+  ],
+  "additionalProperties": false
+}

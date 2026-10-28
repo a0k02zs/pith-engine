@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "events/follow_up@1",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suggested_extra": {
+      "type": "string"
+    },
+    "resources_used": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0,
+      "maxItems": 2
+    },
+    "template_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "template_approved": {
+      "type": "boolean",
+      "description": "True when template_id was approved at the go-live gate. The service code sets this from the approval record, not the model."
+    },
+    "only_merge_fields_changed": {
+      "type": "boolean",
+      "description": "Result of onlyMergeFieldsChanged(template, body) in src/rules.ts. The service code sets this, not the model."
+    },
+    "new_claim_requests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Claims in the body that are not in the approved claims library. Each one needs a person."
+    }
+  },
+  "required": [
+    "contact_id",
+    "subject",
+    "body",
+    "suggested_extra",
+    "resources_used",
+    "template_id",
+    "template_approved",
+    "only_merge_fields_changed",
+    "new_claim_requests"
+  ],
+  "additionalProperties": false
+}

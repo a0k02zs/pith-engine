@@ -1,0 +1,715 @@
+{
+  "id": "events.webinar",
+  "version": 1,
+  "service": "events",
+  "description": "Webinar or virtual event: topic, plan gate, content, registration, promotion, live Q&A, 24-hour follow-up, sales hand-off, repurpose, reports. docs/02-pipeline.md section 1.",
+  "trigger": {
+    "event": "svc.events/event.created"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "event_id",
+      "markets",
+      "event_start"
+    ],
+    "properties": {
+      "event_id": {
+        "type": "string"
+      },
+      "format": {
+        "enum": [
+          "webinar",
+          "webinar_series",
+          "virtual_event"
+        ]
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "event_start": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "paid_spend": {
+        "type": "number",
+        "minimum": 0
+      },
+      "paid_speaker": {
+        "type": "boolean"
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 5
+  },
+  "steps": [
+    {
+      "id": "topic_research",
+      "type": "agent",
+      "name": "Propose 3 topics from real buyer questions",
+      "agent": {
+        "prompt_ref": "events/topic_strategist@1",
+        "output_schema": "events/topics@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "name": "Topic, speakers, session time per market, score weights, targets",
+      "needs": [
+        "topic_research"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "topic_research"
+      }
+    },
+    {
+      "id": "paid_items",
+      "type": "branch",
+      "name": "Paid promotion, platform add-on or paid speaker?",
+      "needs": [
+        "approve_plan"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "run.input.paid_spend > 0 || run.input.paid_speaker == true",
+            "goto": "approve_budget"
+          }
+        ],
+        "else": "run_of_show"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "name": "Event budget",
+      "needs": [
+        "paid_items"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "account_lead",
+          "client_finance"
+        ],
+        "sla_hours": 48,
+        "required_count": 2
+      }
+    },
+    {
+      "id": "approve_contract",
+      "type": "gate",
+      "name": "Speaker or platform contract (a person signs)",
+      "needs": [
+        "approve_budget"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "required_count": 2
+      }
+    },
+    {
+      "id": "sign_contract",
+      "type": "tool",
+      "name": "Send the approved contract for signature",
+      "needs": [
+        "approve_contract"
+      ],
+      "tool": {
+        "name": "esign",
+        "action": "envelope.send",
+        "risk": "sign"
+      }
+    },
+    {
+      "id": "run_of_show",
+      "type": "agent",
+      "name": "Run of show, speaker brief, polls, prepared answers",
+      "agent": {
+        "prompt_ref": "events/run_of_show_writer@1",
+        "output_schema": "events/run_of_show@1"
+      },
+      "needs": [
+        "approve_plan"
+      ]
+    },
+    {
+      "id": "check_content",
+      "type": "check",
+      "name": "Brand, compliance and fact check of session content",
+      "needs": [
+        "run_of_show"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_claims",
+      "type": "gate",
+      "name": "Slides, polls, prepared answers and new claims",
+      "needs": [
+        "check_content"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "content_lead",
+          "subject_expert"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "run_of_show"
+      }
+    },
+    {
+      "id": "promo_pack",
+      "type": "agent",
+      "name": "Promotion brief, registration copy, reminders, 4 follow-up templates",
+      "agent": {
+        "prompt_ref": "events/promo_brief_writer@1",
+        "output_schema": "events/promo_pack@1"
+      },
+      "needs": [
+        "approve_plan"
+      ]
+    },
+    {
+      "id": "check_registration",
+      "type": "check",
+      "name": "Check page copy, reminders and follow-up templates",
+      "needs": [
+        "promo_pack"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "name": "Registration page, reminders and follow-up templates, approved together",
+      "needs": [
+        "check_registration"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "account_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "promo_pack"
+      }
+    },
+    {
+      "id": "publish_registration",
+      "type": "tool",
+      "name": "Create the session and registration page on the events platform",
+      "needs": [
+        "approve_go_live",
+        "approve_claims"
+      ],
+      "tool": {
+        "name": "events",
+        "action": "session.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "promote_email",
+      "type": "subflow",
+      "name": "Invites to opted-in contacts",
+      "needs": [
+        "publish_registration"
+      ],
+      "subflow": {
+        "workflow_id": "email.campaign_send",
+        "per": "market"
+      }
+    },
+    {
+      "id": "promote_social",
+      "type": "subflow",
+      "name": "Organic promotion",
+      "needs": [
+        "publish_registration"
+      ],
+      "subflow": {
+        "workflow_id": "social.post_set",
+        "per": "market"
+      }
+    },
+    {
+      "id": "promote_abm",
+      "type": "subflow",
+      "name": "Invites to target accounts",
+      "needs": [
+        "publish_registration"
+      ],
+      "subflow": {
+        "workflow_id": "abm.invite_sequence"
+      }
+    },
+    {
+      "id": "promote_paid",
+      "type": "subflow",
+      "name": "Paid promotion; its budget gate is inside the paid social flow",
+      "needs": [
+        "publish_registration"
+      ],
+      "subflow": {
+        "workflow_id": "paid_social.boost",
+        "per": "market"
+      }
+    },
+    {
+      "id": "pacing",
+      "type": "agent",
+      "name": "Daily registration pacing until T-1d",
+      "agent": {
+        "prompt_ref": "events/registration_pacer@1",
+        "output_schema": "events/pacing@1",
+        "model": "claude-haiku-5-5"
+      },
+      "needs": [
+        "publish_registration"
+      ]
+    },
+    {
+      "id": "reminder_audience",
+      "type": "tool",
+      "name": "Registrants with a valid consent for SMS or WhatsApp in their country",
+      "needs": [
+        "publish_registration"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "check_reminder",
+      "type": "check",
+      "name": "Compliance check on the T-10min SMS or WhatsApp text",
+      "needs": [
+        "reminder_audience"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "t_minus_10",
+      "type": "wait",
+      "name": "Wait until 10 minutes before the session",
+      "needs": [
+        "check_reminder"
+      ],
+      "wait": {
+        "event": "svc.events/session.reminder_due",
+        "timeout": "60d",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "send_reminder",
+      "type": "tool",
+      "name": "Send the T-10min reminder",
+      "needs": [
+        "t_minus_10"
+      ],
+      "tool": {
+        "name": "sms",
+        "action": "message.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "dry_run",
+      "type": "task",
+      "name": "Producer runs the dry run",
+      "needs": [
+        "approve_claims",
+        "publish_registration"
+      ],
+      "task": {
+        "title": "Dry run: audio, slides, polls, recording, captions, Q&A assistant",
+        "assignee_roles": [
+          "account_lead"
+        ],
+        "due_hours": 72
+      }
+    },
+    {
+      "id": "live_start",
+      "type": "wait",
+      "name": "Live session starts",
+      "needs": [
+        "dry_run"
+      ],
+      "wait": {
+        "event": "svc.events/session.started",
+        "timeout": "60d",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "live_qa",
+      "type": "agent",
+      "name": "Sort live questions and draft answers for the moderator; never posts",
+      "agent": {
+        "prompt_ref": "events/live_qa_assistant@1",
+        "output_schema": "events/qa_triage@1",
+        "model": "claude-haiku-5-5"
+      },
+      "needs": [
+        "live_start"
+      ]
+    },
+    {
+      "id": "live_end",
+      "type": "wait",
+      "name": "Live session ends (E)",
+      "needs": [
+        "live_start"
+      ],
+      "wait": {
+        "event": "svc.events/session.ended",
+        "timeout": "12h",
+        "match": "event.data.event_id == run.input.event_id"
+      }
+    },
+    {
+      "id": "pull_attendance",
+      "type": "tool",
+      "name": "Attendance, watch minutes, questions, polls and clicks",
+      "needs": [
+        "live_end"
+      ],
+      "tool": {
+        "name": "events",
+        "action": "attendance.export",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "record_attendance",
+      "type": "emit",
+      "name": "registered, attended and no_show outbound events",
+      "needs": [
+        "pull_attendance"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    },
+    {
+      "id": "classify_signals",
+      "type": "agent",
+      "name": "Mark hand-raises and questions from the free text",
+      "agent": {
+        "prompt_ref": "events/signal_classifier@1",
+        "output_schema": "events/signals@1",
+        "model": "claude-haiku-5-5"
+      },
+      "needs": [
+        "pull_attendance"
+      ]
+    },
+    {
+      "id": "score",
+      "type": "tool",
+      "name": "Score and segment each registrant (src/rules.ts scoreRecords) and write the fields to the CRM",
+      "needs": [
+        "classify_signals"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "event_scores.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "scored",
+      "type": "emit",
+      "name": "Leads scored",
+      "needs": [
+        "score"
+      ],
+      "emit": {
+        "event": "svc.events/leads.scored"
+      }
+    },
+    {
+      "id": "follow_up_audience",
+      "type": "tool",
+      "name": "Registrants with a valid consent for the follow-up purpose in their country",
+      "needs": [
+        "score"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "fill_follow_up",
+      "type": "agent",
+      "name": "Fill the approved follow-up template for each person",
+      "agent": {
+        "prompt_ref": "events/follow_up_writer@1",
+        "output_schema": "events/follow_up@1"
+      },
+      "needs": [
+        "follow_up_audience"
+      ]
+    },
+    {
+      "id": "check_follow_up",
+      "type": "check",
+      "name": "Compliance and links check on each filled email",
+      "needs": [
+        "fill_follow_up"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "approve_follow_up",
+      "type": "gate",
+      "name": "Copy gate; skipped when only approved merge fields changed",
+      "needs": [
+        "check_follow_up"
+      ],
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 4,
+        "skip_if": "steps.fill_follow_up.output.template_approved && steps.fill_follow_up.output.only_merge_fields_changed && size(steps.fill_follow_up.output.new_claim_requests) == 0",
+        "on_changes": "fill_follow_up"
+      }
+    },
+    {
+      "id": "send_follow_up",
+      "type": "tool",
+      "name": "Send each segment at its local send time, inside E+24h",
+      "needs": [
+        "approve_follow_up"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "transactional.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "sales_briefs",
+      "type": "agent",
+      "name": "A brief for each hot lead",
+      "agent": {
+        "prompt_ref": "events/sales_brief_writer@1",
+        "output_schema": "events/sales_brief@1"
+      },
+      "needs": [
+        "score"
+      ]
+    },
+    {
+      "id": "hand_off",
+      "type": "gate",
+      "name": "Sales accepts or rejects each hot lead with a reason",
+      "needs": [
+        "sales_briefs"
+      ],
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "client_sales"
+        ],
+        "sla_hours": 4
+      }
+    },
+    {
+      "id": "record_sqls",
+      "type": "emit",
+      "name": "Accepted hot leads as SQL conversions",
+      "needs": [
+        "hand_off"
+      ],
+      "emit": {
+        "event": "engine/conversion.recorded"
+      }
+    },
+    {
+      "id": "repurpose_plan",
+      "type": "agent",
+      "name": "Plan about 10 assets from the recording",
+      "agent": {
+        "prompt_ref": "events/repurpose_planner@1",
+        "output_schema": "events/repurpose_plan@1"
+      },
+      "needs": [
+        "live_end"
+      ]
+    },
+    {
+      "id": "clips",
+      "type": "subflow",
+      "name": "Clips; the video final-review gate is inside the video flow",
+      "needs": [
+        "repurpose_plan"
+      ],
+      "subflow": {
+        "workflow_id": "video.clip_set"
+      }
+    },
+    {
+      "id": "written_assets",
+      "type": "subflow",
+      "name": "Blog post and sales one-pager",
+      "needs": [
+        "repurpose_plan"
+      ],
+      "subflow": {
+        "workflow_id": "content.repurpose"
+      }
+    },
+    {
+      "id": "day_7",
+      "type": "wait",
+      "name": "Wait to E+7d",
+      "needs": [
+        "send_follow_up",
+        "record_sqls"
+      ],
+      "wait": {
+        "event": "engine/clock.tick",
+        "timeout": "7d"
+      }
+    },
+    {
+      "id": "report_e7",
+      "type": "agent",
+      "name": "First-look report",
+      "agent": {
+        "prompt_ref": "events/report_writer@1",
+        "output_schema": "events/report@1"
+      },
+      "needs": [
+        "day_7"
+      ]
+    },
+    {
+      "id": "approve_report_e7",
+      "type": "gate",
+      "name": "Strategist checks the report before the client sees it",
+      "needs": [
+        "report_e7"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 24,
+        "on_changes": "report_e7"
+      }
+    },
+    {
+      "id": "day_30",
+      "type": "wait",
+      "name": "Wait to E+30d",
+      "needs": [
+        "approve_report_e7"
+      ],
+      "wait": {
+        "event": "engine/clock.tick",
+        "timeout": "23d"
+      }
+    },
+    {
+      "id": "report_e30",
+      "type": "agent",
+      "name": "Pipeline report",
+      "agent": {
+        "prompt_ref": "events/report_writer@1",
+        "output_schema": "events/report@1"
+      },
+      "needs": [
+        "day_30"
+      ]
+    },
+    {
+      "id": "approve_report_e30",
+      "type": "gate",
+      "name": "Strategist checks the pipeline report",
+      "needs": [
+        "report_e30"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 24,
+        "on_changes": "report_e30"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "name": "Lessons to the client brain",
+      "needs": [
+        "approve_report_e30"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

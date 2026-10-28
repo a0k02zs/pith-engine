@@ -1,0 +1,144 @@
+{
+  "id": "events.campaign_assets",
+  "version": 1,
+  "service": "events",
+  "description": "A launch webinar for a campaign (campaigns contract): run of show and registration assets, gates, artifacts; publish only after svc.campaigns/market.launched.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "campaign_id",
+      "markets",
+      "channel_brief"
+    ],
+    "properties": {
+      "campaign_id": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "channel_brief": {
+        "type": "object"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "run_of_show",
+      "type": "agent",
+      "name": "Run of show from the campaign channel brief",
+      "agent": {
+        "prompt_ref": "events/run_of_show_writer@1",
+        "output_schema": "events/run_of_show@1"
+      }
+    },
+    {
+      "id": "promo_pack",
+      "type": "agent",
+      "name": "Registration copy, reminders and follow-up templates",
+      "agent": {
+        "prompt_ref": "events/promo_brief_writer@1",
+        "output_schema": "events/promo_pack@1"
+      },
+      "needs": [
+        "run_of_show"
+      ]
+    },
+    {
+      "id": "check_assets",
+      "type": "check",
+      "name": "Brand, compliance and fact check",
+      "needs": [
+        "promo_pack"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_claims",
+      "type": "gate",
+      "name": "New claims in the session content",
+      "needs": [
+        "check_assets"
+      ],
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "content_lead",
+          "subject_expert"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "run_of_show"
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "name": "Registration page, reminders and follow-up templates",
+      "needs": [
+        "approve_claims"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_changes": "promo_pack"
+      }
+    },
+    {
+      "id": "register_artifacts",
+      "type": "tool",
+      "name": "Register each asset as an engine artifact with campaign_id, market and language",
+      "needs": [
+        "approve_copy"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "market_launched",
+      "type": "wait",
+      "name": "Campaign launches in this market",
+      "needs": [
+        "register_artifacts"
+      ],
+      "wait": {
+        "event": "svc.campaigns/market.launched",
+        "timeout": "90d",
+        "match": "event.data.campaign_id == run.input.campaign_id"
+      }
+    },
+    {
+      "id": "publish_registration",
+      "type": "tool",
+      "name": "Publish the registration page",
+      "needs": [
+        "market_launched"
+      ],
+      "tool": {
+        "name": "events",
+        "action": "session.publish",
+        "risk": "write_external"
+      }
+    }
+  ]
+}
