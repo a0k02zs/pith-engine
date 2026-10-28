@@ -1,0 +1,35 @@
+{
+  "$comment": "CRO market settings (docs/05-market-rules.md section 3). Planning summary, not legal advice. Blackouts marked approximate follow the lunar calendar: confirm the dates each year.",
+  "version": 1,
+  "markets": {
+    "GB": { "lang": ["en-GB"], "currency": "GBP", "decimals": 2, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "rule_ids": ["UK-COOKIE", "UK-PRIVACY-URL", "UK-VAT-PRICE"] },
+    "SG": { "lang": ["en-SG"], "currency": "SGD", "decimals": 2, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "rule_ids": ["SG-PURPOSE", "SG-DNC"] },
+    "US": { "lang": ["en-US"], "currency": "USD", "decimals": 2, "date": "MM/DD/YYYY", "tax_in_price": false, "cookie_consent_for_tests": false, "weekend": ["sat", "sun"], "rule_ids": ["US-GPC", "US-FAKE-TESTIMONIAL"] },
+    "CA": { "lang": ["en-CA", "fr-CA"], "currency": "CAD", "decimals": 2, "date": "YYYY-MM-DD", "tax_in_price": false, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "rule_ids": ["QC-FRENCH"] },
+    "AE": { "lang": ["ar-AE", "en-AE"], "currency": "AED", "decimals": 2, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C"] },
+    "SA": { "lang": ["ar-SA", "en-SA"], "currency": "SAR", "decimals": 2, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["fri", "sat"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C", "SA-DATA-TRANSFER"] },
+    "QA": { "lang": ["ar-QA", "en-QA"], "currency": "QAR", "decimals": 2, "date": "DD/MM/YYYY", "tax_in_price": false, "cookie_consent_for_tests": true, "weekend": ["fri", "sat"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C"] },
+    "KW": { "lang": ["ar-KW", "en-KW"], "currency": "KWD", "decimals": 3, "date": "DD/MM/YYYY", "tax_in_price": false, "cookie_consent_for_tests": true, "weekend": ["fri", "sat"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C"] },
+    "BH": { "lang": ["ar-BH", "en-BH"], "currency": "BHD", "decimals": 3, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["fri", "sat"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C"] },
+    "OM": { "lang": ["ar-OM", "en-OM"], "currency": "OMR", "decimals": 3, "date": "DD/MM/YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["fri", "sat"], "rule_ids": ["GCC-CULTURE", "GCC-ARABIC-B2C"] },
+    "NL": { "lang": ["nl-NL", "en-NL"], "currency": "EUR", "decimals": 2, "date": "DD-MM-YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "lowest_30_day_price_on_discount": true, "rule_ids": ["EU-COOKIE", "EU-OMNIBUS-PRICE", "EU-ACCESSIBILITY", "EU-AI-LABEL"] },
+    "DE": { "lang": ["de-DE"], "currency": "EUR", "decimals": 2, "date": "DD.MM.YYYY", "tax_in_price": true, "cookie_consent_for_tests": true, "weekend": ["sat", "sun"], "lowest_30_day_price_on_discount": true, "double_opt_in": true, "rule_ids": ["EU-COOKIE", "EU-OMNIBUS-PRICE", "EU-ACCESSIBILITY", "EU-AI-LABEL", "DE-DOI"] }
+  },
+  "blackouts": [
+    { "name": "Black Friday to Cyber Monday", "markets": ["GB", "US", "CA", "NL", "DE", "SG"], "from": "2026-11-27", "to": "2026-11-30" },
+    { "name": "White Friday", "markets": ["AE", "SA", "QA", "KW", "BH", "OM"], "from": "2026-11-27", "to": "2026-11-30" },
+    { "name": "Christmas to Boxing Day", "markets": ["GB", "US", "CA", "NL", "DE", "SG"], "from": "2026-12-24", "to": "2026-12-26" },
+    { "name": "11.11 sale", "markets": ["SG"], "from": "2026-11-11", "to": "2026-11-11" },
+    { "name": "12.12 sale", "markets": ["SG"], "from": "2026-12-12", "to": "2026-12-12" },
+    { "name": "UAE National Day", "markets": ["AE"], "from": "2026-12-02", "to": "2026-12-03" },
+    { "name": "Qatar National Day", "markets": ["QA"], "from": "2026-12-18", "to": "2026-12-18" },
+    { "name": "Chinese New Year", "markets": ["SG"], "from": "2027-02-06", "to": "2027-02-07", "approximate": true },
+    { "name": "Saudi Founding Day", "markets": ["SA"], "from": "2027-02-22", "to": "2027-02-22" },
+    { "name": "Kuwait National Day", "markets": ["KW"], "from": "2027-02-25", "to": "2027-02-26" },
+    { "name": "Ramadan and Eid al-Fitr", "markets": ["AE", "SA", "QA", "KW", "BH", "OM", "SG"], "from": "2027-02-08", "to": "2027-03-12", "approximate": true },
+    { "name": "King's Day", "markets": ["NL"], "from": "2027-04-27", "to": "2027-04-27" },
+    { "name": "Eid al-Adha", "markets": ["AE", "SA", "QA", "KW", "BH", "OM"], "from": "2027-05-16", "to": "2027-05-19", "approximate": true },
+    { "name": "Canada Day", "markets": ["CA"], "from": "2027-07-01", "to": "2027-07-01" },
+    { "name": "Independence Day", "markets": ["US"], "from": "2027-07-04", "to": "2027-07-05" }
+  ]
+}

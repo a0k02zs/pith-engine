@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cro/learning@1",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "test_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "page_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+      },
+      "minItems": 1
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "mobile",
+          "desktop",
+          "tablet"
+        ]
+      }
+    },
+    "theme": {
+      "type": "string",
+      "minLength": 1
+    },
+    "change": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "enum": [
+        "ship",
+        "reject",
+        "inconclusive",
+        "invalid",
+        "hold"
+      ]
+    },
+    "lift_relative": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "learning": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "client_id",
+    "test_id",
+    "page_type",
+    "markets",
+    "devices",
+    "theme",
+    "change",
+    "decision",
+    "lift_relative",
+    "learning",
+    "date"
+  ],
+  "additionalProperties": false
+}

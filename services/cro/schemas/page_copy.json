@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cro/page_copy@1",
+  "type": "object",
+  "properties": {
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "headline": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 120
+          },
+          "body": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cta": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proof_source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "headline",
+          "body",
+          "cta",
+          "proof_source_ids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "missing": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "copy_reused": {
+      "type": "boolean",
+      "description": "True when every section reuses approved copy."
+    },
+    "new_copy_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Sections with copy that no person has approved yet."
+    }
+  },
+  "required": [
+    "market",
+    "language",
+    "sections",
+    "new_claims",
+    "missing",
+    "copy_reused",
+    "new_copy_ids"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,484 @@
+{
+  "id": "cro.optimization_test",
+  "version": 1,
+  "service": "cro",
+  "description": "Track B: 1 A/B test from tracking check to shipped winner and learning. Plan service 17; 01-playbook.md section 4; 02-pipeline.md section 1. At the planned end or an early stop, cro.test_monitor pauses the experiment (all traffic to control, risk remove) before it emits svc.cro/test.ended. Result KPIs are recorded for every decision; only a ship decision goes through G4 and G3.",
+  "trigger": {
+    "event": "svc.cro/test.requested",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "page_url_pattern",
+      "markets"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "page_url_pattern": {
+        "type": "string"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "hypothesis_id": {
+        "type": "string",
+        "description": "Optional. When set, the run starts at test design with an approved backlog item."
+      }
+    }
+  },
+  "concurrency": {
+    "key": "input.client_id + ':' + input.page_url_pattern",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "tracking_check",
+      "type": "agent",
+      "name": "Tracking check and funnel audit",
+      "agent": {
+        "prompt_ref": "cro/funnel_auditor@1",
+        "model": "claude-opus-5-5",
+        "tools": [
+          "ga4.funnel.read",
+          "warehouse.events.read",
+          "crux.cwv.read"
+        ],
+        "output_schema": "cro/funnel_audit@1"
+      }
+    },
+    {
+      "id": "tracking_ok",
+      "type": "branch",
+      "needs": [
+        "tracking_check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.tracking_check.output.tracking_ok",
+            "goto": "tracking_broken"
+          }
+        ],
+        "else": "research"
+      }
+    },
+    {
+      "id": "tracking_broken",
+      "type": "emit",
+      "name": "Ask analytics (12) to fix tracking; the run ends",
+      "emit": {
+        "event": "svc.cro/tracking.broken"
+      }
+    },
+    {
+      "id": "research",
+      "type": "agent",
+      "needs": [
+        "tracking_ok"
+      ],
+      "name": "Research why visitors drop off",
+      "agent": {
+        "prompt_ref": "cro/researcher@1",
+        "tools": [
+          "clarity.insights.read",
+          "hotjar.surveys.read",
+          "brain.search"
+        ],
+        "output_schema": "cro/evidence@1"
+      }
+    },
+    {
+      "id": "hypotheses",
+      "type": "agent",
+      "needs": [
+        "research"
+      ],
+      "name": "Write and score hypotheses",
+      "agent": {
+        "prompt_ref": "cro/hypothesis@1",
+        "output_schema": "cro/hypotheses@1"
+      }
+    },
+    {
+      "id": "design",
+      "type": "agent",
+      "needs": [
+        "hypotheses"
+      ],
+      "name": "Test design with cro-stats plan",
+      "agent": {
+        "prompt_ref": "cro/test_designer@1",
+        "model": "claude-haiku-5-5",
+        "tools": [
+          "cro_stats.plan",
+          "market_calendar.read"
+        ],
+        "output_schema": "cro/test_plan@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "needs": [
+        "design"
+      ],
+      "name": "G1 Test plan",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "cro_lead"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "hypotheses"
+      }
+    },
+    {
+      "id": "testable",
+      "type": "branch",
+      "needs": [
+        "approve_plan"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.design.output.design == 'not_testable'",
+            "goto": "fallback"
+          }
+        ],
+        "else": "copy"
+      }
+    },
+    {
+      "id": "fallback",
+      "type": "emit",
+      "needs": [
+        "testable"
+      ],
+      "name": "Not testable: hand to the low-traffic rule (01-playbook.md 5.6); the run ends",
+      "emit": {
+        "event": "svc.cro/test.not_testable"
+      }
+    },
+    {
+      "id": "copy",
+      "type": "agent",
+      "needs": [
+        "testable"
+      ],
+      "name": "Variant copy per market",
+      "agent": {
+        "prompt_ref": "cro/copywriter@1",
+        "output_schema": "cro/page_copy@1"
+      }
+    },
+    {
+      "id": "localize",
+      "type": "subflow",
+      "needs": [
+        "copy"
+      ],
+      "name": "Localize per market",
+      "subflow": {
+        "workflow_id": "cro.localize",
+        "per": "input.markets"
+      }
+    },
+    {
+      "id": "build",
+      "type": "agent",
+      "needs": [
+        "localize"
+      ],
+      "name": "Variant change set for the test tool",
+      "agent": {
+        "prompt_ref": "cro/page_builder@1",
+        "output_schema": "cro/build@1"
+      }
+    },
+    {
+      "id": "draft_in_tool",
+      "type": "tool",
+      "needs": [
+        "build"
+      ],
+      "name": "Create the variant as a draft (not live) in VWO or Optimizely",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.create_draft",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "checks",
+      "type": "check",
+      "needs": [
+        "draft_in_tool"
+      ],
+      "name": "Brand, compliance, accessibility, links",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "accessibility",
+          "links"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "needs": [
+        "checks"
+      ],
+      "name": "G2a Creative",
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead"
+        ],
+        "sla_hours": 48,
+        "skip_if": "steps.build.output.only_moves_or_removes_approved_elements",
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "needs": [
+        "approve_creative"
+      ],
+      "name": "G2b Copy",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "skip_if": "size(steps.copy.output.new_copy_ids) == 0",
+        "on_changes": "copy"
+      }
+    },
+    {
+      "id": "needs_claim",
+      "type": "branch",
+      "needs": [
+        "approve_copy"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.copy.output.new_claims) > 0 || size(steps.hypotheses.output.selected.flags) > 0",
+            "goto": "approve_claim"
+          }
+        ],
+        "else": "qa"
+      }
+    },
+    {
+      "id": "approve_claim",
+      "type": "gate",
+      "needs": [
+        "needs_claim"
+      ],
+      "name": "G2c Claim, price or offer",
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal",
+          "client_approver",
+          "client_finance"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "copy"
+      }
+    },
+    {
+      "id": "qa",
+      "type": "agent",
+      "needs": [
+        "needs_claim"
+      ],
+      "name": "QA checklist (04-templates.md section 5)",
+      "agent": {
+        "prompt_ref": "cro/qa@1",
+        "model": "claude-haiku-5-5",
+        "tools": [
+          "browser.screenshot",
+          "lighthouse.run"
+        ],
+        "output_schema": "cro/qa_report@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "qa"
+      ],
+      "name": "G3 Test go-live (engine G9)",
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "ops_lead",
+          "client_developer",
+          "cro_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "start_test",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "name": "Start the experiment at the planned split",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.start",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "started",
+      "type": "emit",
+      "needs": [
+        "start_test"
+      ],
+      "emit": {
+        "event": "svc.cro/test.started"
+      }
+    },
+    {
+      "id": "monitor",
+      "type": "subflow",
+      "needs": [
+        "started"
+      ],
+      "name": "Daily SRM and guardrail checks; the child run ends at the planned end date or an early stop",
+      "subflow": {
+        "workflow_id": "cro.test_monitor"
+      }
+    },
+    {
+      "id": "analyze",
+      "type": "agent",
+      "needs": [
+        "monitor"
+      ],
+      "name": "Results with cro-stats analyze",
+      "agent": {
+        "prompt_ref": "cro/results_analyst@1",
+        "tools": [
+          "cro_stats.analyze",
+          "experiment_platform.results.read"
+        ],
+        "output_schema": "cro/results@1"
+      }
+    },
+    {
+      "id": "result_branch",
+      "type": "branch",
+      "needs": [
+        "analyze"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.analyze.output.decision == 'ship'",
+            "goto": "approve_winner"
+          }
+        ],
+        "else": "record"
+      }
+    },
+    {
+      "id": "approve_winner",
+      "type": "gate",
+      "needs": [
+        "result_branch"
+      ],
+      "name": "G4 Ship winner",
+      "gate": {
+        "approval_kind": "test_winner",
+        "required_roles": [
+          "cro_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "analyze"
+      }
+    },
+    {
+      "id": "approve_ship_live",
+      "type": "gate",
+      "needs": [
+        "approve_winner"
+      ],
+      "name": "G3 again: the winner changes the live site (engine G9)",
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "ops_lead",
+          "client_developer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "ship",
+      "type": "tool",
+      "needs": [
+        "approve_ship_live"
+      ],
+      "name": "Send the winner to 100% of traffic and open the hard-code ticket",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.ship_variant",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "result_branch"
+      ],
+      "name": "Record the result KPIs",
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "needs": [
+        "record"
+      ],
+      "name": "Write the learning to the client brain (POST /learnings)",
+      "agent": {
+        "prompt_ref": "cro/learnings@1",
+        "model": "claude-haiku-5-5",
+        "tools": [
+          "brain.learnings.write"
+        ],
+        "output_schema": "cro/learning@1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cro/results@1",
+  "type": "object",
+  "properties": {
+    "decision": {
+      "enum": [
+        "ship",
+        "reject",
+        "inconclusive",
+        "invalid",
+        "hold"
+      ]
+    },
+    "summary_for_client": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lift_relative": {
+      "type": "number"
+    },
+    "ci95": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "p_value": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "guardrails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "harmed",
+              "improved"
+            ]
+          }
+        },
+        "required": [
+          "metric",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "srm_ok": {
+      "type": "boolean"
+    },
+    "learning": {
+      "type": "string",
+      "minLength": 1
+    },
+    "next_step": {
+      "type": "string",
+      "minLength": 1
+    },
+    "escalation_note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "decision",
+    "summary_for_client",
+    "lift_relative",
+    "ci95",
+    "p_value",
+    "guardrails",
+    "srm_ok",
+    "learning",
+    "next_step",
+    "escalation_note"
+  ],
+  "additionalProperties": false
+}

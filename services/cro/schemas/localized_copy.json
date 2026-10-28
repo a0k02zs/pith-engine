@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cro/localized_copy@1",
+  "type": "object",
+  "properties": {
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "headline": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 120
+          },
+          "body": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cta": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proof_source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "headline",
+          "body",
+          "cta",
+          "proof_source_ids"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "legal_text_added": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "needs_native_review": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "market",
+    "language",
+    "sections",
+    "legal_text_added",
+    "needs_native_review",
+    "notes"
+  ],
+  "additionalProperties": false
+}

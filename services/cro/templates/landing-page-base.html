@@ -1,0 +1,129 @@
+<!doctype html>
+<!--
+  Pith M CRO base landing page (templates T1 to T6). Version 1, 21 Oct 2026.
+  The page builder agent fills every slot in double curly braces. Set lang and dir per market: dir="rtl" for Arabic.
+  The layout uses CSS logical properties, so right-to-left pages mirror with no extra CSS.
+  Never remove: the consent block, the privacy link, the legal footer.
+  Load the A/B test tool and analytics only after cookie consent where the market needs it (05-market-rules.md).
+-->
+<html lang="{{lang}}" dir="{{dir}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{page_title}}</title>
+<meta name="description" content="{{meta_description}}">
+<meta name="robots" content="{{robots}}">
+<link rel="canonical" href="{{canonical_url}}">
+<style>
+:root{
+  --brand:{{brand_primary}}; --brand-ink:{{brand_on_primary}};
+  --ink:#16202C; --muted:#4F5B69; --line:#DCE0E6; --bg:#FFFFFF; --soft:#F5F6F8;
+  --radius:10px; --font:{{brand_font_stack}};
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.55;font-size:17px}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--brand)}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:16px}
+header.top{padding-block:14px;border-block-end:1px solid var(--line)}
+header.top img{height:32px;width:auto}
+.hero{display:grid;gap:28px;padding-block:28px 40px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.hero{grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);align-items:start;padding-block:56px}}
+h1{font-size:clamp(30px,6vw,46px);line-height:1.1;margin:0 0 12px;text-wrap:balance}
+.sub{font-size:19px;color:var(--muted);margin:0 0 18px;max-width:52ch}
+.cta{display:inline-block;background:var(--brand);color:var(--brand-ink);text-decoration:none;font-weight:600;
+  padding:14px 22px;border-radius:var(--radius);border:0;font-size:17px;cursor:pointer;min-height:48px}
+.cta:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.proof{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;color:var(--muted);font-size:14px;margin-block-start:18px}
+.proof img{height:24px;width:auto;filter:grayscale(1);opacity:.8}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+section{padding-block:40px;border-block-start:1px solid var(--line)}
+h2{font-size:26px;margin:0 0 16px}
+.grid3{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.grid3 h3{margin:0 0 6px;font-size:18px}
+.grid3 p{margin:0;color:var(--muted)}
+blockquote{margin:0;font-size:19px}
+blockquote footer{font-size:15px;color:var(--muted);margin-block-start:8px}
+details{border-block-end:1px solid var(--line);padding-block:12px}
+summary{cursor:pointer;font-weight:600}
+form label{display:block;font-weight:600;font-size:15px;margin-block:12px 4px}
+form input,form select{width:100%;padding:12px;border:1px solid #8A94A3;border-radius:8px;font:inherit;min-height:48px}
+.consent{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14px;color:var(--muted);margin-block-start:12px}
+.consent input{width:20px;height:20px;min-height:0;margin:2px 0 0}
+.form-legal{font-size:13px;color:var(--muted);margin-block:12px 0}
+form .cta{width:100%;margin-block-start:16px}
+.pay{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pay img{height:24px;width:auto}
+footer.legal{font-size:13px;color:var(--muted);padding-block:28px;border-block-start:1px solid var(--line)}
+footer.legal p{margin:0 0 6px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><img src="{{logo_url}}" alt="{{company_name}}" width="140" height="32"></div></header>
+
+<main>
+  <div class="wrap hero" data-section="hero">
+    <div>
+      <h1 data-slot="headline">{{headline}}</h1>
+      <p class="sub" data-slot="subheadline">{{subheadline}}</p>
+      <a class="cta" href="#form" data-slot="primary_cta" data-track="cta_click">{{primary_cta}}</a>
+      <div class="proof" data-section="proof_bar" aria-label="{{proof_label}}">{{proof_items}}</div>
+    </div>
+    <div class="card" data-section="hero_media">{{hero_media_or_form}}</div>
+  </div>
+
+  <section data-section="benefits"><div class="wrap">
+    <h2>{{benefits_title}}</h2>
+    <div class="grid3">
+      <div><h3>{{benefit_1_title}}</h3><p>{{benefit_1_body}}</p></div>
+      <div><h3>{{benefit_2_title}}</h3><p>{{benefit_2_body}}</p></div>
+      <div><h3>{{benefit_3_title}}</h3><p>{{benefit_3_body}}</p></div>
+    </div>
+  </div></section>
+
+  <section data-section="testimonial"><div class="wrap">
+    <blockquote data-source-id="{{testimonial_source_id}}">
+      <p>{{testimonial_quote}}</p>
+      <footer>{{testimonial_name}}, {{testimonial_role}}, {{testimonial_company}}</footer>
+    </blockquote>
+  </div></section>
+
+  <section data-section="faq"><div class="wrap">
+    <h2>{{faq_title}}</h2>
+    {{faq_items}}
+  </div></section>
+
+  <section id="form" data-section="form"><div class="wrap" style="max-width:560px">
+    <h2>{{form_title}}</h2>
+    <form method="post" action="{{form_action}}" data-track="form_submit" novalidate>
+      {{form_fields}}
+      <!-- Consent block: 1 box per channel and purpose. Never pre-ticked. Text comes from the engine per market. -->
+      <div data-slot="consent_block">{{consent_checkboxes}}</div>
+      <p class="form-legal">{{form_legal_text}} <a href="{{privacy_url}}">{{privacy_link_text}}</a></p>
+      <input type="hidden" name="utm_source" value=""><input type="hidden" name="utm_medium" value="">
+      <input type="hidden" name="utm_campaign" value=""><input type="hidden" name="utm_content" value="">
+      <button class="cta" type="submit">{{form_cta}}</button>
+    </form>
+  </div></section>
+</main>
+
+<footer class="legal" data-section="legal_footer"><div class="wrap">
+  <div class="pay" data-slot="payment_marks">{{payment_marks}}</div>
+  <p>{{legal_entity_line}}</p>
+  <p>{{market_legal_text}}</p>
+  <p><a href="{{privacy_url}}">{{privacy_link_text}}</a> · <a href="{{cookie_settings_url}}">{{cookie_settings_text}}</a> · <a href="{{terms_url}}">{{terms_link_text}}</a></p>
+</div></footer>
+
+<script>
+// Keep UTM values on the form (04-templates.md QA item 19).
+(function(){
+  var q = new URLSearchParams(location.search);
+  ['utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){
+    var el = document.querySelector('input[name="'+k+'"]'); if (el && q.get(k)) el.value = q.get(k);
+  });
+})();
+</script>
+</body>
+</html>

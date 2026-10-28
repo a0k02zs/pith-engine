@@ -1,0 +1,159 @@
+{
+  "id": "cro.test_monitor",
+  "version": 1,
+  "service": "cro",
+  "description": "Daily check of a running test: SRM and guardrails. Deterministic, no language model except for the escalation note. Stops the test alone on a failure (engine G10: removals need no gate).",
+  "trigger": {
+    "event": "svc.cro/test.started"
+  },
+  "concurrency": {
+    "key": "event.data.test_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "daily",
+      "type": "wait",
+      "name": "Wait until 06:00 in the client time zone",
+      "wait": {
+        "timeout": "1d"
+      }
+    },
+    {
+      "id": "read_counts",
+      "type": "tool",
+      "needs": [
+        "daily"
+      ],
+      "name": "Read visitors and conversions per arm and guardrail metrics",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.results.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "srm",
+      "type": "tool",
+      "needs": [
+        "read_counts"
+      ],
+      "name": "cro-stats srm on the arm counts",
+      "tool": {
+        "name": "cro",
+        "action": "stats.srm",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "guardrails",
+      "type": "tool",
+      "needs": [
+        "read_counts"
+      ],
+      "name": "cro-stats analyze per guardrail metric (stop if worse at p < 0.01, or page errors 2x)",
+      "tool": {
+        "name": "cro",
+        "action": "stats.analyze",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "srm",
+        "guardrails"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.srm.output.srm_detected || steps.guardrails.output.any_harmed",
+            "goto": "stop_early"
+          },
+          {
+            "if": "now() >= input.end_date",
+            "goto": "stop_end"
+          }
+        ],
+        "else": "daily"
+      }
+    },
+    {
+      "id": "stop_early",
+      "type": "tool",
+      "needs": [
+        "route"
+      ],
+      "name": "Pause the experiment: all traffic to control",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "escalation_note",
+      "type": "agent",
+      "needs": [
+        "stop_early"
+      ],
+      "name": "Write the escalation note",
+      "agent": {
+        "prompt_ref": "cro/results_analyst@1",
+        "output_schema": "cro/results@1"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "gate",
+      "needs": [
+        "escalation_note"
+      ],
+      "name": "G5 Escalation",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 1,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "stop_end",
+      "type": "tool",
+      "needs": [
+        "route"
+      ],
+      "name": "Planned end: pause the experiment, all traffic to control until G4",
+      "tool": {
+        "name": "cro",
+        "action": "experiment.pause",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "ended",
+      "type": "emit",
+      "needs": [
+        "escalate",
+        "stop_end"
+      ],
+      "name": "Test ended (reason: end_date, srm or guardrail)",
+      "emit": {
+        "event": "svc.cro/test.ended"
+      }
+    },
+    {
+      "id": "daily_kpis",
+      "type": "emit",
+      "needs": [
+        "read_counts"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}
