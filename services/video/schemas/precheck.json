@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/precheck@1",
+  "title": "Video compliance pre-check",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "warn",
+              "block"
+            ]
+          },
+          "rule": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "check",
+          "market",
+          "result",
+          "rule",
+          "fix"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required_labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "platform",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "overall": {
+      "enum": [
+        "pass",
+        "warn",
+        "block"
+      ]
+    }
+  },
+  "required": [
+    "items",
+    "required_labels",
+    "overall"
+  ],
+  "additionalProperties": false
+}

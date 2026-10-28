@@ -1,0 +1,70 @@
+{
+  "id": "video.campaign_assets",
+  "version": 1,
+  "service": "video",
+  "description": "Campaign assets for service 2 (engine service-integration item 9). Campaigns starts it as a subflow with parent_run_id. Input is 1 channel brief, campaign_id and markets. The run finishes with output.artifact_ids. Video never publishes; social and paid publish only after svc.campaigns/market.launched.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "channel_brief",
+      "campaign_id",
+      "markets"
+    ],
+    "properties": {
+      "channel_brief": {
+        "type": "object",
+        "description": "Part 3 of the campaigns master brief, for the video channel"
+      },
+      "campaign_id": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-[a-z0-9-]+$"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "intake",
+      "type": "agent",
+      "name": "Map the channel brief to the video brief (T1)",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "video/brief_intake@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/brief@1"
+      }
+    },
+    {
+      "id": "produce",
+      "type": "subflow",
+      "name": "Run the video job with its own script, budget, rights and final gates",
+      "needs": [
+        "intake"
+      ],
+      "subflow": {
+        "workflow_id": "video.job"
+      }
+    },
+    {
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
+      "needs": [
+        "produce"
+      ],
+      "emit": {
+        "event": "svc.video/asset.delivered"
+      }
+    }
+  ]
+}

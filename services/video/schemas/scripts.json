@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video/scripts@1",
+  "title": "Two-column timed scripts (T2)",
+  "type": "object",
+  "properties": {
+    "scripts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "script_id": {
+            "type": "string"
+          },
+          "angle": {
+            "type": "string"
+          },
+          "duration_s": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "t_start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "t_end": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "visual": {
+                  "type": "string"
+                },
+                "audio": {
+                  "type": "string"
+                },
+                "on_screen_text": {
+                  "type": "string"
+                },
+                "claim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "t_start",
+                "t_end",
+                "visual",
+                "audio",
+                "on_screen_text",
+                "claim_ids"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "cta": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "script_id",
+          "angle",
+          "duration_s",
+          "rows",
+          "cta"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 2
+    },
+    "interview_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "scripts",
+    "interview_questions",
+    "new_claims",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

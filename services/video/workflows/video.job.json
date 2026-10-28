@@ -1,0 +1,601 @@
+{
+  "id": "video.job",
+  "version": 1,
+  "service": "video",
+  "description": "One video job: brief to delivered, labelled exports. Plan service 3. Production track A (AI-made), B (creator UGC) or C (filmed shoot). Video never publishes: social and paid publish the exports.",
+  "trigger": {
+    "event": "svc.video/brief.submitted",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "request",
+      "markets",
+      "locales",
+      "channels",
+      "format"
+    ],
+    "properties": {
+      "request": {
+        "type": "object",
+        "description": "Brief request from a client or another service (T1 in docs/04-templates.md)"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "locales": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "channels": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "format": {
+        "enum": [
+          "short_form",
+          "ad_variants",
+          "explainer",
+          "demo",
+          "testimonial",
+          "executive",
+          "hero",
+          "event_clips"
+        ]
+      },
+      "segment": {
+        "enum": [
+          "b2b",
+          "b2c"
+        ]
+      },
+      "campaign_id": {
+        "type": "string"
+      },
+      "source_service": {
+        "type": "string"
+      }
+    }
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 5
+  },
+  "steps": [
+    {
+      "id": "intake",
+      "type": "agent",
+      "name": "Check and complete the brief",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "video/brief_intake@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/brief@1"
+      }
+    },
+    {
+      "id": "hooks",
+      "type": "agent",
+      "name": "5 hooks per ad",
+      "needs": [
+        "intake"
+      ],
+      "agent": {
+        "prompt_ref": "video/hook_writer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/hooks@1"
+      }
+    },
+    {
+      "id": "script",
+      "type": "agent",
+      "name": "Timed two-column scripts",
+      "needs": [
+        "hooks"
+      ],
+      "agent": {
+        "prompt_ref": "video/scriptwriter@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/scripts@1"
+      }
+    },
+    {
+      "id": "precheck_script",
+      "type": "agent",
+      "name": "Video pre-check: claims, people, AI, labels, culture",
+      "needs": [
+        "script"
+      ],
+      "agent": {
+        "prompt_ref": "video/compliance_precheck@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/precheck@1"
+      }
+    },
+    {
+      "id": "check_script",
+      "type": "check",
+      "name": "Engine brand, compliance and fact check",
+      "needs": [
+        "precheck_script"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_script",
+      "type": "gate",
+      "name": "G1 Approve script",
+      "needs": [
+        "check_script"
+      ],
+      "gate": {
+        "approval_kind": "script",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "script"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Track, shot list, assets, people, cost",
+      "needs": [
+        "approve_script"
+      ],
+      "agent": {
+        "prompt_ref": "video/production_planner@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/production_plan@1"
+      }
+    },
+    {
+      "id": "route_spend",
+      "type": "branch",
+      "needs": [
+        "plan"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.plan.output.needs_spend_gate",
+            "goto": "approve_budget"
+          }
+        ],
+        "else": "route_rights"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "name": "G2 Approve spend",
+      "needs": [
+        "route_spend"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "strategist",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "route_rights",
+      "type": "branch",
+      "needs": [
+        "route_spend"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.plan.output.people.exists(p, p.needs_contract)",
+            "goto": "approve_contract"
+          },
+          {
+            "if": "steps.plan.output.needs_rights_gate",
+            "goto": "lookup_rights"
+          }
+        ],
+        "else": "route_track"
+      }
+    },
+    {
+      "id": "approve_contract",
+      "type": "gate",
+      "name": "G3a Approve creator, talent or crew contract",
+      "needs": [
+        "route_rights"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "creative_lead",
+          "client_legal",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "send_contract",
+      "type": "tool",
+      "name": "Send the approved contract for e-signature",
+      "needs": [
+        "approve_contract"
+      ],
+      "tool": {
+        "name": "esign",
+        "action": "envelope.send",
+        "risk": "sign"
+      }
+    },
+    {
+      "id": "lookup_rights",
+      "type": "tool",
+      "name": "Look up active rights grants per person (GET /clients/{id}/rights?party_id=&active_on=)",
+      "needs": [
+        "send_contract"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "rights.check",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_missing",
+      "type": "branch",
+      "needs": [
+        "lookup_rights"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.lookup_rights.output.missing) > 0",
+            "goto": "collect_rights"
+          }
+        ],
+        "else": "check_rights"
+      }
+    },
+    {
+      "id": "collect_rights",
+      "type": "task",
+      "name": "Collect missing releases",
+      "needs": [
+        "route_missing"
+      ],
+      "task": {
+        "title": "Send consent and release forms (T4) for the missing grants only, and record each signed form as a rights grant",
+        "assignee_roles": [
+          "creative_lead"
+        ],
+        "due_hours": 120,
+        "done_output_schema": "video/releases@1"
+      }
+    },
+    {
+      "id": "wait_rights",
+      "type": "wait",
+      "name": "Wait until the missing grants are active",
+      "needs": [
+        "collect_rights"
+      ],
+      "wait": {
+        "event": "engine/rights.changed",
+        "match": "event.data.status == 'active' && event.data.party_id in steps.lookup_rights.output.missing",
+        "timeout": "21d"
+      }
+    },
+    {
+      "id": "check_rights",
+      "type": "check",
+      "name": "G3b Rights confirmed (engine guardrail G8)",
+      "needs": [
+        "wait_rights"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "route_track",
+      "type": "branch",
+      "needs": [
+        "check_rights"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.plan.output.track == 'A'",
+            "goto": "produce_ai"
+          },
+          {
+            "if": "steps.plan.output.track == 'B'",
+            "goto": "produce_ugc"
+          },
+          {
+            "if": "steps.plan.output.track == 'C'",
+            "goto": "produce_shoot"
+          }
+        ],
+        "else": "produce_ai"
+      }
+    },
+    {
+      "id": "produce_ai",
+      "type": "tool",
+      "name": "Track A: generate AI scenes per shot (checks the rights grant before any avatar or voice clone)",
+      "needs": [
+        "route_track"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "scenes.generate",
+        "risk": "write_internal"
+      },
+      "timeout": "2d"
+    },
+    {
+      "id": "produce_ugc",
+      "type": "wait",
+      "name": "Track B: wait for the creator upload",
+      "needs": [
+        "route_track"
+      ],
+      "wait": {
+        "event": "svc.video/footage.uploaded",
+        "match": "event.data.run_id == run.id",
+        "timeout": "14d"
+      }
+    },
+    {
+      "id": "produce_shoot",
+      "type": "task",
+      "name": "Track C: filmed shoot",
+      "needs": [
+        "route_track"
+      ],
+      "task": {
+        "title": "Run the shoot from the shot list, upload the footage and log the selects",
+        "assignee_roles": [
+          "creative_lead",
+          "editor"
+        ],
+        "due_hours": 360,
+        "done_output_schema": "video/footage@1"
+      }
+    },
+    {
+      "id": "edit",
+      "type": "agent",
+      "name": "Rough cut, captions, music, overlays",
+      "needs": [
+        "route_track"
+      ],
+      "agent": {
+        "prompt_ref": "video/edit_assembler@1",
+        "model": "claude-sonnet-5-5",
+        "reads_brain": true,
+        "output_schema": "video/edl@1",
+        "tools": [
+          "video"
+        ]
+      }
+    },
+    {
+      "id": "localize",
+      "type": "agent",
+      "name": "Captions, on-screen text, dub per market",
+      "needs": [
+        "edit"
+      ],
+      "agent": {
+        "prompt_ref": "video/localizer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/localized_versions@1"
+      }
+    },
+    {
+      "id": "review_language",
+      "type": "gate",
+      "name": "Native review of non-English versions",
+      "needs": [
+        "localize"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 24,
+        "skip_if": "input.locales.all(l, l.startsWith('en'))",
+        "on_reject": "fail",
+        "on_changes": "localize"
+      }
+    },
+    {
+      "id": "versions",
+      "type": "agent",
+      "name": "Ratios, cutdowns, file names",
+      "needs": [
+        "review_language"
+      ],
+      "agent": {
+        "prompt_ref": "video/versioner@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/export_plan@1",
+        "tools": [
+          "video"
+        ]
+      }
+    },
+    {
+      "id": "render",
+      "type": "tool",
+      "name": "Render the planned exports",
+      "needs": [
+        "versions"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "exports.render",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "qc_auto",
+      "type": "agent",
+      "name": "Automated QC (T7) on every export",
+      "needs": [
+        "render"
+      ],
+      "agent": {
+        "prompt_ref": "video/qc_checker@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "video/qc_report@1",
+        "tools": [
+          "video"
+        ]
+      }
+    },
+    {
+      "id": "qc",
+      "type": "check",
+      "name": "Engine check on every export: labels, rights, captions",
+      "needs": [
+        "qc_auto"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_final",
+      "type": "gate",
+      "name": "G4 Final review by editor",
+      "needs": [
+        "qc"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "editor"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "edit"
+      }
+    },
+    {
+      "id": "approve_final_client",
+      "type": "gate",
+      "name": "G4 Final review by client (hero, testimonial, new template)",
+      "needs": [
+        "approve_final"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "skip_if": "!(input.format in ['hero', 'testimonial'] || steps.plan.output.new_template)",
+        "on_reject": "fail",
+        "on_changes": "edit"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "name": "Store masters and exports in the asset library (Frame.io) and update the licence log",
+      "needs": [
+        "approve_final_client"
+      ],
+      "tool": {
+        "name": "video",
+        "action": "assets.store",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "Register the script and each export as engine artifacts (kind script and video)",
+      "needs": [
+        "deliver"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "handoff",
+      "type": "emit",
+      "name": "Hand the files to the social and paid pipelines",
+      "needs": [
+        "register"
+      ],
+      "emit": {
+        "event": "svc.video/asset.delivered"
+      }
+    },
+    {
+      "id": "record_ops",
+      "type": "emit",
+      "name": "Record days_brief_to_delivery, cost_per_finished_video and first_pass_approval_rate",
+      "needs": [
+        "handoff"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}

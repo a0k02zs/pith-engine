@@ -1,0 +1,75 @@
+{
+  "id": "video.weekly_learn",
+  "version": 1,
+  "service": "video",
+  "description": "Weekly performance analysis: rank hooks and angles, flag fatigue, write learnings, request refreshes.",
+  "trigger": {
+    "cron": "0 7 * * 1"
+  },
+  "steps": [
+    {
+      "id": "pull",
+      "type": "tool",
+      "name": "Pull last week's video metrics per export, market and placement",
+      "needs": [],
+      "tool": {
+        "name": "analytics",
+        "action": "metrics.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "analyse",
+      "type": "agent",
+      "needs": [
+        "pull"
+      ],
+      "agent": {
+        "prompt_ref": "video/performance_analyst@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "video/weekly_analysis@1"
+      }
+    },
+    {
+      "id": "review_report",
+      "type": "gate",
+      "needs": [
+        "analyse"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "analyse"
+      }
+    },
+    {
+      "id": "save_learnings",
+      "type": "tool",
+      "needs": [
+        "review_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "request_refresh",
+      "type": "emit",
+      "name": "1 refresh request per fatigued video",
+      "needs": [
+        "save_learnings"
+      ],
+      "emit": {
+        "event": "svc.video/refresh.requested"
+      }
+    }
+  ]
+}
