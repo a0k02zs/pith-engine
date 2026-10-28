@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/interview_guide@1",
+  "type": "object",
+  "properties": {
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1
+          },
+          "follow_ups": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "q",
+          "follow_ups",
+          "purpose"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 8
+    },
+    "consent_note": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "questions",
+    "consent_note"
+  ],
+  "additionalProperties": false
+}

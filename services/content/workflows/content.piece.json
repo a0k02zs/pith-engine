@@ -1,0 +1,363 @@
+{
+  "id": "content.piece",
+  "version": 1,
+  "service": "content",
+  "description": "1 piece from an approved brief: interview, draft, fact, brand and compliance checks, claim gate, copy gate, customer release for case studies, localization, publish, repurpose, measure, learn.",
+  "trigger": {
+    "event": "svc.content/piece.requested"
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "brief"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "brief": {
+        "$ref": "content/brief@1"
+      },
+      "refresh_of": {
+        "type": "string"
+      },
+      "change_size": {
+        "enum": [
+          "light",
+          "major"
+        ]
+      }
+    }
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 4
+  },
+  "steps": [
+    {
+      "id": "route_input",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "input.brief.original_input == 'expert_interview'",
+            "goto": "interview_guide"
+          }
+        ],
+        "else": "draft"
+      }
+    },
+    {
+      "id": "interview_guide",
+      "type": "agent",
+      "name": "Interview guide",
+      "agent": {
+        "prompt_ref": "content/interviewer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "content/interview_guide@1"
+      }
+    },
+    {
+      "id": "interview",
+      "type": "task",
+      "name": "Record a 20-minute expert interview",
+      "needs": [
+        "interview_guide"
+      ],
+      "task": {
+        "title": "Record the expert interview and upload the transcript",
+        "assignee_roles": [
+          "content_lead"
+        ],
+        "due_hours": 168,
+        "done_output_schema": "content/transcript@1"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent",
+      "name": "Draft",
+      "agent": {
+        "prompt_ref": "content/drafter@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "content/draft@1"
+      }
+    },
+    {
+      "id": "fact_check",
+      "type": "agent",
+      "name": "Fact and claim check",
+      "needs": [
+        "draft"
+      ],
+      "agent": {
+        "prompt_ref": "content/fact_checker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "content/fact_report@1"
+      }
+    },
+    {
+      "id": "fact_route",
+      "type": "branch",
+      "needs": [
+        "fact_check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.fact_check.output.pass && steps.draft.attempt < 3",
+            "goto": "draft"
+          }
+        ],
+        "else": "check"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Brand, compliance, fact, links, accessibility",
+      "needs": [
+        "fact_route"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_claims",
+      "type": "branch",
+      "needs": [
+        "check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.draft.output.new_claims) > 0",
+            "goto": "claim_gate"
+          }
+        ],
+        "else": "approve_copy"
+      }
+    },
+    {
+      "id": "claim_gate",
+      "type": "gate",
+      "name": "Approve new claims",
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_approver",
+          "client_legal"
+        ],
+        "sla_hours": 72,
+        "on_changes": "draft",
+        "on_reject": "goto"
+      }
+    },
+    {
+      "id": "approve_copy",
+      "type": "gate",
+      "name": "Edit, fact-check and expert sign-off",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "editor",
+          "subject_expert"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_changes": "draft",
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "release_route",
+      "type": "branch",
+      "needs": [
+        "approve_copy"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.brief.format == 'case_study'",
+            "goto": "customer_release"
+          }
+        ],
+        "else": "localize_route"
+      }
+    },
+    {
+      "id": "customer_release",
+      "type": "gate",
+      "name": "Customer signs the case study release",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "external_contact"
+        ],
+        "sla_hours": 240,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "record_release_rights",
+      "type": "tool",
+      "name": "Record usage rights, markets and expiry for the case study",
+      "needs": [
+        "customer_release"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "rights_grants.create(scope=case_study_release)",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "localize_route",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "!(input.brief.language in brain.locales)",
+            "goto": "localize"
+          }
+        ],
+        "else": "publish_check"
+      }
+    },
+    {
+      "id": "localize",
+      "type": "task",
+      "name": "Native editor writes or checks the local-language version",
+      "task": {
+        "title": "Write or check the local-language version (no machine translation alone)",
+        "assignee_roles": [
+          "native_editor"
+        ],
+        "due_hours": 120,
+        "done_output_schema": "content/localized_copy@1"
+      }
+    },
+    {
+      "id": "publish_check",
+      "type": "check",
+      "name": "Final compliance before publish",
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "name": "Publish to the client CMS with schema markup and hreflang",
+      "needs": [
+        "publish_check"
+      ],
+      "tool": {
+        "name": "cms",
+        "action": "page.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "published",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    },
+    {
+      "id": "announce",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "svc.content/asset.published"
+      }
+    },
+    {
+      "id": "repurpose",
+      "type": "agent",
+      "name": "Repurpose pack",
+      "needs": [
+        "publish"
+      ],
+      "agent": {
+        "prompt_ref": "content/repurposer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "content/repurpose_pack@1"
+      }
+    },
+    {
+      "id": "repurpose_check",
+      "type": "check",
+      "needs": [
+        "repurpose"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "handoff",
+      "type": "emit",
+      "name": "Send the pack to email, social, video and ABM",
+      "needs": [
+        "repurpose_check"
+      ],
+      "emit": {
+        "event": "svc.content/asset.ready"
+      }
+    },
+    {
+      "id": "cycle_metrics",
+      "type": "emit",
+      "name": "content.cycle_days and content.cost_per_piece",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "schedule_refresh",
+      "type": "wait",
+      "needs": [
+        "publish"
+      ],
+      "wait": {
+        "timeout": "180d"
+      }
+    },
+    {
+      "id": "refresh_due",
+      "type": "emit",
+      "needs": [
+        "schedule_refresh"
+      ],
+      "emit": {
+        "event": "svc.content/refresh.due"
+      }
+    }
+  ]
+}

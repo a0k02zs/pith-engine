@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/fact_report@1",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verdict": {
+            "enum": [
+              "supported",
+              "unsupported",
+              "new_claim",
+              "risk"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "fix": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "verdict",
+          "evidence",
+          "fix"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "market_issues": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "banned_terms_found": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "needs_source": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "pass": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "items",
+    "market_issues",
+    "banned_terms_found",
+    "needs_source",
+    "pass"
+  ],
+  "additionalProperties": false
+}

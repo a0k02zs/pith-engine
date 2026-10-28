@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content/refresh_flags@1",
+  "type": "object",
+  "properties": {
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "traffic_drop",
+                "stale_fact",
+                "lost_ai_citations",
+                "retired_product"
+              ]
+            },
+            "minItems": 1
+          },
+          "change_size": {
+            "enum": [
+              "light",
+              "major"
+            ]
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "url",
+          "reasons",
+          "change_size",
+          "priority"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "flags"
+  ],
+  "additionalProperties": false
+}
