@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/creator_brief@1",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "key_message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "must_haves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "must_not": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "disclosure": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "placement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spoken": {
+          "type": "boolean"
+        },
+        "paid_partnership_tool": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "labels",
+        "placement",
+        "spoken",
+        "paid_partnership_tool"
+      ],
+      "additionalProperties": false
+    },
+    "tracking": {
+      "type": "object",
+      "properties": {
+        "code_placeholder": {
+          "const": "{{code}}"
+        },
+        "utm_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "code_placeholder",
+        "utm_url"
+      ],
+      "additionalProperties": false
+    },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "enum": [
+              "instagram",
+              "tiktok",
+              "youtube",
+              "linkedin",
+              "x",
+              "snapchat",
+              "twitch",
+              "podcast",
+              "blog",
+              "newsletter"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "draft_due": {
+            "type": "string",
+            "format": "date"
+          },
+          "post_date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "platform",
+          "format",
+          "count",
+          "draft_due",
+          "post_date"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "creative_freedom": {
+      "type": "string",
+      "minLength": 1
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "deal_id",
+    "market",
+    "language",
+    "key_message",
+    "must_haves",
+    "must_not",
+    "claim_ids",
+    "disclosure",
+    "tracking",
+    "deliverables",
+    "creative_freedom",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

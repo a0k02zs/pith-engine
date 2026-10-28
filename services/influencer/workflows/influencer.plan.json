@@ -1,0 +1,124 @@
+{
+  "id": "influencer.plan",
+  "version": 1,
+  "service": "influencer",
+  "description": "Stages 1 to 4: intake, discover, vet and approve the shortlist.",
+  "trigger": {
+    "event": "svc.influencer/campaign.requested"
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "influencer/strategy@1",
+        "output_schema": "influencer/campaign_plan@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "influencer_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "discover",
+      "type": "agent",
+      "needs": [
+        "approve_plan"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/discovery@1",
+        "output_schema": "influencer/creator_longlist@1",
+        "tools": [
+          "influencer"
+        ]
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      },
+      "name": "Runs once per market and platform in the approved plan"
+    },
+    {
+      "id": "save_parties",
+      "type": "tool",
+      "needs": [
+        "discover"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "parties.upsert",
+        "risk": "write_internal"
+      },
+      "name": "Pending engine action: the API has POST /parties, enums.json has no action for it yet"
+    },
+    {
+      "id": "vet",
+      "type": "agent",
+      "needs": [
+        "save_parties"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/vetting@1",
+        "output_schema": "influencer/creator_vetting@1",
+        "tools": [
+          "influencer"
+        ]
+      },
+      "name": "Runs once per creator; the code applies hard stops and the score weights"
+    },
+    {
+      "id": "rank",
+      "type": "agent",
+      "needs": [
+        "vet"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/shortlist@1",
+        "output_schema": "influencer/shortlist@1"
+      }
+    },
+    {
+      "id": "approve_shortlist",
+      "type": "gate",
+      "needs": [
+        "rank"
+      ],
+      "gate": {
+        "approval_kind": "shortlist",
+        "required_roles": [
+          "influencer_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "rank"
+      }
+    },
+    {
+      "id": "shortlisted",
+      "type": "emit",
+      "needs": [
+        "approve_shortlist"
+      ],
+      "emit": {
+        "event": "svc.influencer/shortlist.approved"
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/payout_request@1",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "party_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "amount": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "proof_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 1
+    },
+    "posts_verified": {
+      "type": "boolean"
+    },
+    "posts_on_hold": {
+      "type": "boolean"
+    },
+    "tax_form": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "on_file": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "required",
+        "on_file"
+      ],
+      "additionalProperties": false
+    },
+    "bank_details_on_file": {
+      "type": "boolean"
+    },
+    "due_by": {
+      "type": "string",
+      "format": "date"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "deal_id",
+    "party_id",
+    "amount",
+    "currency",
+    "proof_urls",
+    "posts_verified",
+    "posts_on_hold",
+    "tax_form",
+    "bank_details_on_file",
+    "due_by",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

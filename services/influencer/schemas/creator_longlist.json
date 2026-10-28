@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/creator_longlist@1",
+  "type": "object",
+  "properties": {
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "platform": {
+      "enum": [
+        "instagram",
+        "tiktok",
+        "youtube",
+        "linkedin",
+        "x",
+        "snapchat",
+        "twitch",
+        "podcast",
+        "blog",
+        "newsletter"
+      ]
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 3,
+      "maxItems": 6
+    },
+    "creators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "enum": [
+              "instagram",
+              "tiktok",
+              "youtube",
+              "linkedin",
+              "x",
+              "snapchat",
+              "twitch",
+              "podcast",
+              "blog",
+              "newsletter"
+            ]
+          },
+          "handle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "profile_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "followers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tier": {
+            "enum": [
+              "nano",
+              "micro",
+              "mid",
+              "macro",
+              "mega",
+              "expert"
+            ]
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "source": {
+            "enum": [
+              "tool",
+              "brand_fan",
+              "history"
+            ]
+          },
+          "first_pass_reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "platform",
+          "handle",
+          "profile_url",
+          "followers",
+          "tier",
+          "country",
+          "source",
+          "first_pass_reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "missing_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "market",
+    "platform",
+    "queries",
+    "creators",
+    "missing_data"
+  ],
+  "additionalProperties": false
+}

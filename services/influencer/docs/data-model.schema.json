@@ -1,0 +1,626 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pithm/influencer.schema.json",
+  "title": "Pith M influencer service data model",
+  "description": "Service-owned records for Service 6. Creators are engine parties (engine/contracts/schemas/party.json, kind=creator). Usage, whitelisting, likeness and voice rights are engine rights_grants. Payouts are recorded as engine/outbound.recorded type=payout_sent. Engine contract v0.1.0.",
+  "$defs": {
+    "market": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2, as the engine uses"
+    },
+    "money": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      }
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "tiktok",
+        "youtube",
+        "linkedin",
+        "snapchat",
+        "x",
+        "facebook",
+        "pinterest",
+        "twitch",
+        "podcast",
+        "blog"
+      ]
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "nano",
+        "micro",
+        "mid",
+        "macro",
+        "mega",
+        "expert"
+      ]
+    },
+    "campaign": {
+      "type": "object",
+      "required": [
+        "campaign_id",
+        "client_id",
+        "play",
+        "markets",
+        "budget",
+        "status"
+      ],
+      "properties": {
+        "campaign_id": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "parent_campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Set when Service 2 (Campaigns) owns the master brief."
+        },
+        "segment": {
+          "type": "string",
+          "enum": [
+            "B2B",
+            "B2C"
+          ]
+        },
+        "play": {
+          "type": "string",
+          "enum": [
+            "product_seeding",
+            "ambassadors",
+            "launch_burst",
+            "ugc_for_ads",
+            "affiliate",
+            "expert_voice",
+            "co_created_report",
+            "webinar_guest",
+            "thought_leader_ads"
+          ]
+        },
+        "markets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/market"
+          }
+        },
+        "budget": {
+          "$ref": "#/$defs/money"
+        },
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        },
+        "kpis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "target": {
+                "type": "number"
+              },
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "history",
+                  "estimate"
+                ]
+              }
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "discovering",
+            "shortlist_pending",
+            "outreach",
+            "contracting",
+            "live",
+            "reporting",
+            "closed",
+            "cancelled"
+          ]
+        }
+      }
+    },
+    "deal": {
+      "type": "object",
+      "required": [
+        "deal_id",
+        "campaign_id",
+        "party_id",
+        "status"
+      ],
+      "properties": {
+        "deal_id": {
+          "type": "string"
+        },
+        "campaign_id": {
+          "type": "string"
+        },
+        "fee": {
+          "$ref": "#/$defs/money"
+        },
+        "gift_only": {
+          "type": "boolean"
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "$ref": "#/$defs/platform"
+              },
+              "format": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "post_window_start": {
+                "type": "string",
+                "format": "date"
+              },
+              "post_window_end": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "exclusivity": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "days_after_last_post": {
+              "type": "integer"
+            }
+          }
+        },
+        "payment_terms_days": {
+          "type": "integer",
+          "default": 15
+        },
+        "kill_fee_pct": {
+          "type": "integer",
+          "default": 50
+        },
+        "code": {
+          "type": "string"
+        },
+        "utm_link": {
+          "type": "string"
+        },
+        "contract_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approval_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "interested",
+            "negotiating",
+            "pending_approval",
+            "contracted",
+            "briefed",
+            "shipped",
+            "in_review",
+            "live",
+            "paid",
+            "cancelled",
+            "disputed"
+          ]
+        },
+        "party_id": {
+          "type": "string"
+        },
+        "rights_grant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Engine rights_grants rows (scope paid_usage, whitelisting, ugc_reuse; likeness or voice_clone only with separate consent)."
+        }
+      }
+    },
+    "content_item": {
+      "type": "object",
+      "required": [
+        "content_id",
+        "deal_id",
+        "platform",
+        "status"
+      ],
+      "properties": {
+        "content_id": {
+          "type": "string"
+        },
+        "deal_id": {
+          "type": "string"
+        },
+        "platform": {
+          "$ref": "#/$defs/platform"
+        },
+        "draft_url": {
+          "type": "string"
+        },
+        "live_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review_round": {
+          "type": "integer",
+          "maximum": 3
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string",
+                "enum": [
+                  "pass",
+                  "fail",
+                  "n/a"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "proof_screenshot_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "h24": {
+              "type": "object"
+            },
+            "d7": {
+              "type": "object"
+            },
+            "d30": {
+              "type": "object"
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft_submitted",
+            "changes_requested",
+            "approved",
+            "live",
+            "verified",
+            "fix_requested",
+            "taken_down"
+          ]
+        },
+        "artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Engine artifact (kind post or video)"
+        },
+        "compliance_check_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "payout": {
+      "type": "object",
+      "required": [
+        "payout_id",
+        "deal_id",
+        "amount",
+        "status"
+      ],
+      "properties": {
+        "payout_id": {
+          "type": "string"
+        },
+        "deal_id": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/money"
+        },
+        "proof_content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provider": {
+          "type": "string",
+          "enum": [
+            "stripe_connect",
+            "wise",
+            "bank_transfer"
+          ]
+        },
+        "approval_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending_proof",
+            "pending_approval",
+            "approved",
+            "sent",
+            "failed",
+            "held"
+          ]
+        }
+      },
+      "description": "Service view of a payout. On send, emit engine/outbound.recorded with type=payout_sent."
+    },
+    "creator_attributes": {
+      "type": "object",
+      "description": "Stored in party.attributes for kind=creator. Name, email, country, handles and licences use the party fields.",
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "tier": {
+          "$ref": "#/$defs/tier"
+        },
+        "agent": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        },
+        "is_minor": {
+          "type": "boolean"
+        },
+        "do_not_contact": {
+          "type": "boolean",
+          "default": false
+        },
+        "tax": {
+          "type": "object",
+          "properties": {
+            "form": {
+              "type": "string",
+              "enum": [
+                "W-9",
+                "W-8BEN",
+                "W-8BEN-E",
+                "VAT",
+                "none",
+                "pending"
+              ]
+            },
+            "vat_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "found",
+            "needs_data",
+            "vetted",
+            "rejected",
+            "shortlisted",
+            "contacted",
+            "interested",
+            "declined",
+            "contracted",
+            "active",
+            "completed",
+            "blocked"
+          ]
+        },
+        "score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string"
+              },
+              "would_rehire": {
+                "type": "boolean"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "contact_basis": {
+          "type": "string",
+          "enum": [
+            "legitimate_interest",
+            "consent",
+            "casl_business_exemption"
+          ],
+          "description": "From engine enums.consent_bases; set before the first message."
+        }
+      }
+    }
+  },
+  "x-events": {
+    "description": "Service events use svc.influencer/<noun>.<verb>. Results go to engine/outbound.recorded and engine/metric.recorded.",
+    "events": [
+      {
+        "name": "svc.influencer/campaign.requested",
+        "props": [
+          "client_id",
+          "campaign_id",
+          "intake"
+        ]
+      },
+      {
+        "name": "svc.influencer/shortlist.approved",
+        "props": [
+          "client_id",
+          "campaign_id",
+          "party_ids",
+          "approval_id"
+        ]
+      },
+      {
+        "name": "svc.influencer/creator.replied",
+        "props": [
+          "client_id",
+          "party_id",
+          "campaign_id",
+          "interested"
+        ]
+      },
+      {
+        "name": "svc.influencer/creator.declined",
+        "props": [
+          "client_id",
+          "party_id",
+          "campaign_id"
+        ]
+      },
+      {
+        "name": "svc.influencer/deal.contracted",
+        "props": [
+          "client_id",
+          "deal_id",
+          "party_id",
+          "fee",
+          "rights_grant_ids"
+        ]
+      },
+      {
+        "name": "svc.influencer/content.submitted",
+        "props": [
+          "client_id",
+          "content_id",
+          "deal_id",
+          "review_round"
+        ]
+      },
+      {
+        "name": "svc.influencer/post.due",
+        "props": [
+          "client_id",
+          "deal_id",
+          "post_date"
+        ]
+      },
+      {
+        "name": "svc.influencer/post.fix_requested",
+        "props": [
+          "client_id",
+          "content_id",
+          "reason"
+        ]
+      },
+      {
+        "name": "svc.influencer/deal.delivered",
+        "props": [
+          "client_id",
+          "deal_id",
+          "content_ids"
+        ]
+      },
+      {
+        "name": "svc.influencer/week.closed",
+        "props": [
+          "client_id",
+          "week"
+        ]
+      }
+    ],
+    "engine_events_sent": [
+      "engine/outbound.recorded type=sent (outreach), posted (live post), payout_sent",
+      "engine/metric.recorded (KPIs in kpis.md)"
+    ],
+    "engine_events_used": [
+      "engine/approval.decided",
+      "engine/rights.changed (pause amplification when a grant expires)",
+      "engine/claim.retired (pull live posts that use it)"
+    ]
+  }
+}

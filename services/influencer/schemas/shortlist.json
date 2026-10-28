@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/shortlist@1",
+  "type": "object",
+  "properties": {
+    "creators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "handle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "platform": {
+            "enum": [
+              "instagram",
+              "tiktok",
+              "youtube",
+              "linkedin",
+              "x",
+              "snapchat",
+              "twitch",
+              "podcast",
+              "blog",
+              "newsletter"
+            ]
+          },
+          "tier": {
+            "enum": [
+              "nano",
+              "micro",
+              "mid",
+              "macro",
+              "mega",
+              "expert"
+            ]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "fee_range": {
+            "type": "object",
+            "properties": {
+              "low": {
+                "type": "number",
+                "minimum": 0
+              },
+              "high": {
+                "type": "number",
+                "minimum": 0
+              },
+              "currency": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              "basis": {
+                "enum": [
+                  "estimate",
+                  "rate_card",
+                  "quote"
+                ]
+              }
+            },
+            "required": [
+              "low",
+              "high",
+              "currency",
+              "basis"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "party_id",
+          "handle",
+          "market",
+          "platform",
+          "tier",
+          "score",
+          "reason",
+          "risks",
+          "fee_range"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "total_fee_high": {
+      "type": "number",
+      "minimum": 0
+    },
+    "creator_budget": {
+      "type": "number",
+      "minimum": 0
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "within_budget": {
+      "type": "boolean"
+    },
+    "reserves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "needs_human": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "creators",
+    "total_fee_high",
+    "creator_budget",
+    "currency",
+    "within_budget",
+    "reserves",
+    "needs_human"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,125 @@
+{
+  "id": "influencer.weekly",
+  "version": 1,
+  "service": "influencer",
+  "description": "Stage 11: weekly report, learnings and amplification picks.",
+  "trigger": {
+    "cron": "0 8 * * 1"
+  },
+  "steps": [
+    {
+      "id": "report",
+      "type": "agent",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "influencer/report@1",
+        "output_schema": "influencer/weekly_report@1"
+      }
+    },
+    {
+      "id": "approve_report",
+      "type": "gate",
+      "needs": [
+        "report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "report"
+      }
+    },
+    {
+      "id": "kpis",
+      "type": "emit",
+      "needs": [
+        "approve_report"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "approve_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "any_amplify",
+      "type": "branch",
+      "needs": [
+        "approve_report"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.report.output.amplify) > 0",
+            "goto": "approve_amplify"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "approve_amplify",
+      "type": "gate",
+      "needs": [
+        "any_amplify"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "strategist",
+          "client_approver"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "required_count": 2
+      }
+    },
+    {
+      "id": "amplify",
+      "type": "subflow",
+      "needs": [
+        "approve_amplify"
+      ],
+      "name": "Paid social skips its own budget gate when it gets budget_approval_id",
+      "subflow": {
+        "workflow_id": "paid_social.creator_amplify",
+        "per": "post",
+        "input": {
+          "client_id": "input.client_id",
+          "party_id": "item.party_id",
+          "post_url": "item.post_url",
+          "artifact_id": "item.artifact_id",
+          "rights_grant_ids": "item.rights_grant_ids",
+          "budget": "item.budget",
+          "currency": "item.currency",
+          "markets": "item.markets",
+          "budget_approval_id": "steps.approve_amplify.output.approval_id"
+        }
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "needs": [
+        "any_amplify"
+      ],
+      "emit": {
+        "event": "svc.influencer/week.closed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "id": "influencer.deliver",
+  "version": 1,
+  "service": "influencer",
+  "description": "Stages 7 to 9: brief, ship, content review, go live and verify, for 1 deal.",
+  "trigger": {
+    "event": "svc.influencer/deal.contracted"
+  },
+  "steps": [
+    {
+      "id": "brief",
+      "type": "agent",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "influencer/brief_writer@1",
+        "output_schema": "influencer/creator_brief@1"
+      }
+    },
+    {
+      "id": "check_brief",
+      "type": "check",
+      "needs": [
+        "brief"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "make_code",
+      "type": "tool",
+      "needs": [
+        "check_brief"
+      ],
+      "tool": {
+        "name": "influencer",
+        "action": "codes.create",
+        "risk": "write_internal"
+      },
+      "name": "Unique creator code; the send step fills {{code}}"
+    },
+    {
+      "id": "resolve",
+      "type": "tool",
+      "needs": [
+        "make_code"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "send_brief",
+      "type": "tool",
+      "needs": [
+        "resolve"
+      ],
+      "tool": {
+        "name": "influencer",
+        "action": "messages.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "ship",
+      "type": "task",
+      "needs": [
+        "send_brief"
+      ],
+      "task": {
+        "title": "Ship the product to the creator and add the tracking number",
+        "assignee_roles": [
+          "ops_lead"
+        ],
+        "due_hours": 72
+      }
+    },
+    {
+      "id": "draft_in",
+      "type": "wait",
+      "needs": [
+        "ship"
+      ],
+      "wait": {
+        "event": "svc.influencer/content.submitted",
+        "match": "data.deal_id",
+        "timeout": "21d"
+      }
+    },
+    {
+      "id": "review",
+      "type": "agent",
+      "needs": [
+        "draft_in"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/content_review@1",
+        "output_schema": "influencer/content_checks@1"
+      }
+    },
+    {
+      "id": "check_content",
+      "type": "check",
+      "needs": [
+        "review"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ]
+      }
+    },
+    {
+      "id": "approve_content",
+      "type": "gate",
+      "needs": [
+        "check_content"
+      ],
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "influencer_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "review"
+      }
+    },
+    {
+      "id": "post_date",
+      "type": "wait",
+      "needs": [
+        "approve_content"
+      ],
+      "wait": {
+        "event": "svc.influencer/post.due",
+        "match": "data.deal_id",
+        "timeout": "30d"
+      }
+    },
+    {
+      "id": "verify_live",
+      "type": "agent",
+      "needs": [
+        "post_date"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/content_review@1",
+        "output_schema": "influencer/content_checks@1",
+        "tools": [
+          "influencer"
+        ]
+      }
+    },
+    {
+      "id": "live_ok",
+      "type": "branch",
+      "needs": [
+        "verify_live"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.verify_live.output.overall == 'pass'",
+            "goto": "record_post"
+          }
+        ],
+        "else": "fix_request"
+      }
+    },
+    {
+      "id": "fix_request",
+      "type": "emit",
+      "needs": [
+        "live_ok"
+      ],
+      "emit": {
+        "event": "svc.influencer/post.fix_requested"
+      },
+      "name": "Ask for a fix in 24 hours; payout holds"
+    },
+    {
+      "id": "record_post",
+      "type": "emit",
+      "needs": [
+        "live_ok"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "name": "type posted"
+    },
+    {
+      "id": "delivered",
+      "type": "emit",
+      "needs": [
+        "record_post"
+      ],
+      "emit": {
+        "event": "svc.influencer/deal.delivered"
+      }
+    }
+  ]
+}
