@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/calendar@1",
+  "type": "object",
+  "properties": {
+    "month": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+    },
+    "summary": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "maxItems": 5
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "local_time": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+          },
+          "platform": {
+            "enum": [
+              "linkedin",
+              "instagram",
+              "tiktok",
+              "youtube",
+              "facebook",
+              "x",
+              "snapchat",
+              "pinterest",
+              "threads",
+              "whatsapp_channel",
+              "xing"
+            ]
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(-[A-Z]{2})?|unknown)$"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pillar": {
+            "type": "string",
+            "minLength": 1
+          },
+          "funnel_stage": {
+            "enum": [
+              "reach",
+              "engage",
+              "convert"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "minLength": 1
+          },
+          "idea": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^(campaign|key_date|evergreen|reactive|asset:.+|trend:.+|reuse:.+)$"
+          },
+          "needs_video": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "slot_id",
+          "date",
+          "local_time",
+          "platform",
+          "account",
+          "market",
+          "language",
+          "pillar",
+          "funnel_stage",
+          "format",
+          "idea",
+          "source",
+          "needs_video",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "skipped_dates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "date",
+          "name",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "month",
+    "summary",
+    "slots",
+    "skipped_dates",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

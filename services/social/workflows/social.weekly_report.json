@@ -1,0 +1,75 @@
+{
+  "id": "social.weekly_report",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline step 9: weekly report, strategist review before the client sees it; monthly proposals feed Gate A.",
+  "trigger": {
+    "cron": "0 7 * * 1"
+  },
+  "steps": [
+    {
+      "id": "metrics",
+      "type": "tool",
+      "name": "Pull post, account and inbox metrics; compute ratios in code",
+      "tool": {
+        "name": "social",
+        "action": "metrics.fetch",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "write",
+      "type": "agent",
+      "needs": [
+        "metrics"
+      ],
+      "agent": {
+        "prompt_ref": "social/analyst@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/report@1"
+      }
+    },
+    {
+      "id": "review",
+      "type": "gate",
+      "needs": [
+        "write"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "review"
+      ],
+      "name": "Publish to client portal",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "review"
+      ],
+      "name": "Write what worked to the brain",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}

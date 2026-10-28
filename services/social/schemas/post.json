@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/post@1",
+  "type": "object",
+  "properties": {
+    "caption": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 2
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^#[^\\s#]+$"
+      }
+    },
+    "first_comment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cta": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alt_text": {
+      "type": "string",
+      "maxLength": 250
+    },
+    "visual": {
+      "type": "object"
+    },
+    "video_brief": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "claims_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text",
+          "claim_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "new_claims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "disclosure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ai_generated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "disclosure",
+        "ai_generated"
+      ],
+      "additionalProperties": false
+    },
+    "needs_human": {
+      "type": "boolean"
+    },
+    "needs_human_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "caption",
+    "variants",
+    "hashtags",
+    "cta",
+    "alt_text",
+    "claims_used",
+    "new_claims",
+    "labels",
+    "needs_human",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

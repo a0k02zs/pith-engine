@@ -1,0 +1,102 @@
+{
+  "id": "social.onboard",
+  "version": 1,
+  "service": "social",
+  "description": "Client onboarding (playbook §7): 90-day audit, pillars and voice samples, workshop approval, load reply library.",
+  "trigger": {
+    "event": "svc.social/client.onboarding_started"
+  },
+  "steps": [
+    {
+      "id": "connect_accounts",
+      "type": "tool",
+      "name": "Verify Pith has admin or editor role on each account (no passwords)",
+      "tool": {
+        "name": "social",
+        "action": "accounts.verify",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "needs": [
+        "connect_accounts"
+      ],
+      "name": "90-day audit of own accounts, 3 competitors, mentions",
+      "agent": {
+        "prompt_ref": "social/listener@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/listener_output@1"
+      }
+    },
+    {
+      "id": "propose",
+      "type": "agent",
+      "needs": [
+        "audit"
+      ],
+      "name": "Propose pillars, platform roles, cadence, 10 voice samples, starter reply library",
+      "agent": {
+        "prompt_ref": "social/onboarding_proposal@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/onboarding_proposal@1"
+      }
+    },
+    {
+      "id": "check_samples",
+      "type": "check",
+      "needs": [
+        "propose"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_setup",
+      "type": "gate",
+      "needs": [
+        "check_samples"
+      ],
+      "name": "Workshop: client approves pillars, voice, reply rules, escalation contacts",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "social_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "required_count": 2,
+        "on_changes": "propose"
+      }
+    },
+    {
+      "id": "save_brain",
+      "type": "tool",
+      "needs": [
+        "approve_setup"
+      ],
+      "name": "Write pillars, reply library, banned topics to the brain",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "start_plan",
+      "type": "subflow",
+      "needs": [
+        "save_brain"
+      ],
+      "subflow": {
+        "workflow_id": "social.plan_monthly"
+      }
+    }
+  ]
+}

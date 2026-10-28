@@ -1,0 +1,108 @@
+{
+  "id": "social.plan_monthly",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline steps 2-3: 4-week calendar per account and market, Gate A once a month.",
+  "trigger": {
+    "cron": "0 8 20 * *"
+  },
+  "steps": [
+    {
+      "id": "gather",
+      "type": "tool",
+      "name": "Load campaign plan, key dates, assets from services 3/6/7/16/18, last 4 briefs, last monthly review",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "needs": [
+        "gather"
+      ],
+      "agent": {
+        "prompt_ref": "social/planner@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/calendar@1"
+      }
+    },
+    {
+      "id": "validate",
+      "type": "check",
+      "needs": [
+        "plan"
+      ],
+      "name": "Code checks: pillar shares ±10 pts, slot counts, time windows, no-post windows",
+      "check": {
+        "kinds": [
+          "fact"
+        ]
+      },
+      "retry": {
+        "attempts": 2
+      }
+    },
+    {
+      "id": "native_review",
+      "type": "gate",
+      "needs": [
+        "validate"
+      ],
+      "name": "Native editor reviews slots in languages that need one",
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 24,
+        "skip_if": "!steps.plan.output.slots.exists(s, s.language in brain.native_editor_languages)",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "approve_calendar",
+      "type": "gate",
+      "needs": [
+        "native_review"
+      ],
+      "name": "GATE A: social lead approves; client sees the calendar in the portal",
+      "gate": {
+        "approval_kind": "calendar",
+        "required_roles": [
+          "social_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "save",
+      "type": "tool",
+      "needs": [
+        "approve_calendar"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "produce",
+      "type": "subflow",
+      "needs": [
+        "save"
+      ],
+      "name": "One create run per slot",
+      "subflow": {
+        "workflow_id": "social.create_post",
+        "per": "slot"
+      }
+    }
+  ]
+}

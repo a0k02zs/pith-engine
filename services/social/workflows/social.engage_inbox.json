@@ -1,0 +1,143 @@
+{
+  "id": "social.engage_inbox",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline step 7: triage comments, mentions and DMs; auto-reply only from the approved list; drafts for a person.",
+  "trigger": {
+    "cron": "*/10 * * * *"
+  },
+  "concurrency": {
+    "key": "input.account_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "fetch",
+      "type": "tool",
+      "tool": {
+        "name": "social",
+        "action": "inbox.fetch",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "triage",
+      "type": "agent",
+      "needs": [
+        "fetch"
+      ],
+      "agent": {
+        "prompt_ref": "social/community@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "social/inbox_actions@1"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "needs": [
+        "triage"
+      ],
+      "name": "High risk, complaints, press, legal, safety, crisis (G4: no agent reply)",
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "hide_spam",
+      "type": "tool",
+      "needs": [
+        "triage"
+      ],
+      "name": "Hide spam, scams, abuse, doxxing (G10 removal)",
+      "tool": {
+        "name": "social",
+        "action": "inbox.hide",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "check_auto",
+      "type": "check",
+      "needs": [
+        "triage"
+      ],
+      "name": "Every auto-reply: code checks + compliance (channel social_reply)",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "check_drafts",
+      "type": "check",
+      "needs": [
+        "triage"
+      ],
+      "name": "Every reply draft: code checks + compliance (channel social_reply)",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "auto_reply",
+      "type": "tool",
+      "needs": [
+        "check_auto"
+      ],
+      "name": "Approved-answer replies only (rules.routeInboxItem): daily cap 200 per account, off at draft_only and in a crisis",
+      "tool": {
+        "name": "social",
+        "action": "inbox.reply",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "drafts",
+      "type": "gate",
+      "needs": [
+        "check_drafts"
+      ],
+      "name": "Reply drafts for the community manager (bulk approve)",
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "social_lead"
+        ],
+        "sla_hours": 2,
+        "on_changes": "triage"
+      }
+    },
+    {
+      "id": "send_drafts",
+      "type": "tool",
+      "needs": [
+        "drafts"
+      ],
+      "tool": {
+        "name": "social",
+        "action": "inbox.reply",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "auto_reply",
+        "send_drafts"
+      ],
+      "name": "outbound replied + KPI median_reply_minutes",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    }
+  ]
+}

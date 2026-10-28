@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/listener_output@1",
+  "type": "object",
+  "properties": {
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "signal_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "mention",
+              "competitor_post",
+              "trend",
+              "question",
+              "complaint",
+              "press",
+              "crisis_risk",
+              "spam"
+            ]
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(-[A-Z]{2})?|unknown)$"
+          },
+          "sentiment": {
+            "type": "integer",
+            "minimum": -2,
+            "maximum": 2
+          },
+          "urgency": {
+            "enum": [
+              "now",
+              "today",
+              "this_week",
+              "none"
+            ]
+          },
+          "pillar_fit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "signal_id",
+          "kind",
+          "market",
+          "sentiment",
+          "urgency",
+          "pillar_fit",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "signals",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,533 @@
+{
+  "$comment": "Organic social rules per market. A country entry overrides its group, which overrides global, field by field. Market codes follow engine/contracts/enums.json. Planning summary, not legal advice.",
+  "version": "0.1.0",
+  "contract_version": "0.1.0",
+  "global": {
+    "disclosure_tools": {
+      "instagram": "Paid partnership label",
+      "facebook": "Paid partnership label",
+      "tiktok": "Branded content toggle",
+      "youtube": "Includes paid promotion checkbox",
+      "linkedin": "Brand partnership label",
+      "x": "Text label only",
+      "snapchat": "Paid partnership tag"
+    },
+    "ai_label_required_when": "realistic AI-generated or AI-altered image, video or audio of people, places or events",
+    "alt_text_required": true,
+    "captions_required_on_video": true,
+    "music": "commercial_library_only",
+    "pii_retention_days": 90,
+    "gate_b_always": [
+      "contest",
+      "new_claim",
+      "price",
+      "health_statement",
+      "finance_statement",
+      "legal_statement",
+      "collab_post",
+      "national_day",
+      "tragedy_or_news_reference",
+      "competitor_named",
+      "restricted_sector"
+    ],
+    "banned_everywhere": [
+      "bought_followers_or_engagement",
+      "engagement_pods",
+      "political_content",
+      "religious_content_for_marketing",
+      "unlicensed_music",
+      "unsolicited_promotional_dm",
+      "likeness_without_rights"
+    ],
+    "caption_limits": {
+      "linkedin": 3000,
+      "instagram": 2200,
+      "tiktok": 4000,
+      "facebook": 63206,
+      "x": 280,
+      "youtube": 100,
+      "threads": 500,
+      "pinterest": 500,
+      "snapchat": 250,
+      "whatsapp_channel": 1000,
+      "xing": 3000
+    },
+    "hashtag_ranges": {
+      "linkedin": [
+        0,
+        3
+      ],
+      "instagram": [
+        3,
+        5
+      ],
+      "tiktok": [
+        3,
+        5
+      ],
+      "x": [
+        0,
+        2
+      ],
+      "youtube": [
+        1,
+        3
+      ],
+      "facebook": [
+        0,
+        2
+      ],
+      "threads": [
+        0,
+        2
+      ],
+      "pinterest": [
+        0,
+        5
+      ],
+      "snapchat": [
+        0,
+        2
+      ],
+      "whatsapp_channel": [
+        0,
+        0
+      ],
+      "xing": [
+        0,
+        3
+      ]
+    },
+    "alt_text_max": 250,
+    "min_brand_score": 80,
+    "auto_reply": {
+      "min_match_confidence": 0.9,
+      "daily_cap_per_account": 200
+    },
+    "pillar_tolerance_points": 10,
+    "reactive_share": 0.1,
+    "max_offer_share": 0.2
+  },
+  "groups": {
+    "UK": {
+      "languages": [
+        "en-GB"
+      ],
+      "tone": "direct, low-hype, understatement",
+      "platforms": {
+        "b2b": [
+          "linkedin"
+        ],
+        "b2c": [
+          "instagram",
+          "tiktok",
+          "youtube",
+          "facebook"
+        ]
+      },
+      "paid_post_label": "Ad",
+      "label_position": "start_of_caption",
+      "week": {
+        "workdays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ]
+      },
+      "restricted_sectors": [
+        "alcohol",
+        "gambling",
+        "financial_promotion",
+        "hfss_food"
+      ],
+      "claims_rule": "CAP Code: hold evidence before any objective claim; CMA Green Claims Code for environmental claims",
+      "blackout": [
+        {
+          "name": "Remembrance period",
+          "rule": "no promotional use of the poppy",
+          "months": [
+            11
+          ]
+        }
+      ],
+      "key_dates": [
+        "January sales",
+        "Valentine's Day",
+        "Mother's Day (UK)",
+        "Easter",
+        "Black Friday",
+        "Christmas",
+        "Boxing Day",
+        "End of tax year (5 April, B2B)"
+      ]
+    },
+    "SG": {
+      "languages": [
+        "en-SG",
+        "zh-SG",
+        "ms-SG",
+        "ta-SG"
+      ],
+      "native_editor_required": [
+        "zh-SG",
+        "ms-SG",
+        "ta-SG"
+      ],
+      "tone": "practical, value-led",
+      "platforms": {
+        "b2b": [
+          "linkedin"
+        ],
+        "b2c": [
+          "instagram",
+          "facebook",
+          "tiktok",
+          "youtube",
+          "whatsapp_channel"
+        ]
+      },
+      "paid_post_label": "Ad",
+      "label_position": "start_of_caption",
+      "week": {
+        "workdays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ]
+      },
+      "sensitive_topics": [
+        "race",
+        "religion",
+        "politics",
+        "unverified_statements_of_fact"
+      ],
+      "data_law": "PDPA 2012",
+      "key_dates": [
+        "Chinese New Year",
+        "Hari Raya Puasa",
+        "Hari Raya Haji",
+        "Deepavali",
+        "National Day (9 August)",
+        "9.9 sale",
+        "11.11 sale",
+        "12.12 sale",
+        "Great Singapore Sale"
+      ]
+    },
+    "NA": {
+      "languages": [
+        "en-US",
+        "en-CA",
+        "fr-CA"
+      ],
+      "tone": "confident, benefit-first, with proof",
+      "platforms": {
+        "b2b": [
+          "linkedin",
+          "x"
+        ],
+        "b2c": [
+          "instagram",
+          "tiktok",
+          "youtube",
+          "pinterest",
+          "facebook"
+        ]
+      },
+      "paid_post_label": "#ad",
+      "label_position": "start_of_caption",
+      "week": {
+        "workdays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ]
+      },
+      "platform_watch": [
+        "tiktok: check current US situation before each monthly calendar"
+      ]
+    },
+    "GCC": {
+      "languages": [
+        "en",
+        "ar-gulf"
+      ],
+      "native_editor_required": [
+        "ar-gulf"
+      ],
+      "rtl_graphics_for": [
+        "ar-gulf"
+      ],
+      "tone": "respectful, premium, relationship-first",
+      "platforms": {
+        "b2b": [
+          "linkedin"
+        ],
+        "b2c": [
+          "instagram",
+          "tiktok",
+          "snapchat",
+          "x",
+          "youtube",
+          "whatsapp_channel"
+        ]
+      },
+      "paid_post_label": "إعلان / Ad",
+      "label_position": "start_of_caption",
+      "week": {
+        "workdays": [
+          "sun",
+          "mon",
+          "tue",
+          "wed",
+          "thu"
+        ]
+      },
+      "no_post_windows": [
+        {
+          "day": "fri",
+          "from": "12:00",
+          "to": "14:00",
+          "reason": "Friday prayer"
+        }
+      ],
+      "banned_imagery": [
+        "alcohol",
+        "pork",
+        "gambling",
+        "romantic_or_revealing",
+        "disputed_border_maps"
+      ],
+      "sensitive_topics": [
+        "religion",
+        "politics",
+        "royal_families",
+        "national_symbols"
+      ],
+      "creator_licence_required": true,
+      "reply_rule": "never argue, name or shame in public; move to private chat and to a person",
+      "ramadan": {
+        "daytime_food_drink_imagery": "avoid",
+        "peak_window": "21:00-01:00",
+        "volume": "lower in daytime",
+        "tone": "warm, giving"
+      },
+      "key_dates": [
+        "Ramadan (movable)",
+        "Eid al-Fitr (movable)",
+        "Eid al-Adha (movable)",
+        "White Friday",
+        "Dubai Shopping Festival"
+      ]
+    },
+    "EU": {
+      "languages": [
+        "en",
+        "nl-NL",
+        "de-DE",
+        "fr-FR",
+        "es-ES"
+      ],
+      "native_editor_required": [
+        "de-DE",
+        "fr-FR",
+        "es-ES"
+      ],
+      "tone": "factual, precise, no hype",
+      "platforms": {
+        "b2b": [
+          "linkedin"
+        ],
+        "b2c": [
+          "instagram",
+          "tiktok",
+          "youtube",
+          "facebook",
+          "whatsapp_channel"
+        ]
+      },
+      "paid_post_label": "Advertentie / Ad",
+      "label_position": "start_of_caption",
+      "week": {
+        "workdays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ]
+      },
+      "ai_act_article_50_from": "2026-08-02",
+      "data_law": "GDPR",
+      "key_dates": [
+        "Black Friday",
+        "Christmas"
+      ]
+    }
+  },
+  "countries": {
+    "GB": {
+      "group": "UK"
+    },
+    "SG": {
+      "group": "SG"
+    },
+    "US": {
+      "group": "NA",
+      "languages": [
+        "en-US"
+      ],
+      "paid_post_label": "#ad",
+      "time_zones": [
+        "America/New_York",
+        "America/Chicago",
+        "America/Denver",
+        "America/Los_Angeles"
+      ],
+      "children_rule": "COPPA: no data from under-13s",
+      "reviews_rule": "FTC 2024 rule: no fake reviews or fake social influence indicators",
+      "key_dates": [
+        "Super Bowl",
+        "Mother's Day (US)",
+        "July 4",
+        "Labor Day",
+        "Thanksgiving (US)",
+        "Black Friday",
+        "Cyber Monday",
+        "Q4 budget season (B2B)"
+      ]
+    },
+    "CA": {
+      "group": "NA",
+      "languages": [
+        "en-CA"
+      ],
+      "paid_post_label": "#ad",
+      "dm_rule": "CASL: promotional DMs are commercial electronic messages; no unsolicited promotional DMs",
+      "key_dates": [
+        "Canada Day (1 July)",
+        "Thanksgiving (Canada, October)",
+        "Black Friday",
+        "Boxing Day"
+      ]
+    },
+    "CA-QC": {
+      "group": "NA",
+      "languages": [
+        "fr-CA"
+      ],
+      "native_editor_required": [
+        "fr-CA"
+      ],
+      "paid_post_label": "#pub",
+      "language_rule": "French required (Charter of the French Language)",
+      "data_law": "Quebec Law 25"
+    },
+    "AE": {
+      "group": "GCC",
+      "week": {
+        "workdays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ]
+      },
+      "creator_licence": "UAE Media Council advertiser permit",
+      "key_dates": [
+        "UAE National Day (2 December)",
+        "Dubai Shopping Festival"
+      ]
+    },
+    "SA": {
+      "group": "GCC",
+      "tone": "respectful, premium, more conservative",
+      "platforms": {
+        "b2b": [
+          "linkedin",
+          "x"
+        ],
+        "b2c": [
+          "snapchat",
+          "tiktok",
+          "instagram",
+          "x",
+          "youtube"
+        ]
+      },
+      "creator_licence": "Mawthooq licence",
+      "modest_dress_imagery": true,
+      "key_dates": [
+        "Saudi Founding Day (22 February)",
+        "Saudi National Day (23 September)"
+      ]
+    },
+    "QA": {
+      "group": "GCC",
+      "key_dates": [
+        "Qatar National Day (18 December)"
+      ]
+    },
+    "KW": {
+      "group": "GCC",
+      "platforms": {
+        "b2b": [
+          "linkedin",
+          "x"
+        ],
+        "b2c": [
+          "instagram",
+          "x",
+          "snapchat",
+          "tiktok"
+        ]
+      },
+      "key_dates": [
+        "Kuwait National Day (25 February)"
+      ]
+    },
+    "BH": {
+      "group": "GCC"
+    },
+    "OM": {
+      "group": "GCC"
+    },
+    "NL": {
+      "group": "EU",
+      "languages": [
+        "nl-NL",
+        "en"
+      ],
+      "influencer_rule": "Media Act: influencers above the Commissariaat voor de Media threshold register",
+      "key_dates": [
+        "King's Day (27 April)",
+        "Sinterklaas (5 December)"
+      ]
+    },
+    "DE": {
+      "group": "EU",
+      "languages": [
+        "de-DE"
+      ],
+      "profile_rule": "Impressum link required on business social profiles",
+      "b2b_extra_platforms": [
+        "xing"
+      ]
+    },
+    "FR": {
+      "group": "EU",
+      "languages": [
+        "fr-FR"
+      ],
+      "paid_post_label": "Publicité",
+      "influencer_rule": "Influencer law 2023: label 'Publicité' or 'Collaboration commerciale'; label retouched or AI images"
+    }
+  }
+}

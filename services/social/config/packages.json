@@ -1,0 +1,19 @@
+{
+  "$comment": "Default social packages and starting KPI targets. Adopted 2026-10-28 as the v1 defaults from docs/playbook.md section 4 and docs/approvals-and-kpis.md section 3. Pith sets the final names and prices.",
+  "packages": {
+    "starter": { "platforms": [2, 2], "feed_posts_per_week_per_platform": [3, 3], "stories_per_week_b2c": [3, 3], "community_hours": "business", "markets": [1, 1] },
+    "growth": { "platforms": [3, 3], "feed_posts_per_week_per_platform": [4, 5], "stories_per_week_b2c": [5, 5], "community_hours": "business", "markets": [2, 2] },
+    "scale": { "platforms": [4, 5], "feed_posts_per_week_per_platform": [5, 7], "stories_per_week_b2c": [7, 7], "community_hours": "extended_07_22", "markets": [3, null] }
+  },
+  "kpi_targets": {
+    "median_reply_minutes": { "max": 120, "scope": "business hours" },
+    "social.escalation_minutes": { "max": 60, "applies_to": ["sev1", "sev2"], "share": 1 },
+    "engagement_rate": { "rule": "above own 90-day average, month on month" },
+    "follower_growth": { "min": 0, "rule": "positive every month; client target set at onboarding" },
+    "share_of_voice": { "rule": "up against 3 named competitors, quarter on quarter" },
+    "brand_score": { "median_min": 85, "floor_without_person": 80 },
+    "social.first_pass_acceptance": { "min": 0.9, "by_day": 30 },
+    "social.on_time_rate": { "min": 0.95 },
+    "disclosure_compliance": { "min": 1 }
+  }
+}

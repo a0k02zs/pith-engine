@@ -1,0 +1,128 @@
+{
+  "id": "social.escalate",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline step 8: a person owns every complaint, press, legal, safety and crisis item within 1 hour.",
+  "trigger": {
+    "event": "engine/escalation.raised"
+  },
+  "steps": [
+    {
+      "id": "summarize",
+      "type": "agent",
+      "name": "3-line summary, thread history, reach, suggested holding line",
+      "agent": {
+        "prompt_ref": "social/escalation_summary@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/escalation_summary@1"
+      }
+    },
+    {
+      "id": "severity",
+      "type": "branch",
+      "needs": [
+        "summarize"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.summarize.output.severity == 'sev1'",
+            "goto": "pause_queue"
+          }
+        ],
+        "else": "decide"
+      }
+    },
+    {
+      "id": "pause_queue",
+      "type": "tool",
+      "needs": [
+        "severity"
+      ],
+      "name": "Crisis: pause all scheduled posts for the client (G10 removal)",
+      "tool": {
+        "name": "engine",
+        "action": "client.pause_scheduled",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "notify_pr",
+      "type": "emit",
+      "needs": [
+        "pause_queue"
+      ],
+      "emit": {
+        "event": "svc.social/crisis.declared"
+      }
+    },
+    {
+      "id": "decide",
+      "type": "gate",
+      "needs": [
+        "severity"
+      ],
+      "name": "GATE C: account lead decides and writes or approves the reply",
+      "gate": {
+        "approval_kind": "escalation",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 1,
+        "on_changes": "summarize"
+      }
+    },
+    {
+      "id": "check_reply",
+      "type": "check",
+      "needs": [
+        "decide"
+      ],
+      "name": "Compliance check on the reply the person wrote or approved",
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "reply",
+      "type": "tool",
+      "needs": [
+        "check_reply"
+      ],
+      "name": "Post the reply the person approved",
+      "tool": {
+        "name": "social",
+        "action": "inbox.reply",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "needs": [
+        "decide"
+      ],
+      "name": "Log outcome; propose reply-library additions",
+      "agent": {
+        "prompt_ref": "social/escalation_learn@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "social/learning@1"
+      }
+    },
+    {
+      "id": "save_learning",
+      "type": "tool",
+      "needs": [
+        "learn"
+      ],
+      "name": "Write the outcome and proposed reply-library additions to the brain",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    }
+  ]
+}
