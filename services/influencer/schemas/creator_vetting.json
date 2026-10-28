@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/creator_vetting@1",
+  "type": "object",
+  "properties": {
+    "party_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "vetted",
+        "rejected",
+        "needs_data"
+      ]
+    },
+    "hard_stop": {
+      "anyOf": [
+        {
+          "enum": [
+            "real_followers_low",
+            "audience_not_in_market",
+            "minor",
+            "brand_safety",
+            "competitor_deal",
+            "licence_missing",
+            "licence_expired",
+            "restricted_category_minor"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "score": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "factors": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "audience_country": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "audience_demo": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "interest": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "engagement_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "brand_safety": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "content_fit": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "audience_country",
+            "audience_demo",
+            "interest",
+            "engagement_quality",
+            "brand_safety",
+            "content_fit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "real_follower_pct": {
+      "anyOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "audience_in_market_pct": {
+      "anyOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "engagement_rate": {
+      "anyOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "url",
+          "date",
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "licence": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "enum": [
+            true,
+            false,
+            "check_local"
+          ]
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "required",
+        "type",
+        "number",
+        "expires",
+        "verified"
+      ],
+      "additionalProperties": false
+    },
+    "fee_range": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "low": {
+              "type": "number",
+              "minimum": 0
+            },
+            "high": {
+              "type": "number",
+              "minimum": 0
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "basis": {
+              "enum": [
+                "estimate",
+                "rate_card",
+                "quote"
+              ]
+            }
+          },
+          "required": [
+            "low",
+            "high",
+            "currency",
+            "basis"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    },
+    "missing_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "party_id",
+    "status",
+    "hard_stop",
+    "score",
+    "factors",
+    "real_follower_pct",
+    "audience_in_market_pct",
+    "engagement_rate",
+    "risks",
+    "licence",
+    "fee_range",
+    "reason",
+    "missing_data"
+  ],
+  "additionalProperties": false
+}

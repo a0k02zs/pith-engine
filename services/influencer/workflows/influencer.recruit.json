@@ -1,0 +1,231 @@
+{
+  "id": "influencer.recruit",
+  "version": 1,
+  "service": "influencer",
+  "description": "Stages 5 and 6: outreach, negotiation and contract for 1 approved creator.",
+  "trigger": {
+    "event": "svc.influencer/shortlist.approved"
+  },
+  "concurrency": {
+    "key": "event.data.party_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "needs": [],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      },
+      "name": "Resolve the creator by party_ids; drops a creator marked do-not-contact (G5)"
+    },
+    {
+      "id": "write_outreach",
+      "type": "agent",
+      "needs": [
+        "resolve"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/outreach@1",
+        "output_schema": "influencer/outreach_message@1"
+      }
+    },
+    {
+      "id": "check_outreach",
+      "type": "check",
+      "needs": [
+        "write_outreach"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "send_outreach",
+      "type": "tool",
+      "needs": [
+        "check_outreach"
+      ],
+      "tool": {
+        "name": "influencer",
+        "action": "messages.send",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "wait_reply",
+      "type": "wait",
+      "needs": [
+        "send_outreach"
+      ],
+      "wait": {
+        "event": "svc.influencer/creator.replied",
+        "match": "data.party_id",
+        "timeout": "4d"
+      }
+    },
+    {
+      "id": "route_reply",
+      "type": "branch",
+      "needs": [
+        "wait_reply"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.wait_reply.output != null && steps.wait_reply.output.declined",
+            "goto": "stop"
+          },
+          {
+            "if": "steps.wait_reply.output != null && steps.wait_reply.output.interested",
+            "goto": "negotiate"
+          },
+          {
+            "if": "steps.wait_reply.output == null && input.message_number < 3",
+            "goto": "resolve"
+          }
+        ],
+        "else": "no_reply"
+      }
+    },
+    {
+      "id": "negotiate",
+      "type": "agent",
+      "needs": [
+        "route_reply"
+      ],
+      "agent": {
+        "prompt_ref": "influencer/negotiation@1",
+        "output_schema": "influencer/deal_summary@1"
+      }
+    },
+    {
+      "id": "licence",
+      "type": "tool",
+      "needs": [
+        "negotiate"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "compliance.check",
+        "risk": "read"
+      },
+      "name": "Creator licence (AE, SA) and market rules on the deal terms"
+    },
+    {
+      "id": "check_deal",
+      "type": "check",
+      "needs": [
+        "licence"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "approve_contract",
+      "type": "gate",
+      "needs": [
+        "check_deal"
+      ],
+      "gate": {
+        "approval_kind": "contract",
+        "required_roles": [
+          "influencer_lead",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "negotiate"
+      }
+    },
+    {
+      "id": "sign",
+      "type": "tool",
+      "needs": [
+        "approve_contract"
+      ],
+      "tool": {
+        "name": "esign",
+        "action": "envelope.send",
+        "risk": "sign"
+      }
+    },
+    {
+      "id": "signed",
+      "type": "wait",
+      "needs": [
+        "sign"
+      ],
+      "wait": {
+        "event": "svc.influencer/contract.signed",
+        "match": "data.envelope_id",
+        "timeout": "14d"
+      }
+    },
+    {
+      "id": "record_rights",
+      "type": "tool",
+      "needs": [
+        "signed"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "rights.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "contracted",
+      "type": "emit",
+      "needs": [
+        "record_rights"
+      ],
+      "emit": {
+        "event": "svc.influencer/deal.contracted"
+      }
+    },
+    {
+      "id": "stop",
+      "type": "tool",
+      "needs": [
+        "route_reply"
+      ],
+      "tool": {
+        "name": "influencer",
+        "action": "contact.do_not_contact",
+        "risk": "remove"
+      },
+      "name": "A no is final; never blocked (G10)"
+    },
+    {
+      "id": "declined",
+      "type": "emit",
+      "needs": [
+        "stop"
+      ],
+      "emit": {
+        "event": "svc.influencer/creator.declined"
+      }
+    },
+    {
+      "id": "no_reply",
+      "type": "emit",
+      "needs": [
+        "route_reply"
+      ],
+      "emit": {
+        "event": "svc.influencer/creator.no_reply"
+      }
+    }
+  ]
+}

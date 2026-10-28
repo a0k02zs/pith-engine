@@ -1,0 +1,86 @@
+{
+  "id": "influencer.payout",
+  "version": 1,
+  "service": "influencer",
+  "description": "Stage 10: pay 1 creator after proof of posting.",
+  "trigger": {
+    "event": "svc.influencer/deal.delivered"
+  },
+  "steps": [
+    {
+      "id": "payout_request",
+      "type": "agent",
+      "needs": [],
+      "agent": {
+        "prompt_ref": "influencer/payout@1",
+        "output_schema": "influencer/payout_request@1"
+      }
+    },
+    {
+      "id": "ready",
+      "type": "branch",
+      "needs": [
+        "payout_request"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.payout_request.output.blockers) == 0",
+            "goto": "approve_payout"
+          }
+        ],
+        "else": "hold"
+      }
+    },
+    {
+      "id": "approve_payout",
+      "type": "gate",
+      "needs": [
+        "ready"
+      ],
+      "gate": {
+        "approval_kind": "payout",
+        "required_roles": [
+          "influencer_lead",
+          "client_finance"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2
+      }
+    },
+    {
+      "id": "pay",
+      "type": "tool",
+      "needs": [
+        "approve_payout"
+      ],
+      "tool": {
+        "name": "payout",
+        "action": "transfers.create",
+        "risk": "pay"
+      }
+    },
+    {
+      "id": "paid",
+      "type": "emit",
+      "needs": [
+        "pay"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      },
+      "name": "type payout_sent"
+    },
+    {
+      "id": "hold",
+      "type": "emit",
+      "needs": [
+        "ready"
+      ],
+      "emit": {
+        "event": "svc.influencer/payout.held"
+      }
+    }
+  ]
+}

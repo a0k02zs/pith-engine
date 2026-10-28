@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/deal_summary@1",
+  "type": "object",
+  "properties": {
+    "reply_draft": {
+      "type": "string"
+    },
+    "deal": {
+      "type": "object",
+      "properties": {
+        "party_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fee": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {
+                "enum": [
+                  "instagram",
+                  "tiktok",
+                  "youtube",
+                  "linkedin",
+                  "x",
+                  "snapchat",
+                  "twitch",
+                  "podcast",
+                  "blog",
+                  "newsletter"
+                ]
+              },
+              "format": {
+                "type": "string",
+                "minLength": 1
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "post_window": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "platform",
+              "format",
+              "count",
+              "post_window"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "paid_usage_months": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "exclusivity": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "days_after_last_post": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 90
+                }
+              },
+              "required": [
+                "category",
+                "days_after_last_post"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rights_scopes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "likeness",
+              "voice_clone",
+              "avatar",
+              "ugc_reuse",
+              "paid_usage",
+              "whitelisting",
+              "music"
+            ]
+          }
+        },
+        "payment_terms_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 15
+        },
+        "kill_fee_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "review_rounds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "disclosure_labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "party_id",
+        "fee",
+        "currency",
+        "deliverables",
+        "paid_usage_months",
+        "exclusivity",
+        "rights_scopes",
+        "payment_terms_days",
+        "kill_fee_pct",
+        "review_rounds",
+        "disclosure_labels"
+      ],
+      "additionalProperties": false
+    },
+    "within_approved_range": {
+      "type": "boolean"
+    },
+    "ready_for_gate": {
+      "type": "boolean"
+    },
+    "needs_human": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "reply_draft",
+    "deal",
+    "within_approved_range",
+    "ready_for_gate",
+    "needs_human"
+  ],
+  "additionalProperties": false
+}

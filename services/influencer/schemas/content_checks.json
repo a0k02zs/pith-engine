@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/content_checks@1",
+  "type": "object",
+  "properties": {
+    "stage": {
+      "enum": [
+        "draft",
+        "live"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "enum": [
+              "disclosure",
+              "claims",
+              "banned_words",
+              "must_haves",
+              "facts",
+              "ai_label",
+              "safety",
+              "music",
+              "matches_approved"
+            ]
+          },
+          "result": {
+            "enum": [
+              "pass",
+              "fail",
+              "n/a"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "item",
+          "result",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "overall": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "change_requests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "proof": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "post_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "screenshot_artifact_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "checked_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "post_url",
+            "screenshot_artifact_id",
+            "checked_at"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "needs_human": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "stage",
+    "checks",
+    "overall",
+    "change_requests",
+    "proof",
+    "needs_human"
+  ],
+  "additionalProperties": false
+}

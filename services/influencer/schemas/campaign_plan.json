@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/campaign_plan@1",
+  "type": "object",
+  "properties": {
+    "play": {
+      "enum": [
+        "product_seeding",
+        "ambassadors",
+        "launch_burst",
+        "ugc_for_ads",
+        "affiliate",
+        "expert_voice",
+        "co_created_report",
+        "webinar_guest",
+        "thought_leader_ads"
+      ]
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "instagram",
+                "tiktok",
+                "youtube",
+                "linkedin",
+                "x",
+                "snapchat",
+                "twitch",
+                "podcast",
+                "blog",
+                "newsletter"
+              ]
+            },
+            "minItems": 1
+          },
+          "creators": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tier_mix": {
+            "type": "object",
+            "properties": {
+              "nano": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "micro": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mid": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "macro": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mega": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expert": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "nano",
+              "micro",
+              "mid",
+              "macro",
+              "mega",
+              "expert"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "market",
+          "platforms",
+          "creators",
+          "tier_mix"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "budget_split": {
+      "type": "object",
+      "properties": {
+        "creator_fees": {
+          "type": "number",
+          "minimum": 0
+        },
+        "product": {
+          "type": "number",
+          "minimum": 0
+        },
+        "shipping": {
+          "type": "number",
+          "minimum": 0
+        },
+        "amplification": {
+          "type": "number",
+          "minimum": 0
+        },
+        "contingency": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": [
+        "creator_fees",
+        "product",
+        "shipping",
+        "amplification",
+        "contingency",
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "stage",
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "number"
+          },
+          "basis": {
+            "enum": [
+              "history",
+              "estimate"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "target",
+          "basis"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "needs_human": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "missing_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "play",
+    "markets",
+    "budget_split",
+    "timeline",
+    "kpis",
+    "questions",
+    "needs_human",
+    "missing_data"
+  ],
+  "additionalProperties": false
+}

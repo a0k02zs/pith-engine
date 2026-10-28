@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/outreach_message@1",
+  "type": "object",
+  "properties": {
+    "message_number": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "subject": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+    },
+    "evidence": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "notice": {
+      "anyOf": [
+        {
+          "enum": [
+            "privacy_notice",
+            "pdpa_purpose",
+            "opt_out",
+            "casl_record",
+            "licence_request",
+            "article_14"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "states_fee": {
+      "const": false
+    },
+    "stop": {
+      "type": "boolean"
+    },
+    "needs_human": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "message_number",
+    "subject",
+    "body",
+    "language",
+    "evidence",
+    "notice",
+    "states_fee",
+    "stop",
+    "needs_human"
+  ],
+  "additionalProperties": false
+}

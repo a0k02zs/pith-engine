@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "influencer/weekly_report@1",
+  "type": "object",
+  "properties": {
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "enum": [
+              "creator",
+              "tier",
+              "market",
+              "total"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inputs": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "scope",
+          "key",
+          "name",
+          "value",
+          "inputs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "amplify": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform": {
+            "enum": [
+              "meta",
+              "linkedin",
+              "tiktok",
+              "snapchat"
+            ]
+          },
+          "post_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "artifact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rights_grant_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "rights_end": {
+            "type": "string",
+            "format": "date"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "minItems": 1
+          },
+          "budget": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "party_id",
+          "platform",
+          "post_url",
+          "artifact_id",
+          "rights_grant_ids",
+          "rights_end",
+          "markets",
+          "budget",
+          "currency",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "learn": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "would_rehire": {
+            "type": "boolean"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "party_id",
+          "would_rehire",
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issue": {
+            "enum": [
+              "code_leaked",
+              "missed_post",
+              "unapproved_post",
+              "disclosure_missing"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "party_id",
+          "issue",
+          "detail"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 800
+    },
+    "missing_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "kpis",
+    "amplify",
+    "learn",
+    "flags",
+    "summary",
+    "missing_data"
+  ],
+  "additionalProperties": false
+}

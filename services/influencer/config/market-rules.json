@@ -1,0 +1,90 @@
+{
+  "$comment": "Influencer overlay on engine/specs/compliance-rules.json. The engine owns disclosure_labels per market; this file adds the labels (and narrows them where a market rule is stricter: DE treats a bare #ad as weak, FR engine rule FR-INFLUENCER-LAW accepts only Publicité or Collaboration commerciale), weak tags, licences, payout and outreach rules that only creator work needs. Planning summary as of October 2026, not legal advice (docs/markets.md).",
+  "version": "0.1.0",
+  "global": {
+    "label_window_chars": 125,
+    "weak_tags": ["#sp", "#spon", "#collab", "#partner", "#ambassador", "thanks to"],
+    "video_label_required": true,
+    "gift_needs_label": true,
+    "min_real_follower_pct": 75,
+    "min_audience_in_market_pct": { "b2c": 30, "b2b": 20 },
+    "brand_safety_lookback_months": 24,
+    "competitor_lookback_days": 90,
+    "minor_banned_categories": ["alcohol", "gambling", "finance", "weight_loss"],
+    "payout_terms_business_days": { "target": 7, "max": 15 },
+    "outreach_follow_up_days": [3, 7],
+    "max_review_rounds": 2
+  },
+  "markets": {
+    "GB": {
+      "extra_labels": ["#ad", "Advert", "Advertisement"],
+      "gift_labels": ["Gifted", "#gifted"],
+      "licence": null,
+      "restricted_categories": ["less_healthy_food", "gambling", "alcohol", "cosmetic_intervention", "finance"],
+      "outreach_notice": "privacy_notice",
+      "tax_forms": [],
+      "language": null
+    },
+    "SG": {
+      "extra_labels": ["#sponsored", "Sponsored by"],
+      "gift_labels": ["Gifted", "#gifted"],
+      "licence": null,
+      "restricted_categories": ["health", "finance", "alcohol"],
+      "outreach_notice": "pdpa_purpose",
+      "tax_forms": [],
+      "language": null
+    },
+    "US": {
+      "extra_labels": ["Ad", "Advertisement", "#sponsored"],
+      "gift_labels": ["Gifted", "#gifted", "Gifted by"],
+      "licence": null,
+      "restricted_categories": ["health", "supplements", "alcohol", "cannabis", "finance", "crypto"],
+      "outreach_notice": "opt_out",
+      "tax_forms": ["W-9", "W-8BEN", "W-8BEN-E"],
+      "language": null
+    },
+    "CA": {
+      "extra_labels": ["#pub", "#commandité", "#publicité"],
+      "gift_labels": ["Gifted", "#gifted", "#cadeau"],
+      "licence": null,
+      "restricted_categories": ["health", "alcohol", "cannabis", "finance"],
+      "outreach_notice": "casl_record",
+      "tax_forms": [],
+      "language": { "subdivision": "CA-QC", "required": "fr" }
+    },
+    "AE": {
+      "extra_labels": ["#ad", "#إعلان"],
+      "gift_labels": ["إهداء", "Gifted"],
+      "licence": { "type": "uae_media_council", "required": true },
+      "restricted_categories": ["alcohol", "gambling", "pork"],
+      "outreach_notice": "licence_request",
+      "tax_forms": [],
+      "language": null
+    },
+    "SA": {
+      "extra_labels": ["#إعلان"],
+      "gift_labels": ["إهداء"],
+      "licence": { "type": "mawthooq", "required": true },
+      "restricted_categories": ["alcohol", "gambling", "pork"],
+      "outreach_notice": "licence_request",
+      "tax_forms": [],
+      "language": null
+    },
+    "QA": { "extra_labels": ["#ad", "#إعلان"], "gift_labels": ["إهداء", "Gifted"], "licence": { "type": "other", "required": "check_local" }, "restricted_categories": ["alcohol", "gambling", "pork"], "outreach_notice": "licence_request", "tax_forms": [], "language": null },
+    "KW": { "extra_labels": ["#ad", "#إعلان"], "gift_labels": ["إهداء", "Gifted"], "licence": { "type": "other", "required": "check_local" }, "restricted_categories": ["alcohol", "gambling", "pork"], "outreach_notice": "licence_request", "tax_forms": [], "language": null },
+    "BH": { "extra_labels": ["#ad", "#إعلان"], "gift_labels": ["إهداء", "Gifted"], "licence": { "type": "other", "required": "check_local" }, "restricted_categories": ["alcohol", "gambling", "pork"], "outreach_notice": "licence_request", "tax_forms": [], "language": null },
+    "OM": { "extra_labels": ["#ad", "#إعلان"], "gift_labels": ["إهداء", "Gifted"], "licence": { "type": "other", "required": "check_local" }, "restricted_categories": ["alcohol", "gambling", "pork"], "outreach_notice": "licence_request", "tax_forms": [], "language": null },
+    "EU_DEFAULT": {
+      "extra_labels": ["#ad"],
+      "gift_labels": ["Gifted"],
+      "licence": null,
+      "restricted_categories": ["alcohol", "gambling", "finance", "crypto"],
+      "outreach_notice": "article_14",
+      "tax_forms": ["VAT"],
+      "language": null
+    },
+    "DE": { "extra_labels": ["Anzeige", "#werbung", "#anzeige"], "gift_labels": ["Werbung", "Anzeige"], "weak_tags_extra": ["#ad"], "inherits": "EU_DEFAULT" },
+    "FR": { "extra_labels": ["#publicité", "#collaborationcommerciale"], "labels_only": ["Publicité", "Collaboration commerciale", "#publicité", "#collaborationcommerciale"], "gift_labels": ["Publicité", "Collaboration commerciale"], "restricted_categories_extra": ["cosmetic_surgery", "crypto", "finance", "nicotine"], "image_labels": ["Image retouchée", "Image virtuelle"], "inherits": "EU_DEFAULT" },
+    "NL": { "extra_labels": ["#adv", "#spon", "#reclame", "#advertentie"], "weak_tags_allowed": ["#spon"], "inherits": "EU_DEFAULT" }
+  }
+}
