@@ -1,0 +1,133 @@
+{
+  "id": "abm.account_list",
+  "version": 1,
+  "service": "abm",
+  "description": "Build or refresh the ICP, score accounts and propose tiers, then gate G1. Full ICP refresh each quarter; tier review each month.",
+  "trigger": {
+    "cron": "0 6 1 * *",
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "mode": {
+        "enum": [
+          "full",
+          "tier_review"
+        ]
+      }
+    },
+    "required": [
+      "client_id"
+    ]
+  },
+  "concurrency": {
+    "key": "client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "read_closed_won",
+      "type": "tool",
+      "name": "Read closed-won deals and candidate accounts",
+      "tool": {
+        "name": "crm",
+        "action": "read_closed_won_24m",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "enrich_accounts",
+      "type": "tool",
+      "needs": [
+        "read_closed_won"
+      ],
+      "tool": {
+        "name": "enrichment",
+        "action": "firmographics_technographics",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "score_accounts",
+      "type": "agent",
+      "name": "Build ICP and score accounts",
+      "needs": [
+        "enrich_accounts"
+      ],
+      "agent": {
+        "prompt_ref": "abm/icp_account_scorer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/icp_account_scorer@1"
+      },
+      "retry": {
+        "attempts": 2
+      }
+    },
+    {
+      "id": "any_changes",
+      "type": "branch",
+      "needs": [
+        "score_accounts"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.mode == 'tier_review' && output.score_accounts.changed_accounts == 0",
+            "goto": "emit_no_change"
+          }
+        ],
+        "else": "g1_approve_list"
+      }
+    },
+    {
+      "id": "g1_approve_list",
+      "type": "gate",
+      "name": "G1 Approve ICP, list and tiers",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead",
+          "client_sales"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "score_accounts"
+      }
+    },
+    {
+      "id": "save_tiers",
+      "type": "tool",
+      "needs": [
+        "g1_approve_list"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "company.update_abm_fields",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_listed",
+      "type": "emit",
+      "needs": [
+        "save_tiers"
+      ],
+      "emit": {
+        "event": "svc.abm/account.listed"
+      }
+    },
+    {
+      "id": "emit_no_change",
+      "type": "emit",
+      "emit": {
+        "event": "svc.abm/tiers.unchanged"
+      }
+    }
+  ]
+}

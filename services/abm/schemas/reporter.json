@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/reporter@1",
+  "title": "ABM reporter output",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "kpi_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string"
+          },
+          "this_week": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "last_week": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "target": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "kpi",
+          "this_week",
+          "last_week",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "account_moves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "account_id",
+          "from",
+          "to"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "plays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "play_id": {
+            "type": "string"
+          },
+          "accounts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "result": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "play_id",
+          "accounts",
+          "result"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "proposed_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "what": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "what",
+          "from",
+          "to",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "report_markdown": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "headline",
+    "kpi_table",
+    "account_moves",
+    "plays",
+    "proposed_changes",
+    "report_markdown"
+  ],
+  "additionalProperties": false
+}

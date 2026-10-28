@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/play_orchestrator@1",
+  "title": "ABM play orchestrator output",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string"
+    },
+    "play_id": {
+      "type": "string"
+    },
+    "touches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "asset_id": {
+            "type": "string"
+          },
+          "channel": {
+            "enum": [
+              "email",
+              "linkedin_message",
+              "paid_ad",
+              "landing_page",
+              "direct_mail",
+              "phone_call",
+              "webinar",
+              "in_person_event"
+            ]
+          },
+          "owner": {
+            "enum": [
+              "agent",
+              "account_lead",
+              "client_sales"
+            ]
+          },
+          "send_at_local": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "seq",
+          "asset_id",
+          "channel",
+          "owner",
+          "send_at_local",
+          "timezone",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "contact_id",
+    "play_id",
+    "touches",
+    "skipped"
+  ],
+  "additionalProperties": false
+}

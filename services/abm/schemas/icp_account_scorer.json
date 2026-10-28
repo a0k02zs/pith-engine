@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abm/icp_account_scorer@1",
+  "title": "ABM icp account scorer output",
+  "type": "object",
+  "properties": {
+    "icp": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attribute": {
+                "type": "string"
+              },
+              "rule": {
+                "type": "string"
+              },
+              "evidence_won_deals": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "attribute",
+              "rule",
+              "evidence_won_deals"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rules",
+        "summary"
+      ],
+      "additionalProperties": false
+    },
+    "accounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "fit_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "fit_breakdown": {
+            "type": "object",
+            "properties": {
+              "industry": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 25
+              },
+              "size": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "technographic": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "market": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 15
+              },
+              "situation": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 10
+              },
+              "relationship": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 10
+              }
+            },
+            "required": [
+              "industry",
+              "size",
+              "technographic",
+              "market",
+              "situation",
+              "relationship"
+            ],
+            "additionalProperties": false
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "proposed_tier": {
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "cluster": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tier_change_from": {
+            "enum": [
+              1,
+              2,
+              3,
+              null
+            ]
+          }
+        },
+        "required": [
+          "account_id",
+          "name",
+          "country",
+          "fit_score",
+          "fit_breakdown",
+          "reasons",
+          "proposed_tier",
+          "cluster",
+          "tier_change_from"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "market": {
+            "type": "string"
+          },
+          "account_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "industry",
+          "problem",
+          "market",
+          "account_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "needs_data": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "icp",
+    "accounts",
+    "clusters",
+    "needs_data",
+    "open_questions"
+  ],
+  "additionalProperties": false
+}

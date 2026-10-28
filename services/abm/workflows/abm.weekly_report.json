@@ -1,0 +1,89 @@
+{
+  "id": "abm.weekly_report",
+  "version": 1,
+  "service": "abm",
+  "description": "Weekly ABM report per client with proposed tier and threshold changes. Gate G6 before the client sees it.",
+  "trigger": {
+    "cron": "0 7 * * 1"
+  },
+  "concurrency": {
+    "key": "client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "query_kpis",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "query_kpis",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "write_report",
+      "type": "agent",
+      "needs": [
+        "query_kpis"
+      ],
+      "agent": {
+        "prompt_ref": "abm/reporter@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/reporter@1"
+      }
+    },
+    {
+      "id": "check_report",
+      "type": "check",
+      "needs": [
+        "write_report"
+      ],
+      "check": {
+        "kinds": [
+          "fact"
+        ]
+      }
+    },
+    {
+      "id": "g6_review",
+      "type": "gate",
+      "needs": [
+        "check_report"
+      ],
+      "name": "G6 Review report and changes",
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "write_report"
+      }
+    },
+    {
+      "id": "publish_report",
+      "type": "tool",
+      "needs": [
+        "g6_review"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_report",
+      "type": "emit",
+      "needs": [
+        "publish_report"
+      ],
+      "emit": {
+        "event": "svc.abm/report.published"
+      }
+    }
+  ]
+}
