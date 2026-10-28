@@ -132,6 +132,7 @@ describe("influencer workflows", () => {
     it("creates the creator code after the brief passes checks, and ships through a person", () => {
       const wf = wfById("influencer.deliver");
       expect(index(wf, "check_brief")).toBeLessThan(index(wf, "make_code"));
+      expect(byId(wf, "make_code").tool?.risk).toBe("write_external");
       expect(byId(wf, "ship").type).toBe("task");
     });
 

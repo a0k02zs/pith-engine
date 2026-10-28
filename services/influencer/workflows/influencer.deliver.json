@@ -39,9 +39,9 @@
       "tool": {
         "name": "influencer",
         "action": "codes.create",
-        "risk": "write_internal"
+        "risk": "write_external"
       },
-      "name": "Unique creator code; the send step fills {{code}}"
+      "name": "Unique creator code that shoppers can use (write_external, after the brief passes checks); the send step fills {{code}}"
     },
     {
       "id": "resolve",
