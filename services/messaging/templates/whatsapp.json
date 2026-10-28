@@ -1,0 +1,384 @@
+{
+  "_about": "Pith M WhatsApp template library. Draft 1, 21 Oct 2026. Format follows the WhatsApp Cloud API message_templates endpoint (POST /{WABA_ID}/message_templates). Fields that start with '_' are Pith notes: strip them before you submit. Variables use positional {{1}} with an example, as Meta requires. Replace BRAND and links per client.",
+  "_rules": [
+    "UTILITY templates must not contain any offer, discount or promotion. Meta re-categorises them as MARKETING and they cost more.",
+    "Every MARKETING template has a 'Stop promotions' quick-reply button. The opt-out workflow treats a tap on it as an opt-out.",
+    "Submit 1 template per language. Arabic templates use language 'ar'. A native editor checks them first.",
+    "Names: lowercase, underscores only, format <flow>_<purpose>_v<n>."
+  ],
+  "templates": [
+    {
+      "_flow": "F01",
+      "name": "welcome_optin_confirm_v1",
+      "language": "en",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, thanks for subscribing to BRAND on WhatsApp. We will send you order updates and, if you choose, offers. You can stop at any time.",
+          "example": {
+            "body_text": [
+              [
+                "Sara"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "FOOTER",
+          "text": "Reply STOP to unsubscribe"
+        }
+      ]
+    },
+    {
+      "_flow": "F02",
+      "name": "cart_reminder_v1",
+      "language": "en",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "HEADER",
+          "format": "IMAGE",
+          "example": {
+            "header_handle": [
+              "<upload handle of product image>"
+            ]
+          }
+        },
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, you left {{2}} in your cart. We saved it for you.",
+          "example": {
+            "body_text": [
+              [
+                "Sara",
+                "the Linen Shirt"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "View my cart",
+              "url": "https://go.brand.com/cart/{{1}}",
+              "example": [
+                "https://go.brand.com/cart/abc123"
+              ]
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "Stop promotions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F04",
+      "name": "order_shipped_v1",
+      "language": "en",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Your order {{1}} has shipped. Expected delivery: {{2}}.",
+          "example": {
+            "body_text": [
+              [
+                "#10482",
+                "Thursday 23 October"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "Track order",
+              "url": "https://go.brand.com/track/{{1}}",
+              "example": [
+                "https://go.brand.com/track/10482"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F05",
+      "name": "booking_reminder_24h_v1",
+      "language": "en",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Reminder: your {{1}} is on {{2}} at {{3}}. Please confirm or change it below.",
+          "example": {
+            "body_text": [
+              [
+                "consultation",
+                "Friday 24 October",
+                "10:30"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "QUICK_REPLY",
+              "text": "Confirm"
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "Change time"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F06",
+      "name": "review_request_v1",
+      "language": "en",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, how is your {{2}}? Your review helps other customers choose.",
+          "example": {
+            "body_text": [
+              [
+                "Sara",
+                "Linen Shirt"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "Leave a review",
+              "url": "https://go.brand.com/review/{{1}}",
+              "example": [
+                "https://go.brand.com/review/10482"
+              ]
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "Stop promotions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F08",
+      "name": "winback_offer_v1",
+      "language": "en",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, it has been a while. Here is {{2}} on your next order, valid until {{3}}.",
+          "example": {
+            "body_text": [
+              [
+                "Sara",
+                "15% off",
+                "31 October"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "Shop now",
+              "url": "https://go.brand.com/s/{{1}}",
+              "example": [
+                "https://go.brand.com/s/wb15"
+              ]
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "Stop promotions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F10",
+      "name": "lead_ack_v1",
+      "language": "en",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, thank you for your request about {{2}}. {{3}} from our team will contact you within 1 business hour. You can reply here with any questions.",
+          "example": {
+            "body_text": [
+              [
+                "Omar",
+                "fleet tracking",
+                "Lina"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "_flow": "F11",
+      "name": "meeting_reminder_1h_v1",
+      "language": "en",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Your meeting with {{1}} starts at {{2}} today.",
+          "example": {
+            "body_text": [
+              [
+                "Lina",
+                "15:00"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "Join meeting",
+              "url": "https://go.brand.com/m/{{1}}",
+              "example": [
+                "https://go.brand.com/m/k9x2"
+              ]
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "I will be late"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F13",
+      "name": "repermission_v1",
+      "language": "en",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "Hi {{1}}, do you still want offers from BRAND on WhatsApp? Tap below to stay. If not, we will stop on {{2}}.",
+          "example": {
+            "body_text": [
+              [
+                "Sara",
+                "15 November"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "QUICK_REPLY",
+              "text": "Yes, keep me"
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "Stop promotions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F02",
+      "_note": "Gulf Arabic. A native editor checks it before submit.",
+      "name": "cart_reminder_ar_v1",
+      "language": "ar",
+      "category": "MARKETING",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "مرحباً {{1}}، نسيت {{2}} في سلتك. حفظناه لك.",
+          "example": {
+            "body_text": [
+              [
+                "سارة",
+                "العباية الكتان"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "عرض السلة",
+              "url": "https://go.brand.com/cart/{{1}}",
+              "example": [
+                "https://go.brand.com/cart/abc123"
+              ]
+            },
+            {
+              "type": "QUICK_REPLY",
+              "text": "إيقاف العروض"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_flow": "F04",
+      "name": "order_shipped_ar_v1",
+      "language": "ar",
+      "category": "UTILITY",
+      "components": [
+        {
+          "type": "BODY",
+          "text": "تم شحن طلبك {{1}}. موعد التوصيل المتوقع: {{2}}.",
+          "example": {
+            "body_text": [
+              [
+                "#10482",
+                "الخميس 23 أكتوبر"
+              ]
+            ]
+          }
+        },
+        {
+          "type": "BUTTONS",
+          "buttons": [
+            {
+              "type": "URL",
+              "text": "تتبع الطلب",
+              "url": "https://go.brand.com/track/{{1}}",
+              "example": [
+                "https://go.brand.com/track/10482"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

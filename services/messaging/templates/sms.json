@@ -1,0 +1,179 @@
+{
+  "_about": "Pith M SMS template library, ported from the service design (draft 1, 21 Oct 2026). Variables use {{double_braces}}. {{brand}} comes from the client brain.",
+  "templates": [
+    {
+      "id": "S-OPTIN-US",
+      "use": "US double opt-in confirm (first message)",
+      "category": "compliance",
+      "language": "en",
+      "text": "{{brand}}: Thanks for joining our text alerts! Up to 4 msgs/mo. Msg & data rates may apply. Reply HELP for help, STOP to cancel. Terms: {{terms_link}}"
+    },
+    {
+      "id": "S-OPTIN-UK",
+      "use": "UK and EU opt-in confirm",
+      "category": "compliance",
+      "language": "en",
+      "text": "{{brand}}: You are now subscribed to texts with offers and news. Up to 4 a month. Reply STOP to opt out at any time. Privacy: {{privacy_link}}"
+    },
+    {
+      "id": "S-OPTIN-SG",
+      "use": "Singapore opt-in confirm",
+      "category": "compliance",
+      "language": "en",
+      "text": "{{brand}}: You agreed to receive offers by SMS. Up to 4/month. Contact us: {{support_contact}}. Reply STOP to opt out."
+    },
+    {
+      "id": "S-HELP",
+      "use": "HELP reply",
+      "category": "compliance",
+      "language": "en",
+      "text": "{{brand}}: Help at {{support_contact}}. Up to 4 msgs/mo. Msg & data rates may apply. Reply STOP to cancel."
+    },
+    {
+      "id": "S-STOP",
+      "use": "STOP confirmation (no marketing allowed)",
+      "category": "compliance",
+      "language": "en",
+      "text": "{{brand}}: You are unsubscribed and will get no more texts. Reply START to join again."
+    },
+    {
+      "id": "S-QC-OPTIN",
+      "use": "Quebec opt-in confirm (French)",
+      "category": "compliance",
+      "language": "fr-CA",
+      "text": "{{brand}} : Merci de votre inscription aux textos. Jusqu'à 4 msg/mois. Des frais peuvent s'appliquer. Répondez ARRET pour vous désabonner."
+    },
+    {
+      "id": "S-ORDER-SHIP",
+      "flow": "F04",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Your order {{order_id}} is on its way. Track it: {{track_link}}"
+    },
+    {
+      "id": "S-ORDER-OUT",
+      "flow": "F04",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Your order arrives today. Track it: {{track_link}}"
+    },
+    {
+      "id": "S-BOOK-24H",
+      "flow": "F05",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Reminder: {{service}} on {{date}} at {{time}}. Reply C to confirm or R to change. {{manage_link}}"
+    },
+    {
+      "id": "S-BOOK-2H",
+      "flow": "F05",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: See you at {{time}} today at {{location}}. Directions: {{map_link}}"
+    },
+    {
+      "id": "S-MEET-1H",
+      "flow": "F11",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Your call with {{rep_name}} starts at {{time}}. Join: {{join_link}}"
+    },
+    {
+      "id": "S-LEAD-ACK",
+      "flow": "F10",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Thanks {{first_name}}, we got your request. {{rep_name}} will call you within 1 business hour. Questions? Reply here."
+    },
+    {
+      "id": "S-RENEW-7D",
+      "flow": "F12",
+      "category": "utility",
+      "language": "en",
+      "text": "{{brand}}: Your {{plan}} renews on {{date}}. Manage it here: {{account_link}}"
+    },
+    {
+      "id": "S-WELCOME-D1",
+      "flow": "F01",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: Hi {{first_name}}, here is {{offer}} on your first order. Use code {{code}} by {{expiry}}: {{link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-CART-1H",
+      "flow": "F02",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: You left {{product}} in your cart. It is saved for you here: {{cart_link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-CART-23H",
+      "flow": "F02",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: Last call: your cart expires soon. {{cart_link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-BACK-STOCK",
+      "flow": "F09",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: {{product}} is back in stock. Get it before it goes: {{link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-REPLENISH",
+      "flow": "F07",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: Time to restock {{product}}? Reorder in 1 tap: {{reorder_link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-WINBACK-90",
+      "flow": "F08",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: We miss you, {{first_name}}. Here is {{offer}} until {{expiry}}: {{link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-FLASH",
+      "flow": "Broadcast",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: {{headline}}. {{offer}} ends {{expiry}}. Shop: {{link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-REVIEW",
+      "flow": "F06",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: How is your {{product}}? Tell us in 30 seconds: {{review_link}} Reply STOP to opt out"
+    },
+    {
+      "id": "S-REPERM",
+      "flow": "F13",
+      "category": "marketing",
+      "language": "en",
+      "text": "{{brand}}: Do you still want our text offers? Reply YES to stay. If not, we will stop texting you on {{date}}. Reply STOP to opt out",
+      "note": "Opt-out line added in the code port: every marketing SMS needs one."
+    },
+    {
+      "id": "S-AR-CART-1H",
+      "category": "marketing",
+      "language": "ar",
+      "text": "{{brand}}: نسيت {{product}} في سلتك. أكمل طلبك هنا: {{cart_link}} لإلغاء الاشتراك أرسل STOP"
+    },
+    {
+      "id": "S-AR-ORDER-SHIP",
+      "category": "utility",
+      "language": "ar",
+      "text": "{{brand}}: طلبك {{order_id}} في الطريق. تتبع الشحنة: {{track_link}}"
+    },
+    {
+      "id": "S-AR-RAMADAN",
+      "category": "marketing",
+      "language": "ar",
+      "note": "Send after Iftar only. A native Gulf Arabic editor checks each version",
+      "text": "{{brand}}: رمضان كريم 🌙 {{offer}} حتى {{expiry}}: {{link}} لإلغاء الاشتراك أرسل STOP"
+    }
+  ]
+}

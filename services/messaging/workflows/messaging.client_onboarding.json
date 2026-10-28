@@ -1,0 +1,188 @@
+{
+  "id": "messaging.client_onboarding",
+  "version": 1,
+  "service": "messaging",
+  "description": "Set up senders, the WhatsApp account, consent sources and the first 4 flows for a new client, per market.",
+  "trigger": {
+    "event": "svc.messaging/client.onboarding.requested"
+  },
+  "concurrency": {
+    "key": "event.data.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "read_brain",
+      "type": "tool",
+      "name": "Read the client brain (voice, offers, answers list)",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "consent_audit",
+      "type": "tool",
+      "name": "Count eligible contacts per market and channel. Counts only: agents never get contact lists",
+      "needs": [
+        "read_brain"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "register_senders",
+      "type": "subflow",
+      "name": "Sender registration per market (10DLC or toll-free US, CWTA CA, SSIR SG, GCC sender IDs, UK and EU alphanumeric)",
+      "needs": [
+        "read_brain"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.sender_registration",
+        "per": "market"
+      }
+    },
+    {
+      "id": "profile_check",
+      "type": "check",
+      "name": "WhatsApp business profile text (display name, about, website) against the brand and Meta rules",
+      "needs": [
+        "read_brain"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "whatsapp_setup",
+      "type": "tool",
+      "name": "Create the WhatsApp Business Account, request the display name and business verification",
+      "needs": [
+        "profile_check"
+      ],
+      "tool": {
+        "name": "whatsapp",
+        "action": "waba.create",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "plan_first_flows",
+      "type": "agent",
+      "name": "Plan the first 4 flows (F01, F02 or F10, F04, F13) per market",
+      "needs": [
+        "consent_audit"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/plan@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "messaging/plan@1"
+      }
+    },
+    {
+      "id": "gate_plan",
+      "type": "gate",
+      "name": "G1 approve the messaging plan",
+      "needs": [
+        "plan_first_flows"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "plan_first_flows"
+      }
+    },
+    {
+      "id": "build_templates",
+      "type": "subflow",
+      "name": "Write, check and approve the templates for each flow",
+      "needs": [
+        "gate_plan"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.template_lifecycle",
+        "per": "flow"
+      }
+    },
+    {
+      "id": "wait_senders",
+      "type": "wait",
+      "name": "Wait until the senders are registered in each market",
+      "needs": [
+        "register_senders"
+      ],
+      "wait": {
+        "event": "svc.messaging/sender.registered",
+        "match": "async.data.client_id == event.data.client_id",
+        "timeout": "35d"
+      }
+    },
+    {
+      "id": "seed_compliance",
+      "type": "check",
+      "name": "Compliance check of every live template before seed sends",
+      "needs": [
+        "build_templates"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "seed_tests",
+      "type": "subflow",
+      "name": "Send every live template to the internal seed audience in each market; check delivery, encoding, links and opt-out",
+      "needs": [
+        "seed_compliance",
+        "wait_senders",
+        "whatsapp_setup"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send",
+        "per": "template"
+      }
+    },
+    {
+      "id": "gate_go_live",
+      "type": "gate",
+      "name": "G4 go live",
+      "needs": [
+        "seed_tests"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "ops_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "seed_tests"
+      }
+    },
+    {
+      "id": "activate",
+      "type": "emit",
+      "name": "Activate the flows",
+      "needs": [
+        "gate_go_live"
+      ],
+      "emit": {
+        "event": "svc.messaging/flows.activated"
+      }
+    }
+  ]
+}

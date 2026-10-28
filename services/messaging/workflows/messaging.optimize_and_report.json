@@ -1,0 +1,106 @@
+{
+  "id": "messaging.optimize_and_report",
+  "version": 1,
+  "service": "messaging",
+  "description": "Daily optimizer run and the Monday weekly report.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "steps": [
+    {
+      "id": "metrics",
+      "type": "tool",
+      "name": "Read the last 24 h and 4-week metrics, WhatsApp quality and limits",
+      "tool": {
+        "name": "analytics",
+        "action": "metrics.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "optimize",
+      "type": "agent",
+      "name": "Optimizer: close tests, move send hours, pause red items, propose tests",
+      "needs": [
+        "metrics"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/optimize@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "messaging/optimize@1"
+      }
+    },
+    {
+      "id": "proposals",
+      "type": "gate",
+      "name": "Account lead approves proposals (new copy goes back to the template lifecycle)",
+      "needs": [
+        "optimize"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "account_lead"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "is_monday",
+      "type": "branch",
+      "name": "Weekly report on Mondays",
+      "needs": [
+        "optimize"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "now.weekday == 'Monday'",
+            "goto": "report"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "name": "Weekly report",
+      "needs": [
+        "is_monday"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/report@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "messaging/report@1"
+      }
+    },
+    {
+      "id": "gate_report",
+      "type": "gate",
+      "name": "G6 strategist reviews before the client sees it",
+      "needs": [
+        "report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist",
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "report"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "name": "Daily run finished",
+      "emit": {
+        "event": "svc.messaging/daily.completed"
+      }
+    }
+  ]
+}

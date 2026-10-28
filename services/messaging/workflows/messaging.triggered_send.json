@@ -1,0 +1,160 @@
+{
+  "id": "messaging.triggered_send",
+  "version": 1,
+  "service": "messaging",
+  "description": "Send 1 flow message (F01 to F13) to 1 contact after a client event, with consent, send window, caps and the channel waterfall.",
+  "trigger": {
+    "event": "engine/client.event"
+  },
+  "concurrency": {
+    "key": "event.data.client_id + ':' + event.data.contact_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "match_flow",
+      "type": "branch",
+      "name": "Find the active flow for this event; stop if none",
+      "branch": {
+        "cases": [
+          {
+            "if": "!flows.activeFor(event.data.name)",
+            "goto": "end"
+          }
+        ],
+        "else": "delay"
+      }
+    },
+    {
+      "id": "delay",
+      "type": "wait",
+      "name": "Flow delay (for example +1 h for a cart). Exits early on the exit event (purchase, opt-out)",
+      "needs": [
+        "match_flow"
+      ],
+      "wait": {
+        "event": "flow.exit_event",
+        "match": "async.data.contact_id == event.data.contact_id",
+        "timeout": "flow.delay"
+      }
+    },
+    {
+      "id": "contact",
+      "type": "tool",
+      "name": "Resolve the contact on every channel (push, whatsapp, sms, email) with consent and send_window",
+      "needs": [
+        "delay"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "choose",
+      "type": "branch",
+      "name": "Channel waterfall and caps: messaging.chooseChannel() then messaging.checkCaps()",
+      "needs": [
+        "contact"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "messaging.chooseChannel(contact, need).channel == 'none' || !messaging.checkCaps(history, next, now).allowed",
+            "goto": "end"
+          },
+          {
+            "if": "messaging.chooseChannel(contact, need).channel == 'email'",
+            "goto": "to_email"
+          }
+        ],
+        "else": "hold"
+      }
+    },
+    {
+      "id": "hold",
+      "type": "wait",
+      "name": "Hold until messaging.nextAllowed() (send window, quiet day, holiday)",
+      "needs": [
+        "choose"
+      ],
+      "wait": {
+        "event": "svc.messaging/flow.cancelled",
+        "match": "async.data.contact_id == event.data.contact_id",
+        "timeout": "window.next_allowed"
+      }
+    },
+    {
+      "id": "compliance",
+      "type": "check",
+      "name": "Engine compliance gate for this template, market and contact",
+      "needs": [
+        "hold"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "send",
+      "type": "subflow",
+      "name": "Send on the chosen channel",
+      "needs": [
+        "compliance"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "fallback",
+      "type": "branch",
+      "name": "Utility WhatsApp not delivered in 10 minutes: send the SMS version",
+      "needs": [
+        "send"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.category == 'UTILITY' && channel == 'whatsapp' && !delivered_within('10m') && contact.consents.sms == 'granted'",
+            "goto": "send_sms_fallback"
+          }
+        ],
+        "else": "end"
+      }
+    },
+    {
+      "id": "send_sms_fallback",
+      "type": "subflow",
+      "name": "SMS fallback for a utility message",
+      "needs": [
+        "fallback"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.send"
+      }
+    },
+    {
+      "id": "to_email",
+      "type": "emit",
+      "name": "Hand the message to the email service (service 1)",
+      "needs": [
+        "choose"
+      ],
+      "emit": {
+        "event": "svc.messaging/email.handoff"
+      }
+    },
+    {
+      "id": "end",
+      "type": "emit",
+      "name": "Flow step finished",
+      "emit": {
+        "event": "svc.messaging/flow.step.completed"
+      }
+    }
+  ]
+}

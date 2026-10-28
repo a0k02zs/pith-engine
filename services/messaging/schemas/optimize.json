@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/optimize@1",
+  "type": "object",
+  "properties": {
+    "actions_taken": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "pause",
+              "winner",
+              "send_hour"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "data": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "type",
+          "target",
+          "reason",
+          "data"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "new_test",
+              "new_copy",
+              "cap_change",
+              "segment"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_effect": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "type",
+          "detail",
+          "expected_effect"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "enum": [
+              "red",
+              "amber"
+            ]
+          },
+          "metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "level",
+          "metric",
+          "value",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "actions_taken",
+    "proposals",
+    "alerts"
+  ],
+  "additionalProperties": false
+}

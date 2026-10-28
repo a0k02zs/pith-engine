@@ -1,0 +1,271 @@
+# Messaging market rules. Draft 1, 21 Oct 2026.
+# The compliance gate reads this file before every send.
+# NOT legal advice. Every item with verify: true needs confirmation by local counsel
+# or the SMS aggregator before the first live send in that market.
+#
+# Field meanings
+#   consent.<channel>      : the minimum lawful basis for MARKETING messages on that channel
+#                            (utility messages need a lawful basis too, but not marketing consent)
+#   consent_proof          : what the consent record must store
+#   sender                 : sender ID rules and registration
+#   window                 : allowed local send hours for MARKETING (24 h clock, inclusive start, exclusive end)
+#   quiet_days             : days with no marketing sends
+#   optout_keywords        : inbound words that MUST opt the contact out of that channel
+#   optout_sla             : the legal maximum to process an opt-out. Pith policy is always "immediate"
+#   required_in_message    : parts that every marketing message must contain
+#   pre_send_checks        : checks the gate runs before each send
+#   languages              : template languages to write
+#
+# Pith global policy (applies on top of every market):
+#   - Opt-out is processed at once, on every channel the word arrives on.
+#   - Brand name in every SMS.
+#   - No marketing message to a contact with no consent record for that channel and country.
+#   - Frequency caps from playbook.md section 5.
+
+global:
+  optout_keywords_any_language: [STOP, STOPALL, UNSUBSCRIBE, CANCEL, END, QUIT, OPTOUT, "OPT OUT", REVOKE]
+  help_keywords: [HELP, INFO]
+  optin_keywords: [START, UNSTOP, YES]
+  optout_policy: immediate
+  consent_record_fields: [contact_id, phone_e164, channel, country, basis, source, timestamp_utc, wording_shown, ip_or_device, double_optin_timestamp]
+  whatsapp:
+    optin_required: true                 # Meta Business Messaging Policy: opt-in before business-started messages
+    customer_service_window_hours: 24    # free-form replies only inside 24 h after the user's last message
+    template_categories: [MARKETING, UTILITY, AUTHENTICATION]
+    utility_must_not_contain_promotion: true   # Meta re-categorises mixed templates as MARKETING
+    honour_block_and_stop: true
+
+markets:
+
+  GB:
+    name: United Kingdom
+    law: [UK GDPR, Data Protection Act 2018, PECR reg. 22, Data (Use and Access) Act 2025, CAP Code]
+    consent:
+      sms: consent_or_soft_optin        # soft opt-in: existing customer, similar products, opt-out offered at collection and in every message
+      whatsapp: consent_or_soft_optin   # plus Meta opt-in
+      push: app_opt_in_plus_marketing_consent   # Pith policy: treat marketing push like electronic mail
+    consent_proof: [timestamp, source, wording_shown]
+    sender:
+      alphanumeric_allowed: true
+      registration: "UK SMS SenderID Protection Registry (MEF) for brand sender IDs (recommended)"
+      verify: true
+    window: { start: "08:00", end: "20:00", tz: "Europe/London" }   # Pith policy; no statutory hours
+    quiet_days: []                       # Pith policy: avoid Sunday before 10:00
+    optout_keywords: [STOP]
+    optout_sla: "without undue delay"
+    required_in_message: [brand_name, optout_instruction]
+    pre_send_checks: [consent_valid, tps_not_relevant_for_sms, frequency_cap, window]
+    languages: [en-GB]
+
+  SG:
+    name: Singapore
+    law: [PDPA 2012 Part 9 (Do Not Call), Spam Control Act 2007, SSIR rules (IMDA)]
+    consent:
+      sms: clear_unambiguous_consent_or_dnc_check   # without written consent, check the DNC Registry first
+      whatsapp: clear_unambiguous_consent_or_dnc_check
+      push: app_opt_in
+    consent_proof: [timestamp, source, wording_shown, evidence_written_or_accessible_form]
+    dnc:
+      required_for: [sms, whatsapp, voice]          # DNC covers text messages and messages sent through IP messaging apps to SG numbers
+      result_valid_days: 21
+      verify: true
+    sender:
+      alphanumeric_allowed: true
+      registration: "SMS Sender ID Registry (SSIR). Unregistered alphanumeric IDs show as 'Likely-SCAM' or are blocked"
+      verify: false
+    window: { start: "09:00", end: "21:00", tz: "Asia/Singapore" }   # Pith policy
+    quiet_days: []
+    optout_keywords: [STOP]
+    optout_sla_days: 10                  # business days under the DNC provisions; Pith = immediate
+    required_in_message: [brand_name, sender_contact_info, optout_instruction]
+    unsolicited_bulk_label: "<ADV>"      # Spam Control Act, only if a message is unsolicited bulk; Pith never sends unsolicited bulk
+    pre_send_checks: [consent_valid, dnc_check_fresh, ssir_registered, frequency_cap, window]
+    languages: [en-SG, zh-Hans, ms, ta]
+    holidays_to_watch: [Chinese New Year, Hari Raya Puasa, Hari Raya Haji, Deepavali, National Day]
+
+  US:
+    name: United States
+    law: [TCPA 47 USC 227, FCC rules 47 CFR 64.1200, CTIA Messaging Principles, carrier 10DLC rules, state mini-TCPA laws]
+    consent:
+      sms: prior_express_written_consent   # marketing texts by autodialer need PEWC; e-sign (E-SIGN Act) is valid
+      whatsapp: prior_express_written_consent_plus_meta_optin
+      push: app_opt_in
+    consent_proof: [timestamp, source, wording_shown, phone_e164, ip_or_device, tcpa_disclosure_text]
+    consent_disclosure_must_say: [brand_name, "recurring automated marketing messages", "consent is not a condition of purchase", "message frequency", "Msg & data rates may apply", "Reply STOP to cancel, HELP for help", links_to_terms_and_privacy]
+    sender:
+      types: [10DLC, toll_free, short_code]
+      registration: "10DLC: brand + campaign registration through The Campaign Registry. Toll-free: toll-free verification. Unregistered traffic is blocked"
+      alphanumeric_allowed: false
+    window: { start: "08:00", end: "21:00", tz: "recipient_local" }   # FCC rule for telephone solicitations
+    stricter_states:
+      FL: { window: { start: "08:00", end: "20:00" }, max_per_24h_same_topic: 3 }   # Florida Telephone Solicitation Act
+      OK: { window: { start: "08:00", end: "20:00" }, max_per_24h_same_topic: 3 }   # Oklahoma Telephone Solicitation Act
+      MD: { max_per_24h_same_topic: 3 }
+      verify: true
+    quiet_days: []                       # some states limit Sundays and holidays; verify per state
+    optout_keywords: [STOP, STOPALL, UNSUBSCRIBE, CANCEL, END, QUIT, REVOKE, OPTOUT]
+    optout_sla_business_days: 10         # FCC revocation rule; Pith = immediate. 1 confirmation text allowed, with no marketing
+    help_reply_required: true
+    required_in_message: [brand_name, optout_instruction]
+    first_message_must_include: [brand_name, program_description, frequency, "Msg & data rates may apply", "Reply HELP for help, STOP to cancel"]
+    content_restrictions: [SHAFT, cannabis, high_risk_financial, third_party_lead_gen]   # carrier rules
+    whatsapp_marketing_note: "Meta paused MARKETING templates to +1 US numbers from 1 Apr 2025. Check current status before any US WhatsApp marketing"
+    pre_send_checks: [consent_valid_pewc, reassigned_numbers_db_check, frequency_cap, window_recipient_local, state_rules, ten_dlc_registered]
+    languages: [en-US, es-US]
+
+  CA:
+    name: Canada
+    law: [CASL, CRTC Unsolicited Telecommunications Rules, PIPEDA, Quebec Law 25, Charter of the French Language]
+    consent:
+      sms: express_or_implied            # implied consent expires (2 years after purchase, 6 months after enquiry)
+      whatsapp: express_or_implied_plus_meta_optin
+      push: app_opt_in
+    implied_consent_expiry: { existing_business_relationship_purchase_months: 24, inquiry_months: 6 }
+    consent_proof: [timestamp, source, wording_shown, type_express_or_implied, expiry_date]
+    sender:
+      types: [short_code, toll_free, long_code]
+      registration: "Canadian short codes through the CWTA program; toll-free verification"
+      verify: true
+    window: { start: "09:00", end: "21:30", tz: "recipient_local", weekend: { start: "10:00", end: "18:00" } }   # Pith policy, matches CRTC telemarketing hours
+    quiet_days: []
+    optout_keywords: [STOP, ARRET, ARRÊT, UNSUBSCRIBE, CANCEL]
+    optout_sla_business_days: 10
+    required_in_message: [brand_name, sender_contact_info, optout_instruction]
+    quebec:
+      language: fr-CA
+      rule: "Marketing to Quebec contacts must be in French. French must be at least as prominent as any other language"
+    pre_send_checks: [consent_valid_casl, implied_consent_not_expired, frequency_cap, window_recipient_local, quebec_french]
+    languages: [en-CA, fr-CA]
+
+  AE:
+    name: United Arab Emirates
+    law: [UAE PDPL Decree-Law 45 of 2021, TDRA regulatory policy on SMS marketing, DIFC DP Law 2020, ADGM DP Regulations 2021]
+    consent:
+      sms: opt_in
+      whatsapp: opt_in
+      push: app_opt_in
+    consent_proof: [timestamp, source, wording_shown]
+    sender:
+      alphanumeric_allowed: true
+      registration: "Sender ID pre-registration with the telecom operators (etisalat by e&, du) through a licensed aggregator. Promotional sender IDs use the 'AD-' prefix"
+      promotional_prefix: "AD-"
+      verify: true
+    window: { start: "07:00", end: "21:00", tz: "Asia/Dubai" }   # TDRA promotional window; verify current values
+    window_verify: true
+    weekend: [Saturday, Sunday]
+    quiet_days: []
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    optout_note: "Operators also offer a central block service for promotional SMS; honour any block the aggregator reports"
+    required_in_message: [brand_name, optout_instruction]
+    content_rules: [respect_religion_and_culture, no_alcohol_or_gambling_promotion, arabic_version_for_b2c]
+    pre_send_checks: [consent_valid, sender_registered, frequency_cap, window, ramadan_mode, content_rules]
+    languages: [ar, en]
+
+  SA:
+    name: Saudi Arabia
+    law: [Saudi PDPL (SDAIA), CST regulations for bulk SMS, Anti-Cyber Crime Law]
+    consent:
+      sms: opt_in
+      whatsapp: opt_in
+      push: app_opt_in
+    consent_proof: [timestamp, source, wording_shown]
+    data_transfer: "PDPL limits transfer of personal data outside the Kingdom. Check where the provider stores and processes phone numbers and chat logs"
+    sender:
+      alphanumeric_allowed: true
+      registration: "Sender ID registration with CST through a licensed aggregator. Needs the company CR and an authorisation letter. Promotional IDs carry an '-AD' marker"
+      promotional_suffix: "-AD"
+      verify: true
+    window: { start: "09:00", end: "21:00", tz: "Asia/Riyadh" }   # Pith conservative policy; verify with aggregator
+    window_verify: true
+    weekend: [Friday, Saturday]
+    quiet_days: []
+    prayer_time_pause: true              # Pith policy: no broadcasts during the 5 daily prayer times
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    required_in_message: [brand_name, optout_instruction]
+    content_rules: [respect_religion_and_culture, conservative_imagery, no_alcohol_or_gambling, arabic_first_for_b2c]
+    pre_send_checks: [consent_valid, sender_registered, data_residency_ok, frequency_cap, window, prayer_time_pause, ramadan_mode, content_rules]
+    languages: [ar, en]
+
+  QA:
+    name: Qatar
+    law: [Qatar PDPPL Law 13 of 2016, CRA rules]
+    consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
+    consent_proof: [timestamp, source, wording_shown]
+    sender: { alphanumeric_allowed: true, registration: "Sender ID registration with Ooredoo and Vodafone Qatar through an aggregator", verify: true }
+    window: { start: "09:00", end: "21:00", tz: "Asia/Qatar" }   # Pith policy
+    weekend: [Friday, Saturday]
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    required_in_message: [brand_name, optout_instruction]
+    pre_send_checks: [consent_valid, sender_registered, frequency_cap, window, ramadan_mode]
+    languages: [ar, en]
+
+  KW:
+    name: Kuwait
+    law: [CITRA Data Privacy Protection Regulation]
+    consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
+    consent_proof: [timestamp, source, wording_shown]
+    sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator with CITRA approval", verify: true }
+    window: { start: "09:00", end: "21:00", tz: "Asia/Kuwait" }   # Pith policy
+    weekend: [Friday, Saturday]
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    required_in_message: [brand_name, optout_instruction]
+    pre_send_checks: [consent_valid, sender_registered, frequency_cap, window, ramadan_mode]
+    languages: [ar, en]
+
+  BH:
+    name: Bahrain
+    law: [Bahrain PDPL Law 30 of 2018, TRA rules]
+    consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
+    consent_proof: [timestamp, source, wording_shown]
+    sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator", verify: true }
+    window: { start: "09:00", end: "21:00", tz: "Asia/Bahrain" }   # Pith policy
+    weekend: [Friday, Saturday]
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    required_in_message: [brand_name, optout_instruction]
+    pre_send_checks: [consent_valid, sender_registered, frequency_cap, window, ramadan_mode]
+    languages: [ar, en]
+
+  OM:
+    name: Oman
+    law: [Oman PDPL Royal Decree 6 of 2022, TRA rules]
+    consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
+    consent_proof: [timestamp, source, wording_shown]
+    sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator with TRA approval", verify: true }
+    window: { start: "09:00", end: "21:00", tz: "Asia/Muscat" }   # Pith policy
+    weekend: [Friday, Saturday]
+    optout_keywords: [STOP, "إلغاء", "توقف"]
+    required_in_message: [brand_name, optout_instruction]
+    pre_send_checks: [consent_valid, sender_registered, frequency_cap, window, ramadan_mode]
+    languages: [ar, en]
+
+  EU:
+    name: European Union (default for EU member states)
+    law: [GDPR, ePrivacy Directive Art. 13 and national laws, EU AI Act Art. 50 (AI chat disclosure)]
+    consent:
+      sms: opt_in                        # soft opt-in for existing customers exists in many states; Pith default = explicit opt-in
+      whatsapp: opt_in
+      push: app_opt_in_plus_marketing_consent
+    consent_proof: [timestamp, source, wording_shown, double_optin_timestamp]
+    sender: { alphanumeric_allowed: true, registration: "Varies by country; some operators need pre-registration", verify: true }
+    window: { start: "09:00", end: "20:00", tz: "recipient_local" }   # Pith policy
+    quiet_days: [Sunday, public_holiday]  # Pith default
+    optout_keywords: [STOP]
+    required_in_message: [brand_name, optout_instruction]
+    ai_chat_disclosure: "Tell the user they talk to an AI system (AI Act Art. 50, from 2 Aug 2026)"
+    pre_send_checks: [consent_valid, frequency_cap, window, quiet_days]
+    country_overrides:
+      NL:
+        law_extra: [Telecommunicatiewet art. 11.7]
+        languages: [nl, en]
+      DE:
+        consent_proof_extra: [double_optin_timestamp_required]
+        double_optin: required
+        languages: [de]
+      FR:
+        window: { start: "08:00", end: "20:00" }
+        quiet_days: [Sunday, public_holiday]   # French SMS industry code; widely enforced by operators
+        optout_keywords: [STOP]
+        optout_note: "Commercial SMS in France use 'STOP au 36180' or the sender's STOP number"
+        languages: [fr]
+        verify: true
+      ES: { languages: [es] }

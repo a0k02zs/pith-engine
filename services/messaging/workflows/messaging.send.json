@@ -1,0 +1,115 @@
+{
+  "id": "messaging.send",
+  "version": 1,
+  "service": "messaging",
+  "description": "The only send path. Resolve recipients, run the engine compliance gate, then send on 1 channel. Every other messaging workflow sends through this subflow.",
+  "trigger": {
+    "manual": true
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Resolve recipients for input.audience_id or input.contact_ids, with channel and purpose. Returns send_window (engine G5)",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "compliance",
+      "type": "check",
+      "name": "Engine compliance gate: consent, window, caps, sender, content (engine G6). Uses market-rules.yaml as the channel overlay",
+      "needs": [
+        "resolve"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Pick the channel adapter",
+      "needs": [
+        "compliance"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.channel == 'sms'",
+            "goto": "send_sms"
+          },
+          {
+            "if": "input.channel == 'whatsapp'",
+            "goto": "send_whatsapp"
+          }
+        ],
+        "else": "send_push"
+      }
+    },
+    {
+      "id": "send_sms",
+      "type": "tool",
+      "name": "Send SMS through the aggregator (Twilio, Infobip), throttled per sender",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "sms",
+        "action": "messages.send",
+        "risk": "send"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "send_whatsapp",
+      "type": "tool",
+      "name": "Send a WhatsApp template, or free text only inside the 24 h window",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "whatsapp",
+        "action": "messages.send",
+        "risk": "send"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "send_push",
+      "type": "tool",
+      "name": "Send the push notification (Braze, OneSignal)",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "push",
+        "action": "notifications.send",
+        "risk": "send"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "engine/outbound.recorded per provider webhook (sent, delivered, clicked, failed)",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    }
+  ]
+}

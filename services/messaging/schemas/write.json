@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/write@1",
+  "type": "object",
+  "properties": {
+    "drafts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "flow_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "channel": {
+            "enum": [
+              "sms",
+              "whatsapp",
+              "push"
+            ]
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "enum": [
+              "MARKETING",
+              "UTILITY"
+            ]
+          },
+          "variant": {
+            "type": "string",
+            "pattern": "^[A-D]$"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object"
+              }
+            ]
+          },
+          "encoding": {
+            "enum": [
+              "GSM-7",
+              "UCS-2",
+              "n/a"
+            ]
+          },
+          "segments": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "claims_used": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "offer_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "needs_native_review": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "template_id",
+          "channel",
+          "market",
+          "language",
+          "category",
+          "variant",
+          "content",
+          "encoding",
+          "segments",
+          "claims_used",
+          "needs_native_review"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "drafts",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

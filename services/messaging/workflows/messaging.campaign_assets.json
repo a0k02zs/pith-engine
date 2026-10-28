@@ -1,0 +1,69 @@
+{
+  "id": "messaging.campaign_assets",
+  "version": 1,
+  "service": "messaging",
+  "description": "Channel assets for a Campaigns (service 2) run: write and approve the templates, then send the broadcast only after the market launches.",
+  "trigger": {
+    "manual": true
+  },
+  "steps": [
+    {
+      "id": "read_brain",
+      "type": "tool",
+      "name": "Read the client brain for the campaign markets",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "templates",
+      "type": "subflow",
+      "name": "Write, check and approve the templates for the channel brief",
+      "needs": [
+        "read_brain"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.template_lifecycle",
+        "per": "market"
+      }
+    },
+    {
+      "id": "assets_ready",
+      "type": "emit",
+      "name": "Templates approved; artifact_ids go back to the campaign run",
+      "needs": [
+        "templates"
+      ],
+      "emit": {
+        "event": "channel/messaging.assets.ready"
+      }
+    },
+    {
+      "id": "wait_launch",
+      "type": "wait",
+      "name": "Never publish before the market launches",
+      "needs": [
+        "assets_ready"
+      ],
+      "wait": {
+        "event": "svc.campaigns/market.launched",
+        "match": "async.data.campaign_id == input.campaign_id && async.data.market == input.market",
+        "timeout": "60d"
+      }
+    },
+    {
+      "id": "broadcast",
+      "type": "subflow",
+      "name": "Send the campaign broadcast in the launched market",
+      "needs": [
+        "wait_launch"
+      ],
+      "subflow": {
+        "workflow_id": "messaging.broadcast",
+        "per": "market"
+      }
+    }
+  ]
+}

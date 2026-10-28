@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/sender@1",
+  "type": "object",
+  "properties": {
+    "market": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "channel": { "enum": ["sms", "whatsapp"] },
+    "sender_type": { "enum": ["alphanumeric", "10dlc", "toll_free", "short_code", "long_code", "whatsapp_number"] },
+    "sender_id": { "type": "string", "minLength": 1 },
+    "registration_ref": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["approved", "pending", "rejected"] },
+    "notes": { "type": "string" }
+  },
+  "required": ["market", "channel", "sender_type", "sender_id", "registration_ref", "status"],
+  "additionalProperties": false
+}

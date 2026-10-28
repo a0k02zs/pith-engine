@@ -1,0 +1,186 @@
+{
+  "id": "messaging.template_lifecycle",
+  "version": 1,
+  "service": "messaging",
+  "description": "Write SMS, WhatsApp and push templates for 1 flow or broadcast, check them, get client approval, and submit WhatsApp templates to Meta.",
+  "trigger": {
+    "event": "svc.messaging/template.requested"
+  },
+  "steps": [
+    {
+      "id": "draft",
+      "type": "agent",
+      "name": "Write variants per language",
+      "agent": {
+        "prompt_ref": "messaging/write@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "messaging/write@1"
+      }
+    },
+    {
+      "id": "save_artifacts",
+      "type": "tool",
+      "name": "Save each variant as an engine artifact (kind sms, whatsapp_template or push)",
+      "needs": [
+        "draft"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "precheck",
+      "type": "agent",
+      "name": "Compliance pre-check (14 checks) plus the template-check rules in src/template-check.ts",
+      "needs": [
+        "save_artifacts"
+      ],
+      "agent": {
+        "prompt_ref": "messaging/precheck@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "messaging/precheck@1"
+      }
+    },
+    {
+      "id": "fix_loop",
+      "type": "branch",
+      "name": "Back to the writer on fail (max 2 loops), then to a person",
+      "needs": [
+        "precheck"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.precheck.output.result == 'fail' && run.loops.draft < 2",
+            "goto": "draft"
+          }
+        ],
+        "else": "brand_and_gate_check"
+      }
+    },
+    {
+      "id": "brand_and_gate_check",
+      "type": "check",
+      "name": "Brand score and engine compliance gate per market",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links",
+          "spam"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "native_review",
+      "type": "gate",
+      "name": "Native editor reviews Arabic, Quebec French, German and Chinese variants",
+      "needs": [
+        "brand_and_gate_check"
+      ],
+      "gate": {
+        "approval_kind": "copy",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 48,
+        "skip_if": "!artifacts.any(a => a.needs_native_review)",
+        "on_reject": "goto",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "gate_template",
+      "type": "gate",
+      "name": "G2 client approves new templates and offers",
+      "needs": [
+        "native_review"
+      ],
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "skip_if": "artifacts.all(a => a.reused_approved_template && a.new_claim_ids.length == 0)",
+        "on_reject": "fail",
+        "on_changes": "draft"
+      }
+    },
+    {
+      "id": "route_channel",
+      "type": "branch",
+      "name": "WhatsApp templates go to Meta; SMS and push templates are ready",
+      "needs": [
+        "gate_template"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.channel == 'whatsapp'",
+            "goto": "submit_meta"
+          }
+        ],
+        "else": "publish"
+      }
+    },
+    {
+      "id": "submit_meta",
+      "type": "tool",
+      "name": "Submit to Meta (POST /{WABA_ID}/message_templates)",
+      "needs": [
+        "route_channel"
+      ],
+      "tool": {
+        "name": "whatsapp",
+        "action": "templates.create",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "wait_meta",
+      "type": "wait",
+      "name": "Wait for the Meta template status webhook",
+      "needs": [
+        "submit_meta"
+      ],
+      "wait": {
+        "event": "svc.messaging/whatsapp.template.status",
+        "match": "async.data.template_name == steps.submit_meta.output.name",
+        "timeout": "3d"
+      }
+    },
+    {
+      "id": "meta_result",
+      "type": "branch",
+      "name": "Approved: ready. Rejected or re-categorised: rewrite with Meta's reason",
+      "needs": [
+        "wait_meta"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.wait_meta.output.status == 'REJECTED'",
+            "goto": "draft"
+          },
+          {
+            "if": "steps.wait_meta.output.category != input.category",
+            "goto": "draft"
+          }
+        ],
+        "else": "publish"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "emit",
+      "name": "Template is ready to use",
+      "emit": {
+        "event": "svc.messaging/template.published"
+      }
+    }
+  ]
+}

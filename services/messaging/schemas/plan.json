@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "messaging/plan@1",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "period": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}$"
+    },
+    "flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "pattern": "^F(0[1-9]|1[0-3])$"
+          },
+          "action": {
+            "enum": [
+              "run",
+              "add",
+              "fix",
+              "stop"
+            ]
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "minItems": 1
+          },
+          "channel_by_market": {
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^[A-Z]{2}$"
+            },
+            "additionalProperties": {
+              "enum": [
+                "sms",
+                "whatsapp",
+                "push",
+                "blocked_check_meta_policy"
+              ]
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "needs_offer": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "flow_id",
+          "action",
+          "markets",
+          "channel_by_market",
+          "reason",
+          "needs_offer"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "broadcasts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "channel": {
+            "enum": [
+              "sms",
+              "whatsapp",
+              "push",
+              "blocked_check_meta_policy"
+            ]
+          },
+          "date_local": {
+            "type": "string",
+            "format": "date"
+          },
+          "time_local": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "segment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "offer_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "est_recipients": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "est_cost": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "market",
+          "channel",
+          "date_local",
+          "time_local",
+          "segment",
+          "est_recipients",
+          "est_cost"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 200
+    },
+    "tracking_requests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "client_id",
+    "period",
+    "flows",
+    "broadcasts",
+    "tracking_requests",
+    "risks",
+    "summary"
+  ],
+  "additionalProperties": false
+}
