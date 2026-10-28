@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/audit@1",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "score_0_100": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "indexing",
+              "crawling",
+              "duplication",
+              "internal_links",
+              "speed",
+              "mobile",
+              "structured_data",
+              "hreflang",
+              "security",
+              "ai_crawler_access"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "normal"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affected_urls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0
+          },
+          "why_it_matters": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effort": {
+            "enum": [
+              "S",
+              "M",
+              "L"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "severity",
+          "title",
+          "affected_urls",
+          "examples",
+          "why_it_matters",
+          "fix",
+          "effort"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "ai_crawler_access": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agent": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowed": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent",
+          "allowed",
+          "note"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "summary",
+    "score_0_100",
+    "issues",
+    "ai_crawler_access",
+    "gaps"
+  ],
+  "additionalProperties": false
+}

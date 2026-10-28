@@ -1,0 +1,67 @@
+{
+  "id": "search.content_refresh",
+  "version": 1,
+  "service": "search",
+  "description": "W8. Monthly decay check (20% click drop, 10-point citation loss, facts over 12 months), refresh briefs, approval, then content_cluster per page.",
+  "trigger": {
+    "cron": "0 7 15 * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "decay",
+      "type": "tool",
+      "name": "decay",
+      "tool": {
+        "name": "seo",
+        "action": "pages.decay_report",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "refresh_briefs",
+      "type": "agent",
+      "name": "refresh_briefs",
+      "agent": {
+        "prompt_ref": "search/brief_writer@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/brief@1"
+      },
+      "needs": [
+        "decay"
+      ]
+    },
+    {
+      "id": "approve_refresh_list",
+      "type": "gate",
+      "needs": [
+        "refresh_briefs"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "seo_lead"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "on_changes": "refresh_briefs"
+      },
+      "name": "approve refresh list"
+    },
+    {
+      "id": "run_refreshes",
+      "type": "subflow",
+      "needs": [
+        "approve_refresh_list"
+      ],
+      "subflow": {
+        "workflow_id": "search.content_cluster",
+        "per": "steps.refresh_briefs.output"
+      },
+      "name": "run refreshes"
+    }
+  ]
+}

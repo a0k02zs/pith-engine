@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "search/ticket@1",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body_markdown": {
+      "type": "string",
+      "minLength": 1
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0
+    },
+    "changes_live_site": {
+      "type": "boolean"
+    },
+    "effort": {
+      "enum": [
+        "S",
+        "M",
+        "L"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "body_markdown",
+    "acceptance_criteria",
+    "labels",
+    "changes_live_site",
+    "effort"
+  ],
+  "additionalProperties": false
+}

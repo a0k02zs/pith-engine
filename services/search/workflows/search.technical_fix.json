@@ -1,0 +1,156 @@
+{
+  "id": "search.technical_fix",
+  "version": 1,
+  "service": "search",
+  "description": "W2. Weekly re-crawl, triage, schema and llms.txt, then gate G4 (never skipped, engine G9) before the client developer applies any live site change.",
+  "trigger": {
+    "cron": "0 6 * * 1"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "recrawl",
+      "type": "tool",
+      "name": "recrawl",
+      "tool": {
+        "name": "seo",
+        "action": "crawl.diff",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "triage",
+      "type": "agent",
+      "name": "triage",
+      "agent": {
+        "prompt_ref": "search/technical_auditor@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/audit@1",
+        "tools": [
+          "seo.crawl_results",
+          "seo.robots_txt"
+        ]
+      },
+      "needs": [
+        "recrawl"
+      ]
+    },
+    {
+      "id": "critical",
+      "type": "branch",
+      "needs": [
+        "triage"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.triage.output.issues.some(i => i.severity == 'critical')",
+            "goto": "alert"
+          }
+        ],
+        "else": "tickets"
+      },
+      "name": "critical"
+    },
+    {
+      "id": "alert",
+      "type": "emit",
+      "needs": [
+        "critical"
+      ],
+      "emit": {
+        "event": "svc.search/issue.critical"
+      },
+      "name": "alert"
+    },
+    {
+      "id": "tickets",
+      "type": "agent",
+      "name": "tickets",
+      "agent": {
+        "prompt_ref": "search/ticket_writer@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/ticket@1"
+      },
+      "needs": [
+        "critical"
+      ]
+    },
+    {
+      "id": "markup",
+      "type": "agent",
+      "name": "markup",
+      "agent": {
+        "prompt_ref": "search/schema_writer@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "search/schema_markup@1"
+      },
+      "needs": [
+        "triage"
+      ]
+    },
+    {
+      "id": "site_check",
+      "type": "check",
+      "needs": [
+        "tickets",
+        "markup"
+      ],
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      },
+      "name": "site check"
+    },
+    {
+      "id": "approve_site_change",
+      "type": "gate",
+      "needs": [
+        "site_check"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "client_developer"
+        ],
+        "sla_hours": 120,
+        "on_reject": "fail"
+      },
+      "name": "G4 live site change"
+    },
+    {
+      "id": "apply_change",
+      "type": "task",
+      "needs": [
+        "approve_site_change"
+      ],
+      "task": {
+        "title": "Apply the approved site changes and mark done with the deployed URLs",
+        "assignee_roles": [
+          "client_developer"
+        ],
+        "due_hours": 120,
+        "done_output_schema": "search/ticket@1"
+      },
+      "name": "apply change"
+    },
+    {
+      "id": "submit_urls",
+      "type": "tool",
+      "name": "submit_urls",
+      "tool": {
+        "name": "seo",
+        "action": "indexnow.submit",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "apply_change"
+      ]
+    }
+  ]
+}

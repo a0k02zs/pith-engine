@@ -1,0 +1,81 @@
+{
+  "id": "search.monthly_report",
+  "version": 1,
+  "service": "search",
+  "description": "W7. Monthly report, strategist review (G5), send and store learnings.",
+  "trigger": {
+    "cron": "0 8 2 * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "kpis",
+      "type": "tool",
+      "name": "kpis",
+      "tool": {
+        "name": "analytics",
+        "action": "kpis.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "report",
+      "type": "agent",
+      "name": "report",
+      "agent": {
+        "prompt_ref": "search/reporter@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "search/report@1"
+      },
+      "needs": [
+        "kpis"
+      ]
+    },
+    {
+      "id": "review",
+      "type": "gate",
+      "needs": [
+        "report"
+      ],
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "report"
+      },
+      "name": "G5 report"
+    },
+    {
+      "id": "send",
+      "type": "tool",
+      "name": "send",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "review"
+      ]
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "name": "learn",
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "review"
+      ]
+    }
+  ]
+}
