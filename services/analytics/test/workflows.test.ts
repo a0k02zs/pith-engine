@@ -1,7 +1,7 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { Ajv2020 } from "ajv/dist/2020.js";
-import { engineDir } from "../src/paths.js";
+import { dir, engineDir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 
 // The engine contracts live in this repository, so the tests read them directly.
@@ -31,6 +31,13 @@ describe("analytics workflows", () => {
       });
 
       it("uses the service code analytics", () => expect(wf.service).toBe("analytics"));
+
+      it("has a SQL model for every warehouse query it runs", () => {
+        for (const s of wf.steps.filter((s) => s.tool?.action?.startsWith("warehouse.query:"))) {
+          const model = s.tool!.action!.split(":")[1];
+          expect(existsSync(dir("sql", `${model}.sql`)), `${wf.id}.${s.id}: sql/${model}.sql`).toBe(true);
+        }
+      });
 
       it("has unique step ids and only points at steps that exist", () => {
         const ids = wf.steps.map((s) => s.id);
