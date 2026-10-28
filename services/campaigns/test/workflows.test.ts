@@ -8,8 +8,6 @@ const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "wor
 const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
-/** Engine actions this service needs that engine v0.1.0 does not list yet. Added in engine PR #10; remove once it merges. */
-const PENDING_ENGINE_ACTIONS = ["spend_policies.upsert"];
 const AD_PLATFORMS = ["ads_google", "ads_meta", "ads_linkedin", "ads_tiktok", "ads_snapchat"];
 
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
@@ -53,7 +51,7 @@ describe("campaigns workflows", () => {
         for (const s of wf.steps.filter((s) => s.tool)) {
           expect(Object.keys(enums.tool_registry)).toContain(s.tool!.name);
           expect(Object.keys(enums.tool_risk_meaning)).toContain(s.tool!.risk);
-          if (s.tool!.name === "engine") expect([...Object.keys(enums.engine_actions), ...PENDING_ENGINE_ACTIONS]).toContain(s.tool!.action);
+          if (s.tool!.name === "engine") expect(Object.keys(enums.engine_actions)).toContain(s.tool!.action);
         }
       });
 

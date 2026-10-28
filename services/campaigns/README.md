@@ -36,10 +36,6 @@ npm test
 - The crisis flow pauses first with risk `remove`, so it is never blocked (engine G10), and resumes only after the G6 escalation gate.
 - No workflow has a `send` or `write_external` step. Channel services do that, behind their own gates.
 
-## Open item for the engine
-
-`engine spend_policies.upsert` (risk `spend`) is added in engine PR #10. Until that merges, the tests list it in `PENDING_ENGINE_ACTIONS` in `test/workflows.test.ts`; remove it there after the merge.
-
 ## Not legal advice
 
 The market rules are a planning summary. A local lawyer confirms each market before the first launch.
