@@ -480,7 +480,8 @@
     "pr": "Muck Rack, Cision, Meltwater",
     "events": "Zoom, ON24, Livestorm",
     "outbound": "Apollo, sequencers",
-    "enrichment": "Apollo, ZoomInfo, Clay, 6sense"
+    "enrichment": "Apollo, ZoomInfo, Clay, 6sense",
+    "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft"
   },
   "engine_actions": {
     "$comment": "Tool name 'engine'. Actions any service may call.",
@@ -493,7 +494,11 @@
     "rights.check": "read",
     "learnings.write": "write_internal",
     "artifacts.create": "write_internal",
-    "artifacts.brand_score": "read"
+    "artifacts.brand_score": "read",
+    "parties.upsert": "write_internal: create or update a party (same as POST /parties)",
+    "metrics.query": "read: read KPI values (same as GET /metrics)",
+    "rights.create": "write_internal: record a rights grant, such as paid_usage or whitelisting after a signed contract (same as POST /clients/{client_id}/rights)",
+    "spend_policies.upsert": "spend: write the daily and total caps that a budget or budget_change gate approved; G1 needs that gate earlier in the same run, and set_by is the person who approved it"
   },
   "conversion_kinds": [
     "purchase",

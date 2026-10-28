@@ -1318,7 +1318,7 @@
   "service_overlays": {
     "$comment": "Service-owned extra rules, merged by the gate for that service. The service thread owns its file; ids use the service prefix.",
     "abm": "services/abm/markets/rules.json",
-    "pr": "services/pr-thought-leadership/06-market-rules.md#7",
+    "pr": "services/pr-thought-leadership/config/compliance-overlay.json",
     "paid_social": "services/paid-social/02-market-rules.md#4",
     "video": "services/video-production/05-market-rules.md"
   }
