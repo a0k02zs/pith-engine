@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/inbox_actions@1",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "inbox_item_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "enum": [
+              "praise",
+              "question_simple",
+              "question_complex",
+              "complaint",
+              "service_issue",
+              "sales_lead",
+              "press",
+              "legal_or_regulator",
+              "safety",
+              "harassment_or_abuse",
+              "spam_or_scam",
+              "crisis_risk",
+              "other"
+            ]
+          },
+          "sentiment": {
+            "type": "integer",
+            "minimum": -2,
+            "maximum": 2
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(-[A-Z]{2})?|unknown)$"
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "action": {
+            "enum": [
+              "auto_reply",
+              "draft_for_human",
+              "escalate",
+              "hide_or_report",
+              "no_action"
+            ]
+          },
+          "reply_library_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "match_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reply_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reply_channel": {
+            "enum": [
+              "public",
+              "dm",
+              null
+            ]
+          },
+          "escalation_summary": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 3
+          },
+          "needs_human": {
+            "type": "boolean"
+          },
+          "needs_human_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "inbox_item_id",
+          "category",
+          "sentiment",
+          "language",
+          "market",
+          "risk",
+          "action",
+          "reply_text",
+          "reply_channel",
+          "needs_human"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "additionalProperties": false
+}

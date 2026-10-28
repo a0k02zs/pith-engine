@@ -1,0 +1,5 @@
+slot_id,date,local_time,time_zone,platform,account,market,language,pillar,funnel_stage,format,idea,source,needs_video,flags,status,post_id,approver,published_url
+S-2026-11-001,2026-11-03,08:30,Europe/London,linkedin,@acme,GB,en-GB,How-to,engage,linkedin_document,"5 checks before you renew a SaaS contract (carousel, 7 slides)",evergreen,false,,planned,,,
+S-2026-11-002,2026-11-04,12:15,Asia/Singapore,instagram,@acme.sg,SG,en-SG,Product in use,reach,ig_reel,"30-second routine with the product, shot at a hawker centre",asset:VID-0142,true,,planned,,,
+S-2026-11-003,2026-11-05,21:30,Asia/Riyadh,snapchat,@acme.sa,SA,ar-SA,Offers,convert,snap_story,"White Friday early access, 3 frames",key_date,false,price,planned,,,
+S-2026-11-004,2026-11-06,09:00,Europe/London,linkedin,@acme,GB,en-GB,reactive,reach,linkedin_text_image,reserved for trend or news response,reactive,false,,reserved,,,

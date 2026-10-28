@@ -1,0 +1,74 @@
+{
+  "id": "social.reactive_post",
+  "version": 1,
+  "service": "social",
+  "description": "Fast lane: fill a reserved reactive slot from a trend or news opportunity, always through Gate B, 2-hour SLA.",
+  "trigger": {
+    "event": "svc.social/opportunity.selected"
+  },
+  "steps": [
+    {
+      "id": "write",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "social/creator@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/post@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "write"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 85
+      }
+    },
+    {
+      "id": "approve",
+      "type": "gate",
+      "needs": [
+        "check"
+      ],
+      "name": "Reactive posts are never skipped",
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "social_lead"
+        ],
+        "sla_hours": 2,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "needs": [
+        "approve"
+      ],
+      "tool": {
+        "name": "social",
+        "action": "post.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "publish"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    }
+  ]
+}

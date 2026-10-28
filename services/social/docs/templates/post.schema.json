@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pith.marketing/services/social/post.schema.json",
+  "title": "Social post (service 4)",
+  "type": "object",
+  "required": ["post_id", "client_id", "slot_id", "platform", "market", "language", "pillar", "funnel_stage", "format", "status", "draft"],
+  "properties": {
+    "post_id": {"type": "string"},
+    "client_id": {"type": "string"},
+    "slot_id": {"type": "string"},
+    "platform": {"enum": ["linkedin", "instagram", "tiktok", "youtube", "facebook", "x", "snapchat", "pinterest", "threads", "whatsapp_channel", "xing"]},
+    "account": {"type": "string"},
+    "market": {"type": "string", "description": "ISO country or subdivision, e.g. GB, SG, US, CA-QC, SA, NL"},
+    "language": {"type": "string", "description": "BCP-47"},
+    "pillar": {"type": "string"},
+    "funnel_stage": {"enum": ["reach", "engage", "convert"]},
+    "format": {"type": "string"},
+    "scheduled_at": {"type": "string", "format": "date-time"},
+    "time_zone": {"type": "string"},
+    "status": {"enum": ["planned", "drafted", "checking", "needs_fix", "awaiting_approval", "approved", "scheduled", "published", "paused", "pulled", "blocked"]},
+    "draft": {
+      "type": "object",
+      "required": ["caption", "alt_text", "claims_used", "new_claims"],
+      "properties": {
+        "caption": {"type": "string"},
+        "variants": {"type": "array", "items": {"type": "string"}, "maxItems": 2},
+        "hashtags": {"type": "array", "items": {"type": "string"}},
+        "first_comment": {"type": ["string", "null"]},
+        "cta": {"type": "string"},
+        "link": {"type": ["string", "null"], "format": "uri"},
+        "alt_text": {"type": "string", "maxLength": 250},
+        "visual": {"type": "object", "description": "Canva template id and field values, or carousel slides"},
+        "video_brief": {"type": ["object", "null"]},
+        "claims_used": {"type": "array", "items": {"type": "object", "required": ["text", "claim_id"], "properties": {"text": {"type": "string"}, "claim_id": {"type": "string"}}}},
+        "new_claims": {"type": "array", "items": {"type": "string"}},
+        "labels": {"type": "object", "properties": {"disclosure": {"type": ["string", "null"]}, "ai_generated": {"type": "boolean"}}},
+        "flags": {"type": "array", "items": {"type": "string"}},
+        "needs_human": {"type": "boolean"},
+        "needs_human_reason": {"type": ["string", "null"]}
+      }
+    },
+    "asset_ids": {"type": "array", "items": {"type": "string"}},
+    "rights_grant_ids": {"type": "array", "items": {"type": "string"}},
+    "check": {"type": "object", "description": "Output of agents/04-checker plus the engine compliance result"},
+    "approval_ids": {"type": "array", "items": {"type": "string"}},
+    "published_url": {"type": ["string", "null"]},
+    "prompt_versions": {"type": "object", "additionalProperties": {"type": "string"}}
+  }
+}

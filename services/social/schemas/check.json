@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/check@1",
+  "type": "object",
+  "properties": {
+    "brand_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "sub_scores": {
+      "type": "object",
+      "properties": {
+        "voice": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "clarity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "platform_fit": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "market_fit": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 25
+        }
+      },
+      "required": [
+        "voice",
+        "clarity",
+        "platform_fit",
+        "market_fit"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "voice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clarity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform_fit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "market_fit": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "voice",
+        "clarity",
+        "platform_fit",
+        "market_fit"
+      ],
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "enum": [
+              "block",
+              "gate_b",
+              "fix",
+              "note"
+            ]
+          },
+          "rule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "span": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "severity",
+          "rule",
+          "span",
+          "comment"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sensitive_topic": {
+      "type": "object",
+      "properties": {
+        "flag": {
+          "type": "boolean"
+        },
+        "topic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "flag",
+        "topic"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "fix",
+        "gate_b",
+        "block"
+      ]
+    }
+  },
+  "required": [
+    "brand_score",
+    "sub_scores",
+    "evidence",
+    "findings",
+    "sensitive_topic",
+    "decision"
+  ],
+  "additionalProperties": false
+}

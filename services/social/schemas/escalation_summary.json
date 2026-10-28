@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/escalation_summary@1",
+  "type": "object",
+  "properties": {
+    "severity": {
+      "enum": [
+        "sev1",
+        "sev2",
+        "sev3"
+      ]
+    },
+    "severity_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "reach": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "similar_cases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "holding_line": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "reply_public",
+          "move_to_dm",
+          "hand_to_pr",
+          "hand_to_support",
+          "no_reply",
+          "pause_posts"
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "severity",
+    "severity_reason",
+    "summary",
+    "reach",
+    "links",
+    "similar_cases",
+    "holding_line",
+    "options"
+  ],
+  "additionalProperties": false
+}

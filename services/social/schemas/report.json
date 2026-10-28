@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/report@1",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "to": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false
+    },
+    "headline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(-[A-Z]{2})?|unknown)$"
+          },
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "this_period": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "last_period": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "avg_90d": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "on_track",
+              "watch",
+              "off_track"
+            ]
+          }
+        },
+        "required": [
+          "market",
+          "kpi",
+          "this_period",
+          "last_period",
+          "avg_90d",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "top_posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "post_id",
+          "url",
+          "why"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "bottom_posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "post_id",
+          "url",
+          "why"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "community": {
+      "type": "object",
+      "properties": {
+        "median_reply_minutes": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "escalations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "escalation_outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sentiment_change": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "median_reply_minutes",
+        "escalations",
+        "escalation_outcomes",
+        "sentiment_change"
+      ],
+      "additionalProperties": false
+    },
+    "next_week": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "action",
+          "kpi"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 3
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "monthly": {
+      "type": "object",
+      "properties": {
+        "pillar_mix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pillar": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "number"
+              },
+              "to": {
+                "type": "number"
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "pillar",
+              "from",
+              "to",
+              "evidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "formats_more": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 3
+        },
+        "formats_less": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 3
+        },
+        "time_windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "account": {
+                "type": "string",
+                "minLength": 1
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "account",
+              "windows",
+              "evidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "variable": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hypothesis": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kpi": {
+                "type": "string",
+                "minLength": 1
+              },
+              "min_posts": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "variable",
+              "hypothesis",
+              "kpi",
+              "min_posts"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "pillar_mix",
+        "formats_more",
+        "formats_less",
+        "time_windows",
+        "tests"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "period",
+    "headline",
+    "kpis",
+    "top_posts",
+    "bottom_posts",
+    "community",
+    "next_week",
+    "caveats"
+  ],
+  "additionalProperties": false
+}

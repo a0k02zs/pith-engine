@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "social/listener_brief@1",
+  "type": "object",
+  "properties": {
+    "top_opportunities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "idea": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform": {
+            "enum": [
+              "linkedin",
+              "instagram",
+              "tiktok",
+              "youtube",
+              "facebook",
+              "x",
+              "snapchat",
+              "pinterest",
+              "threads",
+              "whatsapp_channel",
+              "xing"
+            ]
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(-[A-Z]{2})?|unknown)$"
+          },
+          "pillar": {
+            "type": "string",
+            "minLength": 1
+          },
+          "why_now": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "idea",
+          "platform",
+          "market",
+          "pillar",
+          "why_now",
+          "expires_at"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "competitor_moves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "competitor": {
+            "type": "string",
+            "minLength": 1
+          },
+          "what": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "competitor",
+          "what",
+          "evidence_url"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "what": {
+            "type": "string",
+            "minLength": 1
+          },
+          "trend": {
+            "enum": [
+              "rising",
+              "stable",
+              "falling"
+            ]
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "what",
+          "trend",
+          "evidence_url"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "top_opportunities",
+    "competitor_moves",
+    "risks",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

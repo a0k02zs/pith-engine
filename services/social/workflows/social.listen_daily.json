@@ -1,0 +1,98 @@
+{
+  "id": "social.listen_daily",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline step 1: daily listening brief; urgent mentions go to escalation at once.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "collect",
+      "type": "tool",
+      "name": "Pull mentions, competitor posts and trends, last 24 h, per market",
+      "tool": {
+        "name": "social",
+        "action": "listening.fetch",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "classify",
+      "type": "agent",
+      "needs": [
+        "collect"
+      ],
+      "agent": {
+        "prompt_ref": "social/listener@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "social/listener_output@1"
+      }
+    },
+    {
+      "id": "urgent",
+      "type": "branch",
+      "needs": [
+        "classify"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.signals.exists(s, s.urgency == 'now')",
+            "goto": "raise"
+          }
+        ],
+        "else": "brief"
+      }
+    },
+    {
+      "id": "raise",
+      "type": "emit",
+      "needs": [
+        "urgent"
+      ],
+      "name": "Urgent signals go to social.escalate (crisis risk, complaint going viral, press)",
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "brief",
+      "type": "agent",
+      "needs": [
+        "classify"
+      ],
+      "name": "Daily brief for planner and social lead",
+      "agent": {
+        "prompt_ref": "social/listener_brief@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/listener_brief@1"
+      }
+    },
+    {
+      "id": "share_of_voice",
+      "type": "emit",
+      "needs": [
+        "classify"
+      ],
+      "name": "KPI share_of_voice (computed in code)",
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "post_brief",
+      "type": "emit",
+      "needs": [
+        "brief"
+      ],
+      "emit": {
+        "event": "svc.social/brief.ready"
+      }
+    }
+  ]
+}

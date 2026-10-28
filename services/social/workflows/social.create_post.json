@@ -1,0 +1,196 @@
+{
+  "id": "social.create_post",
+  "version": 1,
+  "service": "social",
+  "description": "Pipeline steps 4-6: create, check, Gate B when flagged, schedule and publish one calendar slot.",
+  "trigger": {
+    "event": "svc.social/slot.ready"
+  },
+  "steps": [
+    {
+      "id": "video_needed",
+      "type": "branch",
+      "branch": {
+        "cases": [
+          {
+            "if": "input.slot.needs_video",
+            "goto": "request_video"
+          }
+        ],
+        "else": "write"
+      }
+    },
+    {
+      "id": "request_video",
+      "type": "emit",
+      "needs": [
+        "video_needed"
+      ],
+      "emit": {
+        "event": "svc.video/brief.requested"
+      }
+    },
+    {
+      "id": "wait_video",
+      "type": "wait",
+      "needs": [
+        "request_video"
+      ],
+      "wait": {
+        "event": "svc.video/asset.approved",
+        "match": "async.data.slot_id == input.slot.slot_id",
+        "timeout": "10d"
+      }
+    },
+    {
+      "id": "write",
+      "type": "agent",
+      "needs": [
+        "video_needed"
+      ],
+      "agent": {
+        "prompt_ref": "social/creator@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/post@1"
+      }
+    },
+    {
+      "id": "design",
+      "type": "tool",
+      "needs": [
+        "write"
+      ],
+      "name": "Fill Canva brand template, export per platform size",
+      "tool": {
+        "name": "canva",
+        "action": "template.fill_and_export",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "review",
+      "type": "agent",
+      "needs": [
+        "design"
+      ],
+      "name": "Checker agent: brand voice, platform fit, market rules, claims",
+      "agent": {
+        "prompt_ref": "social/checker@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "social/check@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "needs": [
+        "review"
+      ],
+      "name": "Code checks (rules.postProblems) + engine compliance (channel social_post)",
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "links",
+          "accessibility"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.check.output.decision == 'block'",
+            "goto": "approve_post"
+          },
+          {
+            "if": "steps.check.output.decision == 'retry'",
+            "goto": "write"
+          },
+          {
+            "if": "size(steps.write.output.new_claims) > 0",
+            "goto": "approve_claim"
+          }
+        ],
+        "else": "approve_post"
+      }
+    },
+    {
+      "id": "approve_claim",
+      "type": "gate",
+      "needs": [
+        "route"
+      ],
+      "name": "New claim, price, health, finance or legal statement (G3, never skipped)",
+      "gate": {
+        "approval_kind": "claim",
+        "required_roles": [
+          "client_legal",
+          "client_approver"
+        ],
+        "sla_hours": 72,
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "approve_post",
+      "type": "gate",
+      "needs": [
+        "route"
+      ],
+      "name": "GATE B: flagged posts, and every post unless autonomy is auto_publish_approved_calendar (rules.finalDecision)",
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "social_lead",
+          "client_approver"
+        ],
+        "sla_hours": 24,
+        "skip_if": "steps.check.output.decision == 'publish' && size(steps.write.output.new_claims) == 0",
+        "on_changes": "write"
+      }
+    },
+    {
+      "id": "schedule",
+      "type": "tool",
+      "needs": [
+        "approve_post"
+      ],
+      "name": "Schedule at the slot's local time in the market time zone",
+      "tool": {
+        "name": "social",
+        "action": "post.schedule",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "wait_publish",
+      "type": "wait",
+      "needs": [
+        "schedule"
+      ],
+      "wait": {
+        "event": "svc.social/post.published",
+        "match": "async.data.post_id == steps.schedule.output.post_id",
+        "timeout": "35d"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "wait_publish"
+      ],
+      "name": "engine/outbound.recorded type=posted, channel=social_post",
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    }
+  ]
+}
