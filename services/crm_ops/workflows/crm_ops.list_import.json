@@ -1,0 +1,85 @@
+{
+  "id": "crm_ops.list_import",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W1 import branch: a list import over 500 rows needs a person.",
+  "trigger": {
+    "event": "svc.crm_ops/import.requested"
+  },
+  "steps": [
+    {
+      "id": "profile",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "crm_ops/import_profiler@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "crm_ops/import_profile@1"
+      }
+    },
+    {
+      "id": "approve_import",
+      "type": "gate",
+      "needs": [
+        "profile"
+      ],
+      "gate": {
+        "approval_kind": "data_change",
+        "required_roles": [
+          "ops_lead"
+        ],
+        "sla_hours": 48,
+        "skip_if": "steps.profile.output.rows <= 500 && steps.profile.output.third_party == false",
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "load",
+      "type": "tool",
+      "needs": [
+        "approve_import"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "contacts.upsert",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "art14_tasks",
+      "type": "branch",
+      "needs": [
+        "load"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.profile.output.third_party && steps.profile.output.has_eu_or_uk",
+            "goto": "emit_art14"
+          }
+        ],
+        "else": "emit_done"
+      }
+    },
+    {
+      "id": "emit_art14",
+      "type": "emit",
+      "needs": [
+        "art14_tasks"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/art14.notice_due"
+      }
+    },
+    {
+      "id": "emit_done",
+      "type": "emit",
+      "needs": [
+        "art14_tasks"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/import.completed"
+      }
+    }
+  ]
+}

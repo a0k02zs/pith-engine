@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/handoff_brief@1",
+  "type": "object",
+  "properties": {
+    "brief_markdown": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "watch_outs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "inferred_items": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "brief_markdown",
+    "watch_outs",
+    "inferred_items"
+  ],
+  "additionalProperties": false
+}

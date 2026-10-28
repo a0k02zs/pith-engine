@@ -1,0 +1,56 @@
+group,label,hubspot_internal_name,salesforce_api_name,object,type,values_or_format,required,written_by
+lifecycle,Lifecycle stage (engine lifecycle_stages; sal nurture disqualified requested),lifecyclestage,Lifecycle_Stage__c,contact,picklist,subscriber|lead|mql|sal|sql|opportunity|customer|evangelist|nurture|disqualified|churned,yes,W4 W5 W6 W8
+lifecycle,B2C lifecycle stage,pithm_b2c_stage,Pithm_B2C_Stage__c,contact,picklist,subscriber|engaged|first_purchase|repeat|vip|at_risk|lapsed|sunset,b2c only,RFM job
+lifecycle,MQL date,pithm_mql_date,MQL_Date__c,contact,datetime,ISO 8601,auto,W4
+lifecycle,MQL reason,pithm_mql_reason,MQL_Reason__c,contact,picklist,handraise|score_threshold|abm_intent|manual,auto,W4
+lifecycle,SAL date,pithm_sal_date,SAL_Date__c,contact,datetime,ISO 8601,auto,W6
+lifecycle,SQL date,pithm_sql_date,SQL_Date__c,contact,datetime,ISO 8601,auto,W6
+lifecycle,Rejection reason,pithm_rejection_reason,Rejection_Reason__c,contact,picklist,bad_fit|no_budget|bad_timing|no_response|already_customer|competitor|duplicate|other,on reject,sales rep
+lifecycle,Recycle review date,pithm_recycle_review_date,Recycle_Review_Date__c,contact,date,YYYY-MM-DD,auto,W8
+score,Fit score,pithm_fit_score,Fit_Score__c,contact,number,0-50,auto,W4
+score,Engagement score,pithm_engagement_score,Engagement_Score__c,contact,number,0-50,auto,W4
+score,Lead score,pithm_lead_score,Lead_Score__c,contact,number,0-100,auto,W4
+score,Lead grade,pithm_lead_grade,Lead_Grade__c,contact,picklist,A|B|C|D,auto,W4
+score,Score model version,pithm_score_model_version,Score_Model_Version__c,contact,text,semver,auto,W4
+score,Score updated at,pithm_score_updated_at,Score_Updated_At__c,contact,datetime,ISO 8601,auto,W4
+score,Account engagement score,pithm_account_engagement_score,Account_Engagement_Score__c,company/account,number,0-100,auto,W4
+score,RFM segment,pithm_rfm_segment,RFM_Segment__c,contact,picklist,champions|loyal|promising|at_risk|hibernating,b2c only,RFM job
+source,Original source,hs_analytics_source,Original_Source__c,contact,picklist,platform default,auto,W1
+source,Latest source,hs_latest_source,Latest_Source__c,contact,picklist,platform default,auto,W1
+source,UTM source,pithm_utm_source,UTM_Source__c,contact,text,,auto,W1
+source,UTM medium,pithm_utm_medium,UTM_Medium__c,contact,text,,auto,W1
+source,UTM campaign,pithm_utm_campaign,UTM_Campaign__c,contact,text,,auto,W1
+source,UTM content,pithm_utm_content,UTM_Content__c,contact,text,,auto,W1
+source,UTM term,pithm_utm_term,UTM_Term__c,contact,text,,auto,W1
+source,Capture channel,pithm_capture_channel,Capture_Channel__c,contact,picklist,web_form|chat|linkedin_leadform|meta_leadform|tiktok_leadform|event|webinar|import|manual,yes,W1
+source,Captured at,pithm_captured_at,Captured_At__c,contact,datetime,ISO 8601,yes,W1
+source,Pith service source,pithm_service_source,Pithm_Service_Source__c,contact,picklist,01_email|02_campaigns|03_video|04_social|05_search|06_influencer|07_content|08_abm|10_messaging|11_paid|14_pr|15_affiliate|16_events|17_cro|18_community,auto,W1
+consent,Country code,pithm_country_code,Country_Code__c,contact,text,ISO 3166-1 alpha-2,yes,W1 W2
+consent,Subdivision (engine subdivision),pithm_region_code,Region_Code__c,contact,text,ISO 3166-2 (for example CA-QC),if CA US or AE,W1 W2
+consent,Pith market group (engine market_groups),pithm_market,Pithm_Market__c,contact,picklist,UK|SG|NA|GCC|EU|OUT,auto,W2
+consent,Email marketing consent status (mirror of engine),pithm_consent_email,Consent_Email__c,contact,picklist,granted|withdrawn|expired|unknown,yes,engine via W9
+consent,SMS marketing consent status (mirror of engine),pithm_consent_sms,Consent_SMS__c,contact,picklist,granted|withdrawn|expired|unknown,yes,engine via W9
+consent,WhatsApp marketing consent status (mirror of engine),pithm_consent_whatsapp,Consent_WhatsApp__c,contact,picklist,granted|withdrawn|expired|unknown,yes,engine via W9
+consent,Email consent basis (engine consent_bases),pithm_consent_basis,Consent_Basis__c,contact,picklist,consent|double_opt_in|soft_opt_in|legitimate_interest|corporate_subscriber|express_casl|implied_casl|casl_business_exemption|prior_express_written|opt_out_regime|none,yes,W1
+consent,Consent text version (engine consents.wording ref),pithm_consent_text_version,Consent_Text_Version__c,contact,text,id of the form consent text,yes,W1
+consent,Consent captured at,pithm_consent_captured_at,Consent_Captured_At__c,contact,datetime,ISO 8601,yes,W1
+consent,Consent source URL,pithm_consent_source_url,Consent_Source_URL__c,contact,url,,yes,W1
+consent,CASL implied consent expiry (engine consents.expires_at),pithm_casl_implied_expiry,CASL_Implied_Expiry__c,contact,date,YYYY-MM-DD,if CA and implied_casl,engine via W9
+consent,Singapore DNC checked at (engine dnc_checked_at),pithm_sg_dnc_checked_at,SG_DNC_Checked_At__c,contact,datetime,ISO 8601,if SG phone,engine via W9
+consent,Article 14 notice sent at (engine art14_notice_sent_at),pithm_art14_notice_at,Art14_Notice_At__c,contact,datetime,ISO 8601,if EU/UK third-party source,W1
+consent,Data residency region,pithm_data_region,Data_Region__c,contact,picklist,eu|uk|us|sg|sa|ae|other,auto,W2
+consent,Country unknown,pithm_country_unknown,Country_Unknown__c,contact,boolean,,auto,W1
+fit,Job seniority,pithm_job_seniority,Job_Seniority__c,contact,picklist,c_level|vp|head|director|manager|individual_contributor|unknown,auto,W2 W3
+fit,Job function,pithm_job_function,Job_Function__c,contact,picklist,client defined,auto,W2 W3
+fit,Company size band,pithm_company_size_band,Company_Size_Band__c,company/account,picklist,1-10|11-50|51-200|201-500|501-1000|1001-5000|5000+,auto,W3
+fit,Email domain type (engine email_type: corporate=business; personal=free),pithm_email_domain_type,Email_Domain_Type__c,contact,picklist,business|free|disposable,auto,W2
+fit,Persona flag,pithm_persona_flag,Persona_Flag__c,contact,picklist,student|job_seeker|partner|press|none,manual or auto,W2
+fit,Enrichment source,pithm_enrichment_source,Enrichment_Source__c,contact,picklist,clay|apollo|zoominfo|manual,auto,W3
+fit,Enriched at,pithm_enriched_at,Enriched_At__c,contact,datetime,ISO 8601,auto,W3
+sales,First touch at,pithm_first_touch_at,First_Touch_At__c,contact,datetime,ISO 8601,auto,W6
+sales,Response minutes,pithm_response_minutes,Response_Minutes__c,contact,number,business minutes,auto,W6
+sales,SLA breached,pithm_sla_breached,SLA_Breached__c,contact,boolean,,auto,W6
+sales,Hand-off brief,pithm_handoff_brief,Handoff_Brief__c,contact,long text,template T4,auto,W5
+hygiene,Invalid email,pithm_invalid_email,Invalid_Email__c,contact,boolean,,auto,W10
+hygiene,Preferred language,pithm_preferred_language,Preferred_Language__c,contact,picklist,en-GB|en-US|en-SG|fr-CA|ar|de|fr|es|nl|zh|ms|ta,auto,W1 W2
+hygiene,Time zone,pithm_time_zone,Time_Zone__c,contact,text,IANA (for example Asia/Dubai),auto,W2

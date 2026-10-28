@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/normalized_contact@1",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "pattern": "^[^A-Z\\s@]+@[^A-Z\\s@]+\\.[a-z]{2,}$"
+    },
+    "phone": {
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{6,14}$"
+    },
+    "country_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "subdivision": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"
+    },
+    "job_seniority": {
+      "enum": [
+        "c_level",
+        "vp",
+        "head",
+        "director",
+        "manager",
+        "individual_contributor",
+        "unknown"
+      ]
+    },
+    "job_function": {
+      "type": "string",
+      "minLength": 1
+    },
+    "email_domain_type": {
+      "enum": [
+        "free",
+        "business"
+      ]
+    }
+  },
+  "required": [
+    "email",
+    "country_code",
+    "job_seniority",
+    "email_domain_type"
+  ],
+  "additionalProperties": false
+}

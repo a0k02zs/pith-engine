@@ -1,0 +1,33 @@
+{
+  "id": "crm_ops.consent_sync",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W9: mirror engine consent changes into the CRM and its connected tools. Opt-out syncs are risk remove (guardrail G10), never blocked.",
+  "trigger": {
+    "event": "engine/consent.changed"
+  },
+  "steps": [
+    {
+      "id": "crm_write",
+      "type": "tool",
+      "tool": {
+        "name": "crm",
+        "action": "contact.mirror_consent",
+        "risk": "remove"
+      },
+      "timeout": "5m"
+    },
+    {
+      "id": "tools_sync",
+      "type": "tool",
+      "needs": [
+        "crm_write"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "connected_tools.suppress",
+        "risk": "remove"
+      }
+    }
+  ]
+}

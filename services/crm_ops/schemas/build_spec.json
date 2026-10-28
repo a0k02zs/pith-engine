@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/build_spec@1",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "api_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action": {
+            "enum": [
+              "create",
+              "update",
+              "keep"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "api_name",
+          "object",
+          "type",
+          "action"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "forms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required_fields": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "consent_checkboxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "purpose": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "wording_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "channel",
+                "purpose",
+                "wording_id"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "name",
+          "market",
+          "required_fields",
+          "consent_checkboxes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "workflow_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform_steps": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "workflow_ref",
+          "platform_steps"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "integration_users": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "scopes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "case_id",
+          "fix"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tier_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "fields",
+    "forms",
+    "workflows",
+    "integration_users",
+    "fixes",
+    "tier_checks"
+  ],
+  "additionalProperties": false
+}

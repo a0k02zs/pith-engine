@@ -1,0 +1,132 @@
+{
+  "id": "crm_ops.score_route",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W4 + W5: score with the approved model, set MQL, route, write the hand-off brief, alert.",
+  "trigger": {
+    "event": "svc.crm_ops/score.requested"
+  },
+  "concurrency": {
+    "key": "event.data.client_id + event.data.contact_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "score",
+      "type": "tool",
+      "tool": {
+        "name": "crm_ops",
+        "action": "score.calculate",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "write_score",
+      "type": "tool",
+      "needs": [
+        "score"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "contact.update_score_fields",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "is_mql",
+      "type": "branch",
+      "needs": [
+        "write_score"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.score.output.grade in ['A','B'] && steps.score.output.prior_stage in ['lead','nurture']",
+            "goto": "set_mql"
+          }
+        ],
+        "else": "done"
+      }
+    },
+    {
+      "id": "set_mql",
+      "type": "tool",
+      "needs": [
+        "is_mql"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "contact.set_stage_mql",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record_mql",
+      "type": "tool",
+      "needs": [
+        "set_mql"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "conversions.post(kind=mql)",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "route",
+      "type": "tool",
+      "needs": [
+        "set_mql"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "routing.assign_round_robin",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "brief",
+      "type": "agent",
+      "needs": [
+        "route"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/handoff_briefer@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "crm_ops/handoff_brief@1"
+      }
+    },
+    {
+      "id": "alert",
+      "type": "tool",
+      "needs": [
+        "brief"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "owner.notify(new_mql)",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_routed",
+      "type": "emit",
+      "needs": [
+        "alert"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/lead.routed"
+      }
+    },
+    {
+      "id": "done",
+      "type": "emit",
+      "needs": [
+        "is_mql"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/score.updated"
+      }
+    }
+  ]
+}

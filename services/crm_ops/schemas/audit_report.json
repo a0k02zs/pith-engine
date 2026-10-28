@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/audit_report@1",
+  "type": "object",
+  "properties": {
+    "health_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "warn",
+              "fail",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "check",
+          "result",
+          "target",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "top_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "issue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effort": {
+            "enum": [
+              "S",
+              "M",
+              "L"
+            ]
+          }
+        },
+        "required": [
+          "rank",
+          "issue",
+          "impact",
+          "fix",
+          "effort"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    },
+    "keep": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "package": {
+      "enum": [
+        "foundation",
+        "growth",
+        "migration"
+      ]
+    },
+    "package_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "health_score",
+    "table",
+    "top_issues",
+    "keep",
+    "package",
+    "package_reason",
+    "unknowns"
+  ],
+  "additionalProperties": false
+}

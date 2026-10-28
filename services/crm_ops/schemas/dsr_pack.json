@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm_ops/dsr_pack@1",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "enum": [
+        "access",
+        "delete",
+        "correct"
+      ]
+    },
+    "market": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date"
+    },
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "system": {
+            "type": "string",
+            "minLength": 1
+          },
+          "data_found": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "system",
+          "data_found",
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "kind",
+    "market",
+    "deadline",
+    "systems",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

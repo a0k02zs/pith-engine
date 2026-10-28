@@ -1,0 +1,58 @@
+{
+  "id": "crm_ops.dsr",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W9 DSR branch: an agent prepares the export or delete list; a person approves; engine erasure sends engine/contact.erased.",
+  "trigger": {
+    "event": "svc.crm_ops/dsr.received"
+  },
+  "steps": [
+    {
+      "id": "prepare",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "crm_ops/dsr_preparer@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "crm_ops/dsr_pack@1"
+      }
+    },
+    {
+      "id": "approve_dsr",
+      "type": "gate",
+      "needs": [
+        "prepare"
+      ],
+      "gate": {
+        "approval_kind": "data_change",
+        "required_roles": [
+          "client_legal"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "execute",
+      "type": "tool",
+      "needs": [
+        "approve_dsr"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "contacts.delete_or_export",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "emit_done",
+      "type": "emit",
+      "needs": [
+        "execute"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/dsr.completed"
+      }
+    }
+  ]
+}

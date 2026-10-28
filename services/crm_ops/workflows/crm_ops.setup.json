@@ -1,0 +1,182 @@
+{
+  "id": "crm_ops.setup",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "Plan service 9 pipeline: audit, design, approve, build in sandbox, test, go live.",
+  "trigger": {
+    "manual": true
+  },
+  "steps": [
+    {
+      "id": "audit_export",
+      "type": "tool",
+      "tool": {
+        "name": "crm",
+        "action": "export.metadata_and_sample",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "audit",
+      "type": "agent",
+      "needs": [
+        "audit_export"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/auditor@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "crm_ops/audit_report@1"
+      }
+    },
+    {
+      "id": "design",
+      "type": "agent",
+      "needs": [
+        "audit"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/architect@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "crm_ops/design_doc@1"
+      }
+    },
+    {
+      "id": "approve_design",
+      "type": "gate",
+      "needs": [
+        "design"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "client_sales",
+          "client_marketing_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_changes": "design",
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "confirm_platform",
+      "type": "gate",
+      "needs": [
+        "approve_design"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "ops_lead"
+        ],
+        "sla_hours": 24,
+        "on_changes": "design"
+      }
+    },
+    {
+      "id": "build_config",
+      "type": "agent",
+      "needs": [
+        "confirm_platform"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/config_drafter@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "crm_ops/build_spec@1"
+      }
+    },
+    {
+      "id": "build_sandbox",
+      "type": "tool",
+      "needs": [
+        "build_config"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "sandbox.apply_build_spec",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "test",
+      "type": "agent",
+      "needs": [
+        "build_sandbox"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/qa_tester@1",
+        "model": "claude-haiku-5-5",
+        "tools": [
+          "crm.sandbox.create_test_lead",
+          "crm.sandbox.read_record"
+        ],
+        "output_schema": "crm_ops/test_report@1"
+      }
+    },
+    {
+      "id": "test_result",
+      "type": "branch",
+      "needs": [
+        "test"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.test.output.blockers > 0 || steps.test.output.consent_failures > 0",
+            "goto": "build_config"
+          }
+        ],
+        "else": "approve_go_live"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "needs": [
+        "test_result"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "ops_lead"
+        ],
+        "sla_hours": 24,
+        "on_changes": "build_config",
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "deploy_live",
+      "type": "tool",
+      "needs": [
+        "approve_go_live"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "live.apply_build_spec",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "emit_live",
+      "type": "emit",
+      "needs": [
+        "deploy_live"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/setup.live"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "agent",
+      "needs": [
+        "emit_live"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/learn@1",
+        "model": "claude-haiku-5-5"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "crm_ops.recycle",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W8: rejected MQL, closed-lost or 90 days idle goes back to nurture by reason.",
+  "trigger": {
+    "event": "svc.crm_ops/lead.rejected"
+  },
+  "steps": [
+    {
+      "id": "apply_reason",
+      "type": "tool",
+      "tool": {
+        "name": "crm",
+        "action": "contact.apply_recycle_rule",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "feedback",
+      "type": "emit",
+      "needs": [
+        "apply_reason"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/score.feedback"
+      }
+    },
+    {
+      "id": "to_nurture",
+      "type": "emit",
+      "needs": [
+        "apply_reason"
+      ],
+      "emit": {
+        "event": "svc.crm_ops/nurture.eligible"
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "id": "crm_ops.daily_health",
+  "version": 1,
+  "service": "crm_ops",
+  "description": "W10: daily data health monitor at 06:00 client time.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "steps": [
+    {
+      "id": "scan",
+      "type": "tool",
+      "tool": {
+        "name": "crm",
+        "action": "health.scan",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "triage",
+      "type": "agent",
+      "needs": [
+        "scan"
+      ],
+      "agent": {
+        "prompt_ref": "crm_ops/hygiene_monitor@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": false,
+        "output_schema": "crm_ops/health_triage@1"
+      }
+    },
+    {
+      "id": "block_no_consent",
+      "type": "tool",
+      "needs": [
+        "triage"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "contacts.suppress_marketing",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "auto_fix",
+      "type": "tool",
+      "needs": [
+        "triage"
+      ],
+      "tool": {
+        "name": "crm",
+        "action": "health.apply_allowed_fixes",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "digest",
+      "type": "tool",
+      "needs": [
+        "auto_fix",
+        "block_no_consent"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create(kind=report, notify=ops_lead)",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "metrics",
+      "type": "emit",
+      "needs": [
+        "digest"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}
