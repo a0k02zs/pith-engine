@@ -47,25 +47,40 @@
     },
     "preview_notes": {
       "type": "string"
+    },
+    "template_reused": {
+      "type": "boolean",
+      "description": "True when the page uses an approved template with no layout change (lets G2a skip)."
+    },
+    "only_moves_or_removes_approved_elements": {
+      "type": "boolean",
+      "description": "True when a variant only moves or removes approved elements (lets G2a skip)."
     }
   },
   "required": [
     "kind",
     "html",
     "changes",
-    "preview_notes"
+    "preview_notes",
+    "template_reused",
+    "only_moves_or_removes_approved_elements"
   ],
   "additionalProperties": false,
   "allOf": [
     {
       "if": {
+        "type": "object",
         "properties": {
           "kind": {
             "const": "page"
           }
-        }
+        },
+        "required": [
+          "kind"
+        ]
       },
       "then": {
+        "type": "object",
         "properties": {
           "html": {
             "type": "string",
@@ -74,8 +89,10 @@
         }
       },
       "else": {
+        "type": "object",
         "properties": {
           "changes": {
+            "type": "array",
             "minItems": 1
           }
         }

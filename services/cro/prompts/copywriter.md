@@ -23,4 +23,5 @@ Output schema cro/page_copy@1:
 { "market": str, "language": str,
   "sections": [{ "id": str, "headline": str|null, "body": str|null,
                  "cta": str|null, "proof_source_ids": [str] }],
-  "new_claims": [str], "missing": [str] }
+  "new_claims": [str], "missing": [str],
+  "copy_reused": bool, "new_copy_ids": [str] }

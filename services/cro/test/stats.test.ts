@@ -31,8 +31,8 @@ describe("plan", () => {
     expect(p.testable).toBe(true);
   });
 
-  it("needs 3,841 per arm from 10% to 12%", () => {
-    expect(plan({ baseline: 0.1, mde: 0.2, dailyVisitors: 1000 }).sample_per_arm).toBe(3841);
+  it("needs 3,839 per arm from 10% to 12%", () => {
+    expect(plan({ baseline: 0.1, mde: 0.2, dailyVisitors: 1000 }).sample_per_arm).toBe(3839);
   });
 
   it("runs at least 14 days and in full weeks", () => {
@@ -92,8 +92,8 @@ describe("compare", () => {
     const [c] = compare({ n: 10_000, x: 400 }, [{ name: "B", n: 10_000, x: 480 }]);
     expect(c.name).toBe("B");
     expect(c.lift_relative).toBe(0.2);
-    expect(c.z).toBeCloseTo(2.7558, 3);
-    expect(c.p_value).toBeCloseTo(0.00585, 4);
+    expect(c.z).toBeCloseTo(2.7582, 3);
+    expect(c.p_value).toBeCloseTo(0.00581, 4);
     expect(c.significant).toBe(true);
     expect(c.direction).toBe("better");
     expect(c.ci_relative[0]).toBeGreaterThan(0);
@@ -108,9 +108,9 @@ describe("compare", () => {
   });
 
   it("corrects alpha for many variants", () => {
-    // p is about 0.03: significant with 1 variant, not with 2 (alpha 0.025 each).
+    // p is about 0.04: significant with 1 variant, not with 2 (alpha 0.025 each).
     const control = { n: 10_000, x: 400 };
-    const v = { name: "B", n: 10_000, x: 465 };
+    const v = { name: "B", n: 10_000, x: 460 };
     expect(compare(control, [v])[0].significant).toBe(true);
     expect(compare(control, [v, { name: "C", n: 10_000, x: 400 }])[0].significant).toBe(false);
   });

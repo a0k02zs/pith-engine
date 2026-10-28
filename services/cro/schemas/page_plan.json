@@ -94,13 +94,27 @@
   ],
   "additionalProperties": false,
   "if": {
+    "type": "object",
     "properties": {
       "status": {
         "const": "ok"
       }
-    }
+    },
+    "required": [
+      "status"
+    ]
   },
   "then": {
+    "type": "object",
+    "properties": {
+      "template": true,
+      "primary_cta": true,
+      "message_match_promise": true,
+      "sections": true,
+      "markets": true,
+      "languages": true,
+      "launch_test": true
+    },
     "required": [
       "template",
       "primary_cta",
@@ -112,8 +126,10 @@
     ]
   },
   "else": {
+    "type": "object",
     "properties": {
       "questions": {
+        "type": "array",
         "minItems": 1
       }
     }

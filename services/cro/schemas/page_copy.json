@@ -71,6 +71,18 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "copy_reused": {
+      "type": "boolean",
+      "description": "True when every section reuses approved copy."
+    },
+    "new_copy_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Sections with copy that no person has approved yet."
     }
   },
   "required": [
@@ -78,7 +90,9 @@
     "language",
     "sections",
     "new_claims",
-    "missing"
+    "missing",
+    "copy_reused",
+    "new_copy_ids"
   ],
   "additionalProperties": false
 }

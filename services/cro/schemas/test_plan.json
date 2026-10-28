@@ -153,13 +153,18 @@
   "allOf": [
     {
       "if": {
+        "type": "object",
         "properties": {
           "design": {
             "const": "not_testable"
           }
-        }
+        },
+        "required": [
+          "design"
+        ]
       },
       "then": {
+        "type": "object",
         "properties": {
           "fallback": {
             "type": "string"
@@ -167,6 +172,7 @@
         }
       },
       "else": {
+        "type": "object",
         "properties": {
           "fallback": {
             "const": null
@@ -176,13 +182,18 @@
     },
     {
       "if": {
+        "type": "object",
         "properties": {
           "design": {
             "const": "ab"
           }
-        }
+        },
+        "required": [
+          "design"
+        ]
       },
       "then": {
+        "type": "object",
         "properties": {
           "arms": {
             "const": 2
@@ -192,15 +203,21 @@
     },
     {
       "if": {
+        "type": "object",
         "properties": {
           "design": {
             "const": "abn"
           }
-        }
+        },
+        "required": [
+          "design"
+        ]
       },
       "then": {
+        "type": "object",
         "properties": {
           "arms": {
+            "type": "integer",
             "minimum": 3
           }
         }

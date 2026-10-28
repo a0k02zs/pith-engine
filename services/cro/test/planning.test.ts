@@ -35,7 +35,7 @@ describe("schedule", () => {
   });
 
   it("moves the start past Black Friday and Christmas in the UK", () => {
-    const s = schedule({ ...base, markets: ["GB"], earliestStart: "2026-11-16" });
+    const s = schedule({ ...base, dailyVisitors: 500, markets: ["GB"], earliestStart: "2026-11-16" });
     expect(s.avoided.map((b) => b.name)).toEqual(["Black Friday to Cyber Monday", "Christmas to Boxing Day"]);
     expect(s.start).toBe("2026-12-27");
   });

@@ -23,4 +23,5 @@ Output schema cro/build@1:
   "html": str|null,
   "changes": [{ "selector": str, "action": "text"|"attr"|"insert"|"remove"|"style",
                 "value": str }],
-  "preview_notes": str }
+  "preview_notes": str,
+  "template_reused": bool, "only_moves_or_removes_approved_elements": bool }

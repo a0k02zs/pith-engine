@@ -27,4 +27,5 @@ Output schema cro/hypotheses@1:
    "markets": [str], "audience": str, "primary_metric": str,
    "guardrails": [str], "evidence_ids": [str],
    "impact": 1-5, "confidence": 1-5, "effort": 1-5, "priority": number,
-   "flags": ["NEW_CLAIM"|"NEEDS_FINANCE_APPROVAL"|"CHECKOUT_CHANGE"] }] }
+   "flags": ["NEW_CLAIM"|"NEEDS_FINANCE_APPROVAL"|"CHECKOUT_CHANGE"] }],
+  "selected": <the hypothesis to test now, highest priority that fits the package> }
