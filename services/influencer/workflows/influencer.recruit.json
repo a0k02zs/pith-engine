@@ -182,8 +182,7 @@
         "name": "engine",
         "action": "rights.create",
         "risk": "write_internal"
-      },
-      "name": "Pending engine action: the API has POST /clients/{id}/rights, enums.json has no action for it yet"
+      }
     },
     {
       "id": "contracted",

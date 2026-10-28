@@ -36,15 +36,6 @@ npm test
 - Paid amplification goes to `paid_social.creator_amplify` only after a `budget` gate, with the ad platform. Paid social runs its own budget gate per creator ad; the budget approval id goes along as context.
 - Every engine disclosure label is accepted, except where a stricter market rule narrows it: Germany treats a bare `#ad` as a weak tag, and France accepts only "Publicité" or "Collaboration commerciale" (engine rule `FR-INFLUENCER-LAW`).
 
-## Pending in the engine
-
-Two steps call engine actions that `enums.json` does not list yet. The API already has the endpoints. The tests allow only these 2.
-
-| Action | Step | API endpoint |
-|---|---|---|
-| `parties.upsert` | `influencer.plan` `save_parties` | `POST /parties` |
-| `rights.create` | `influencer.recruit` `record_rights` | `POST /clients/{id}/rights` |
-
 ## Not legal advice
 
 The market rules are a planning summary. A local lawyer confirms each market before the first campaign. Qatar, Kuwait, Bahrain and Oman creator licence rules need a local check.

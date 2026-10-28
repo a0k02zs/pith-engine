@@ -8,8 +8,6 @@ const engineSchema = JSON.parse(readFileSync(engineDir("contracts", "schemas", "
 const enums = JSON.parse(readFileSync(engineDir("contracts", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
-/** Engine actions this service needs that enums.json does not list yet. The API has the endpoints (POST /parties, POST /clients/{id}/rights). */
-const PENDING_ENGINE_ACTIONS = ["parties.upsert", "rights.create"];
 const NEVER_SKIP = ["budget", "contract", "payout", "claim", "escalation"];
 
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
@@ -63,7 +61,7 @@ describe("influencer workflows", () => {
           expect(Object.keys(enums.tool_registry)).toContain(s.tool!.name);
           expect(Object.keys(enums.tool_risk_meaning)).toContain(s.tool!.risk);
           if (s.tool!.name === "engine") {
-            expect([...Object.keys(enums.engine_actions), ...PENDING_ENGINE_ACTIONS], `${wf.id}.${s.id}`).toContain(s.tool!.action);
+            expect(Object.keys(enums.engine_actions), `${wf.id}.${s.id}`).toContain(s.tool!.action);
           }
         }
       });

@@ -63,8 +63,7 @@
         "name": "engine",
         "action": "parties.upsert",
         "risk": "write_internal"
-      },
-      "name": "Pending engine action: the API has POST /parties, enums.json has no action for it yet"
+      }
     },
     {
       "id": "vet",
