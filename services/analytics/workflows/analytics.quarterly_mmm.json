@@ -1,0 +1,166 @@
+{
+  "id": "analytics.quarterly_mmm",
+  "version": 1,
+  "service": "analytics",
+  "description": "First Monday of each quarter. Marketing mix model refit and budget scenarios (Optimise tier). Readiness and fit checks run in code. Gate G6. Agents never change a budget.",
+  "trigger": {
+    "cron": "0 5 1-7 1,4,7,10 1"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "input",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:mmm_weekly",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "readiness",
+      "type": "tool",
+      "needs": [
+        "input"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "mmm.readiness",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_ready",
+      "type": "branch",
+      "needs": [
+        "readiness"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.readiness.output.ready",
+            "goto": "not_ready"
+          }
+        ],
+        "else": "fit"
+      }
+    },
+    {
+      "id": "not_ready",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/alert.raised"
+      }
+    },
+    {
+      "id": "fit",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "mmm.fit:config/meridian-config.yaml",
+        "risk": "write_internal"
+      },
+      "timeout": "4h"
+    },
+    {
+      "id": "fit_check",
+      "type": "tool",
+      "needs": [
+        "fit"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "mmm.check_fit",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_fit",
+      "type": "branch",
+      "needs": [
+        "fit_check"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.fit_check.output.pass",
+            "goto": "fit_failed"
+          }
+        ],
+        "else": "scenarios"
+      }
+    },
+    {
+      "id": "fit_failed",
+      "type": "emit",
+      "emit": {
+        "event": "svc.analytics/alert.raised"
+      }
+    },
+    {
+      "id": "scenarios",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "mmm.scenarios",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "readout",
+      "type": "agent",
+      "needs": [
+        "scenarios"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/mmm_readout@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/mmm_readout@1"
+      }
+    },
+    {
+      "id": "g6_mmm",
+      "type": "gate",
+      "needs": [
+        "readout"
+      ],
+      "name": "G6 MMM and budget advice",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "analytics_lead",
+          "strategist"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "readout"
+      }
+    },
+    {
+      "id": "deliver",
+      "type": "tool",
+      "needs": [
+        "g6_mmm"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "reports.publish",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record_roi",
+      "type": "emit",
+      "needs": [
+        "g6_mmm"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    }
+  ]
+}

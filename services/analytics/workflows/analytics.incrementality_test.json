@@ -1,0 +1,200 @@
+{
+  "id": "analytics.incrementality_test",
+  "version": 1,
+  "service": "analytics",
+  "description": "Design, run and read a holdout or geo lift test. Gate G5 approves the design, then the spend change. A person changes spend in the ad platform; no step here spends.",
+  "trigger": {
+    "event": "svc.analytics/test.requested"
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "history",
+      "type": "tool",
+      "tool": {
+        "name": "analytics",
+        "action": "warehouse.query:geo_daily_52w",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "design",
+      "type": "agent",
+      "needs": [
+        "history"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/test_design@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/test_design@1"
+      }
+    },
+    {
+      "id": "power",
+      "type": "tool",
+      "needs": [
+        "design"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "test.power",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "route_power",
+      "type": "branch",
+      "needs": [
+        "power"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.power.output.underpowered",
+            "goto": "design"
+          }
+        ],
+        "else": "g5_design"
+      }
+    },
+    {
+      "id": "g5_design",
+      "type": "gate",
+      "needs": [
+        "route_power"
+      ],
+      "name": "G5 test design",
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "strategist",
+          "client_marketing_lead"
+        ],
+        "sla_hours": 72,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "design"
+      }
+    },
+    {
+      "id": "g5_spend",
+      "type": "gate",
+      "needs": [
+        "g5_design"
+      ],
+      "name": "G5 holdout spend change",
+      "gate": {
+        "approval_kind": "budget_change",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 8,
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "setup",
+      "type": "task",
+      "needs": [
+        "g5_spend"
+      ],
+      "task": {
+        "title": "Set up the holdout in the ad platforms as the approved design says",
+        "assignee_roles": [
+          "performance_marketer"
+        ],
+        "due_hours": 72,
+        "done_output_schema": "analytics/test_setup@1"
+      }
+    },
+    {
+      "id": "ended",
+      "type": "wait",
+      "needs": [
+        "setup"
+      ],
+      "wait": {
+        "event": "svc.analytics/test.ended",
+        "match": "event.data.client_id == input.client_id",
+        "timeout": "120d"
+      }
+    },
+    {
+      "id": "analyse",
+      "type": "tool",
+      "needs": [
+        "ended"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "test.analyse",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "readout",
+      "type": "agent",
+      "needs": [
+        "analyse"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/findings@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/findings@1"
+      }
+    },
+    {
+      "id": "g4_report",
+      "type": "gate",
+      "needs": [
+        "readout"
+      ],
+      "name": "G4 test readout review",
+      "gate": {
+        "approval_kind": "report",
+        "required_roles": [
+          "strategist"
+        ],
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "readout"
+      }
+    },
+    {
+      "id": "learn",
+      "type": "tool",
+      "needs": [
+        "g4_report"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "learnings.write",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record_lift",
+      "type": "emit",
+      "needs": [
+        "g4_report"
+      ],
+      "emit": {
+        "event": "engine/metric.recorded"
+      }
+    },
+    {
+      "id": "completed",
+      "type": "emit",
+      "needs": [
+        "learn",
+        "record_lift"
+      ],
+      "emit": {
+        "event": "svc.analytics/test.completed"
+      }
+    }
+  ]
+}

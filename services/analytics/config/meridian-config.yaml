@@ -1,0 +1,61 @@
+# Marketing mix model config · service 12 · Optimise tier
+# Engine: Google Meridian (Bayesian MMM). Fallback: Meta Robyn when the client needs a ridge model or Meridian fails.
+# Filled per client by the mmm-analyst agent (readiness mode) and checked at gate G6.
+client_id: "{{client_id}}"
+input_sql: sql/mmm_weekly.sql
+time_grain: week                  # ISO weeks; see sql/mmm_weekly.sql
+geo_level: market                 # one geo per engine country code with enough volume; else national
+kpi:
+  column: revenue                 # or conversions for clients with no reliable revenue
+  type: revenue
+  currency: "{{report_currency}}" # convert all markets at monthly average FX before the fit
+min_weeks: 104                    # 78 allowed with note "low data, wide intervals"
+holdout_weeks: 8                  # last 8 weeks held out for MAPE
+
+media:                            # paid channels: spend columns
+  - { channel: paid_search, spend: spend_paid_search, adstock: geometric, max_lag_weeks: 4 }
+  - { channel: paid_social, spend: spend_paid_social, adstock: geometric, max_lag_weeks: 6 }
+  - { channel: video,       spend: spend_video,       adstock: geometric, max_lag_weeks: 8 }
+  - { channel: influencer,  spend: spend_influencer,  adstock: geometric, max_lag_weeks: 8 }
+  - { channel: affiliate,   spend: spend_affiliate,   adstock: geometric, max_lag_weeks: 2 }
+  - { channel: offline,     spend: spend_offline,     adstock: geometric, max_lag_weeks: 12 }
+organic_media:                    # non-paid channels: volume, no ROI prior
+  - { channel: email,          volume: volume_email_sends }
+  - { channel: social_organic, volume: volume_social_organic }
+saturation: hill                  # per channel
+
+controls:
+  - price_index                   # from client brain
+  - promotion_flag                # from campaign calendar (service 2)
+  - stock_out_share               # e-commerce only
+  - competitor_search_index       # optional
+holidays:                         # one binary column per event per market; dates from the holiday calendar job
+  GB: [black_friday_week, christmas_week, boxing_day_week, january_sales]
+  SG: [chinese_new_year, hari_raya_puasa, deepavali, sale_9_9, sale_11_11, sale_12_12]
+  US: [super_bowl, july_4, thanksgiving_week, black_friday_cyber_monday]
+  CA: [canada_day, thanksgiving_ca, black_friday, boxing_day]
+  GCC: [ramadan_weeks, eid_al_fitr, eid_al_adha, national_day, white_friday, dubai_shopping_festival]  # Ramadan/Eid from calendar API, never hard-coded
+  EU: [black_friday, christmas_week, august_holiday]
+
+priors:
+  roi_default: { distribution: lognormal, median: 1.0, sigma: 0.9 }   # weak prior for channels with no test
+  from_tests: true                # each incremental_lift result in the last 18 months sets an ROI prior on its channel
+  baseline_share_bounds: [0.20, 0.95]
+
+sampling:
+  chains: 4
+  draws: 1000
+  warmup: 1000
+  seed: 2026
+
+acceptance:                       # mmm-analyst model_check mode
+  max_rhat: 1.1
+  max_holdout_mape: 0.15
+  target_holdout_mape: 0.10
+  test_direction_must_agree: true
+
+optimisation:
+  scenarios: [same_budget_resplit, budget_minus_10, budget_plus_10]
+  max_channel_change_per_quarter: 0.25
+  use: marginal_roi
+  output_label: "Draft for approval"   # G6; only a person changes budget
