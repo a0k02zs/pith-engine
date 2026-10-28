@@ -68,11 +68,8 @@ describe("pr workflows", () => {
       it("uses registered tools, and engine actions that exist", () => {
         for (const s of wf.steps.filter((s) => s.tool)) {
           const name = s.tool!.name!;
-          // "mailbox" is requested from the engine thread (docs/07-engine-requests.md)
-          if (name !== "mailbox") expect(Object.keys(enums.tool_registry)).toContain(name);
-          if (name === "engine" && !["parties.upsert", "metrics.query"].includes(s.tool!.action!)) {
-            expect(Object.keys(enums.engine_actions)).toContain(s.tool!.action);
-          }
+          expect(Object.keys(enums.tool_registry)).toContain(name);
+          if (name === "engine") expect(Object.keys(enums.engine_actions)).toContain(s.tool!.action);
         }
       });
 

@@ -19,7 +19,7 @@ describe("PR compliance overlay", () => {
 
   it("is registered as the engine's pr service overlay", () => {
     const rules = JSON.parse(readFileSync(dir("..", "..", "engine", "specs", "compliance-rules.json"), "utf8"));
-    expect(rules.service_overlays.pr).toMatch(/^services\/pr-thought-leadership\//);
+    expect(rules.service_overlays.pr).toBe("services/pr-thought-leadership/config/compliance-overlay.json");
   });
 
   it("passes a clean UK pitch", () => expect(checkOverlay(pitch)).toEqual({ outcome: "pass", findings: [] }));
