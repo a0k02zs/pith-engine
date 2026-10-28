@@ -1,0 +1,61 @@
+{
+  "id": "email.audience_sync",
+  "version": 1,
+  "service": "email",
+  "description": "Daily. Resolve consented contacts per market and push segments to the email platform. Removes anyone who lost consent.",
+  "trigger": {
+    "cron": "0 2 * * *"
+  },
+  "concurrency": {
+    "key": "client_id",
+    "limit": 1
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Resolve consented audience",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "segment",
+      "type": "agent",
+      "needs": [
+        "resolve"
+      ],
+      "name": "Update segment definitions",
+      "agent": {
+        "prompt_ref": "email/segment@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/segments@1"
+      }
+    },
+    {
+      "id": "push",
+      "type": "tool",
+      "needs": [
+        "segment"
+      ],
+      "name": "Sync lists and suppressions to the platform",
+      "tool": {
+        "name": "esp",
+        "action": "lists.sync",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "needs": [
+        "push"
+      ],
+      "emit": {
+        "event": "svc.email/audience.synced"
+      }
+    }
+  ]
+}

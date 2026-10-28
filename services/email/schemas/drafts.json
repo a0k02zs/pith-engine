@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/drafts@1",
+  "type": "object",
+  "properties": {
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 150
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "previews": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 150
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "bodies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "enum": [
+                    "A",
+                    "B"
+                  ]
+                },
+                "html": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "variant",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 2
+          },
+          "cta": {
+            "type": "string",
+            "minLength": 1
+          },
+          "alt_texts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "needs_native_editor": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email_key",
+          "market",
+          "language",
+          "subjects",
+          "previews",
+          "bodies",
+          "cta",
+          "alt_texts",
+          "claim_ids",
+          "needs_native_editor"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "template_reused": {
+      "type": "boolean"
+    },
+    "new_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "new_claim_requests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "emails",
+    "template_reused",
+    "new_claim_ids",
+    "new_claim_requests",
+    "blockers"
+  ],
+  "additionalProperties": false
+}

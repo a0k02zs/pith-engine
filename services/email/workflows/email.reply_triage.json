@@ -1,0 +1,91 @@
+{
+  "id": "email.reply_triage",
+  "version": 1,
+  "service": "email",
+  "description": "Real time. Sort each reply to an outbound or flow email. Stop the sequence, route to sales, or escalate.",
+  "trigger": {
+    "event": "svc.email/reply.received"
+  },
+  "steps": [
+    {
+      "id": "classify",
+      "type": "agent",
+      "agent": {
+        "prompt_ref": "email/reply_triage@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "email/reply_class@1"
+      }
+    },
+    {
+      "id": "stop",
+      "type": "tool",
+      "needs": [
+        "classify"
+      ],
+      "name": "Stop the sequence for this contact (every class)",
+      "tool": {
+        "name": "outbound",
+        "action": "sequence.stop_contact",
+        "risk": "remove"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "needs": [
+        "stop"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.classify.output.class in ['complaint','legal','press','regulator']",
+            "goto": "escalate"
+          },
+          {
+            "if": "steps.classify.output.class in ['unsubscribe','not_interested']",
+            "goto": "optout"
+          },
+          {
+            "if": "steps.classify.output.class in ['interested','meeting_request','referral']",
+            "goto": "to_sales"
+          }
+        ],
+        "else": "log"
+      }
+    },
+    {
+      "id": "escalate",
+      "type": "emit",
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    },
+    {
+      "id": "optout",
+      "type": "tool",
+      "name": "Record the opt-out in the engine consent store",
+      "tool": {
+        "name": "engine",
+        "action": "consents.withdraw",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "to_sales",
+      "type": "tool",
+      "name": "Create a CRM task for the owner with the reply and a brief",
+      "tool": {
+        "name": "crm",
+        "action": "task.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "log",
+      "type": "emit",
+      "emit": {
+        "event": "svc.email/reply.classified"
+      }
+    }
+  ]
+}

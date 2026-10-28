@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/qa_report@1",
+  "type": "object",
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "block",
+              "fix",
+              "note"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          },
+          "suggested_fix": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "email_key",
+          "rule",
+          "severity",
+          "detail",
+          "suggested_fix"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pass": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "findings",
+    "pass"
+  ],
+  "additionalProperties": false
+}

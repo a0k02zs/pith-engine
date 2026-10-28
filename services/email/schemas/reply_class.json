@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "email/reply_class@1",
+  "type": "object",
+  "properties": {
+    "class": {
+      "enum": [
+        "interested",
+        "meeting_request",
+        "referral",
+        "not_now",
+        "not_interested",
+        "unsubscribe",
+        "out_of_office",
+        "wrong_person",
+        "bounce_or_auto",
+        "complaint",
+        "legal",
+        "press",
+        "regulator",
+        "other"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "return_date": {
+      "type": "string",
+      "minLength": 1,
+      "format": "date"
+    },
+    "referral": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "minLength": 1,
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "sales_brief": {
+      "type": "string",
+      "minLength": 1
+    },
+    "quote": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "class",
+    "confidence",
+    "quote"
+  ],
+  "additionalProperties": false
+}
