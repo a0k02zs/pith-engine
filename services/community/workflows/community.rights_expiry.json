@@ -1,0 +1,84 @@
+{
+  "id": "community.rights_expiry",
+  "version": 1,
+  "service": "community",
+  "description": "Daily: warn 30 days before rights expire; take content down when rights expire or are revoked.",
+  "trigger": {
+    "cron": "0 6 * * *"
+  },
+  "steps": [
+    {
+      "id": "scan",
+      "type": "tool",
+      "name": "Find grants that expire within 30 days, expired or revoked",
+      "tool": {
+        "name": "engine",
+        "action": "rights.list_expiring",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "warn",
+      "type": "emit",
+      "name": "Tell the account lead and the services that use the content",
+      "emit": {
+        "event": "svc.community/rights.expiring"
+      },
+      "needs": [
+        "scan"
+      ]
+    },
+    {
+      "id": "unpublish_social",
+      "type": "tool",
+      "name": "Unpublish expired content from client social accounts",
+      "tool": {
+        "name": "social",
+        "action": "post.unpublish",
+        "risk": "remove"
+      },
+      "needs": [
+        "scan"
+      ]
+    },
+    {
+      "id": "unpublish_site",
+      "type": "tool",
+      "name": "Unpublish expired content from the site and product pages",
+      "tool": {
+        "name": "cms",
+        "action": "asset.unpublish",
+        "risk": "remove"
+      },
+      "needs": [
+        "scan"
+      ]
+    },
+    {
+      "id": "retire",
+      "type": "tool",
+      "name": "Retire the artifact so no service can use it",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.retire",
+        "risk": "remove"
+      },
+      "needs": [
+        "scan"
+      ]
+    },
+    {
+      "id": "changed",
+      "type": "emit",
+      "name": "Tell paid social and the other services to pull the content",
+      "emit": {
+        "event": "engine/rights.changed"
+      },
+      "needs": [
+        "unpublish_social",
+        "unpublish_site",
+        "retire"
+      ]
+    }
+  ]
+}

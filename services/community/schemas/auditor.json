@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/auditor@1",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gap": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        },
+        "required": [
+          "gap",
+          "evidence",
+          "impact"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "market",
+          "why"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "targets_90d": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kpi": {
+            "type": "string",
+            "minLength": 1
+          },
+          "now": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "target": {
+            "type": "number"
+          },
+          "basis": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kpi",
+          "now",
+          "target",
+          "basis"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "package": {
+      "enum": [
+        "review_engine",
+        "ugc_studio",
+        "community_builder",
+        "full_advocacy"
+      ]
+    },
+    "trigger_events": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "negative_themes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "maxItems": 3
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "summary",
+    "gaps",
+    "platforms",
+    "targets_90d",
+    "package",
+    "trigger_events",
+    "negative_themes",
+    "data_gaps"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/review_requester@1",
+  "type": "object",
+  "properties": {
+    "action": {
+      "enum": [
+        "send",
+        "skip"
+      ]
+    },
+    "skip_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "send_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "channel": {
+      "enum": [
+        "email",
+        "sms",
+        "whatsapp",
+        "in_app"
+      ]
+    },
+    "template_id": {
+      "enum": [
+        "E1",
+        "E2",
+        "E3",
+        "S1",
+        "B1",
+        "Q1"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "body": {
+      "type": "string"
+    },
+    "review_link": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "required": [
+    "action",
+    "skip_reason",
+    "send_at",
+    "channel",
+    "template_id",
+    "language",
+    "subject",
+    "body",
+    "review_link"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "skip"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "skip_reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "send"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "send_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}

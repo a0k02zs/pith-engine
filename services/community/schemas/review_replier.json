@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "community/review_replier@1",
+  "type": "object",
+  "properties": {
+    "class": {
+      "enum": [
+        "positive",
+        "mixed",
+        "negative"
+      ]
+    },
+    "risk": {
+      "enum": [
+        "green",
+        "amber",
+        "red"
+      ]
+    },
+    "risk_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "suspected_policy_violation": {
+      "type": "boolean"
+    },
+    "violation_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reply": {
+      "type": "string",
+      "minLength": 1
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "class",
+    "risk",
+    "risk_reasons",
+    "suspected_policy_violation",
+    "violation_reason",
+    "language",
+    "reply",
+    "themes"
+  ],
+  "additionalProperties": false
+}

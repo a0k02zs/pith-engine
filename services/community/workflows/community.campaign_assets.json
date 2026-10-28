@@ -1,0 +1,117 @@
+{
+  "id": "community.campaign_assets",
+  "version": 1,
+  "service": "community",
+  "description": "Campaign child run: supply rights-cleared customer content for a campaign brief. Nothing is used before the market launches.",
+  "trigger": {
+    "event": "engine/run.started"
+  },
+  "steps": [
+    {
+      "id": "find",
+      "type": "tool",
+      "name": "Find approved UGC that fits the channel brief",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "rights",
+      "type": "tool",
+      "name": "Check grants for each asset, use, channel and market",
+      "tool": {
+        "name": "engine",
+        "action": "rights.check",
+        "risk": "read"
+      },
+      "needs": [
+        "find"
+      ]
+    },
+    {
+      "id": "moderate",
+      "type": "agent",
+      "name": "Moderate each asset for the campaign use",
+      "agent": {
+        "prompt_ref": "community/moderator@1",
+        "model": "claude-haiku-5-5",
+        "reads_brain": true,
+        "output_schema": "community/moderator@1"
+      },
+      "needs": [
+        "rights"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Checks: compliance, brand",
+      "check": {
+        "kinds": [
+          "compliance",
+          "brand"
+        ]
+      },
+      "needs": [
+        "moderate"
+      ]
+    },
+    {
+      "id": "approve_assets",
+      "type": "gate",
+      "name": "Approve UGC for the campaign",
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "creative_lead",
+          "client_approver"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail"
+      },
+      "needs": [
+        "check"
+      ]
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "Register the assets with the campaign id",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.update",
+        "risk": "write_internal"
+      },
+      "needs": [
+        "approve_assets"
+      ]
+    },
+    {
+      "id": "wait_launch",
+      "type": "wait",
+      "name": "Wait for the market to launch",
+      "wait": {
+        "event": "svc.campaigns/market.launched",
+        "match": "data.campaign_id == run.input.campaign_id",
+        "timeout": "60d"
+      },
+      "needs": [
+        "register"
+      ]
+    },
+    {
+      "id": "release",
+      "type": "emit",
+      "name": "Release the assets to the channel services",
+      "emit": {
+        "event": "svc.community/ugc.released"
+      },
+      "needs": [
+        "wait_launch"
+      ]
+    }
+  ]
+}
