@@ -128,8 +128,14 @@ export function formatValue(value: unknown, format: Format, opts: Pick<RenderOpt
   const n = Number(value);
   if (!Number.isFinite(n)) return String(value);
   switch (format) {
-    case "currency":
-      return new Intl.NumberFormat(locale, { style: "currency", currency: opts.currency, notation: Math.abs(n) >= 1e5 ? "compact" : "standard", maximumFractionDigits: Math.abs(n) >= 100 || Number.isInteger(n) ? 0 : 2 }).format(n);
+    case "currency": {
+      // Compact with a fixed K or M suffix. Intl's compact notation differs between ICU versions ("k" or "K").
+      const [scaled, suffix] = Math.abs(n) >= 1e6 ? [n / 1e6, "M"] : Math.abs(n) >= 1e5 ? [n / 1e3, "K"] : [n, ""];
+      const digits = suffix === "M" ? 1 : Math.abs(n) >= 100 || Number.isInteger(n) ? 0 : 2;
+      const parts = new Intl.NumberFormat(locale, { style: "currency", currency: opts.currency, maximumFractionDigits: digits }).formatToParts(scaled);
+      const lastNumber = parts.map((x) => x.type).lastIndexOf(parts.some((x) => x.type === "fraction") ? "fraction" : "integer");
+      return parts.map((x, i) => x.value + (i === lastNumber ? suffix : "")).join("");
+    }
     case "ratio":
       return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2, minimumFractionDigits: 1 }).format(n)}×`;
     case "percent":

@@ -56,6 +56,8 @@ describe("formatting", () => {
     expect(formatValue(38.4, "currency", o)).toBe("£38.40");
     expect(formatValue(61200, "currency", o)).toBe("£61,200");
     expect(formatValue(254300, "currency", o)).toBe("£254K");
+    expect(formatValue(2543000, "currency", o)).toBe("£2.5M");
+    expect(formatValue(254300, "currency", { currency: "EUR", locale: "de-DE" })).toBe("254K\u00a0€");
     expect(formatValue(4.155, "ratio", o)).toBe("4.16×");
     expect(formatValue(0.985, "percent", o)).toBe("98.5%");
     expect(formatValue("2026-04-01", "month", o)).toBe("Apr 2026");
