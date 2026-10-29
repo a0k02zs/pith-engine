@@ -481,7 +481,8 @@
     "events": "Zoom, ON24, Livestorm",
     "outbound": "Apollo, sequencers",
     "enrichment": "Apollo, ZoomInfo, Clay, 6sense",
-    "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft"
+    "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft",
+    "crm_ops": "service-local pure functions in services/crm_ops (score.calculate, score_model.publish_version)"
   },
   "engine_actions": {
     "$comment": "Tool name 'engine'. Actions any service may call.",
