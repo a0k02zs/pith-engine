@@ -1,0 +1,1731 @@
+{
+ "kpi_table": [
+  {
+   "market": "GB",
+   "kpi": "revenue",
+   "current_value": 254300,
+   "prior_value": 238900,
+   "last_year_value": 201000,
+   "target": 250000,
+   "change_vs_prior": 0.064,
+   "label": "observed"
+  },
+  {
+   "market": "GB",
+   "kpi": "spend",
+   "current_value": 61200,
+   "prior_value": 58400,
+   "last_year_value": 52000,
+   "target": null,
+   "change_vs_prior": 0.048,
+   "label": "observed"
+  },
+  {
+   "market": "GB",
+   "kpi": "roas",
+   "current_value": 4.155,
+   "prior_value": 4.09,
+   "last_year_value": 3.87,
+   "target": 4.0,
+   "change_vs_prior": 0.016,
+   "label": "observed"
+  },
+  {
+   "market": "GB",
+   "kpi": "cpa",
+   "current_value": 38.4,
+   "prior_value": 36.9,
+   "last_year_value": 41.0,
+   "target": 35,
+   "change_vs_prior": 0.04,
+   "label": "observed"
+  },
+  {
+   "market": "SG",
+   "kpi": "revenue",
+   "current_value": 1,
+   "prior_value": 1,
+   "label": "observed"
+  }
+ ],
+ "daily_kpi_forecast": [
+  {
+   "date": "2026-09-01",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4022.42,
+   "expected": 4200.0,
+   "band_low": 3570.0,
+   "band_high": 4830.0
+  },
+  {
+   "date": "2026-09-01",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-02",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5012.7,
+   "expected": 4837.47,
+   "band_low": 4111.85,
+   "band_high": 5563.08
+  },
+  {
+   "date": "2026-09-02",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-03",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5047.03,
+   "expected": 5003.94,
+   "band_low": 4253.35,
+   "band_high": 5754.53
+  },
+  {
+   "date": "2026-09-03",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-04",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4096.93,
+   "expected": 4583.11,
+   "band_low": 3895.64,
+   "band_high": 5270.57
+  },
+  {
+   "date": "2026-09-04",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-05",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3467.89,
+   "expected": 3900.89,
+   "band_low": 3315.76,
+   "band_high": 4486.03
+  },
+  {
+   "date": "2026-09-05",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-06",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3120.79,
+   "expected": 3480.06,
+   "band_low": 2958.05,
+   "band_high": 4002.07
+  },
+  {
+   "date": "2026-09-06",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-07",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3580.48,
+   "expected": 3646.53,
+   "band_low": 3099.55,
+   "band_high": 4193.52
+  },
+  {
+   "date": "2026-09-07",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-08",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3897.21,
+   "expected": 4284.0,
+   "band_low": 3641.4,
+   "band_high": 4926.6
+  },
+  {
+   "date": "2026-09-08",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-09",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5071.98,
+   "expected": 4921.47,
+   "band_low": 4183.25,
+   "band_high": 5659.68
+  },
+  {
+   "date": "2026-09-09",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-10",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5182.09,
+   "expected": 5087.94,
+   "band_low": 4324.75,
+   "band_high": 5851.13
+  },
+  {
+   "date": "2026-09-10",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-11",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5200.56,
+   "expected": 4667.11,
+   "band_low": 3967.04,
+   "band_high": 5367.17
+  },
+  {
+   "date": "2026-09-11",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-12",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4327.72,
+   "expected": 3984.89,
+   "band_low": 3387.16,
+   "band_high": 4582.63
+  },
+  {
+   "date": "2026-09-12",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-13",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3259.76,
+   "expected": 3564.06,
+   "band_low": 3029.45,
+   "band_high": 4098.67
+  },
+  {
+   "date": "2026-09-13",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-14",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3559.06,
+   "expected": 3730.53,
+   "band_low": 3170.95,
+   "band_high": 4290.12
+  },
+  {
+   "date": "2026-09-14",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-15",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4033.3,
+   "expected": 4368.0,
+   "band_low": 3712.8,
+   "band_high": 5023.2
+  },
+  {
+   "date": "2026-09-15",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-16",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5172.34,
+   "expected": 5005.47,
+   "band_low": 4254.65,
+   "band_high": 5756.28
+  },
+  {
+   "date": "2026-09-16",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-17",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5231.21,
+   "expected": 5171.94,
+   "band_low": 4396.15,
+   "band_high": 5947.73
+  },
+  {
+   "date": "2026-09-17",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-18",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4248.94,
+   "expected": 4751.11,
+   "band_low": 4038.44,
+   "band_high": 5463.77
+  },
+  {
+   "date": "2026-09-18",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-19",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4245.06,
+   "expected": 4068.89,
+   "band_low": 3458.56,
+   "band_high": 4679.23
+  },
+  {
+   "date": "2026-09-19",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-20",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3485.34,
+   "expected": 3648.06,
+   "band_low": 3100.85,
+   "band_high": 4195.27
+  },
+  {
+   "date": "2026-09-20",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-21",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3771.68,
+   "expected": 3814.53,
+   "band_low": 3242.35,
+   "band_high": 4386.72
+  },
+  {
+   "date": "2026-09-21",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-22",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4766.54,
+   "expected": 4452.0,
+   "band_low": 3784.2,
+   "band_high": 5119.8
+  },
+  {
+   "date": "2026-09-22",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-23",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4776.89,
+   "expected": 5089.47,
+   "band_low": 4326.05,
+   "band_high": 5852.88
+  },
+  {
+   "date": "2026-09-23",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-24",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5287.73,
+   "expected": 5255.94,
+   "band_low": 4467.55,
+   "band_high": 6044.33
+  },
+  {
+   "date": "2026-09-24",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-25",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5101.36,
+   "expected": 4835.11,
+   "band_low": 4109.84,
+   "band_high": 5560.37
+  },
+  {
+   "date": "2026-09-25",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-26",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4631.48,
+   "expected": 4152.89,
+   "band_low": 3529.96,
+   "band_high": 4775.83
+  },
+  {
+   "date": "2026-09-26",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-27",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3658.72,
+   "expected": 3732.06,
+   "band_low": 3172.25,
+   "band_high": 4291.87
+  },
+  {
+   "date": "2026-09-27",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-28",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3572.91,
+   "expected": 3898.53,
+   "band_low": 3313.75,
+   "band_high": 4483.32
+  },
+  {
+   "date": "2026-09-28",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-29",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4034.36,
+   "expected": 4536.0,
+   "band_low": 3855.6,
+   "band_high": 5216.4
+  },
+  {
+   "date": "2026-09-29",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-09-30",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5501.96,
+   "expected": 5173.47,
+   "band_low": 4397.45,
+   "band_high": 5949.48
+  },
+  {
+   "date": "2026-09-30",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-01",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5821.15,
+   "expected": 5339.94,
+   "band_low": 4538.95,
+   "band_high": 6140.93
+  },
+  {
+   "date": "2026-10-01",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-02",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5149.67,
+   "expected": 4919.11,
+   "band_low": 4181.24,
+   "band_high": 5656.97
+  },
+  {
+   "date": "2026-10-02",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-03",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4318.13,
+   "expected": 4236.89,
+   "band_low": 3601.36,
+   "band_high": 4872.43
+  },
+  {
+   "date": "2026-10-03",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-04",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4127.42,
+   "expected": 3816.06,
+   "band_low": 3243.65,
+   "band_high": 4388.47
+  },
+  {
+   "date": "2026-10-04",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-05",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3957.78,
+   "expected": 3982.53,
+   "band_low": 3385.15,
+   "band_high": 4579.92
+  },
+  {
+   "date": "2026-10-05",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-06",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4132.87,
+   "expected": 4620.0,
+   "band_low": 3927.0,
+   "band_high": 5313.0
+  },
+  {
+   "date": "2026-10-06",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-07",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5443.11,
+   "expected": 5257.47,
+   "band_low": 4468.85,
+   "band_high": 6046.08
+  },
+  {
+   "date": "2026-10-07",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-08",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5843.01,
+   "expected": 5423.94,
+   "band_low": 4610.35,
+   "band_high": 6237.53
+  },
+  {
+   "date": "2026-10-08",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-09",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4865.97,
+   "expected": 5003.11,
+   "band_low": 4252.64,
+   "band_high": 5753.57
+  },
+  {
+   "date": "2026-10-09",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-10",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3825.78,
+   "expected": 4320.89,
+   "band_low": 3672.76,
+   "band_high": 4969.03
+  },
+  {
+   "date": "2026-10-10",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-11",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 2418.04,
+   "expected": 3900.06,
+   "band_low": 3315.05,
+   "band_high": 4485.07
+  },
+  {
+   "date": "2026-10-11",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-12",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 2521.25,
+   "expected": 4066.53,
+   "band_low": 3456.55,
+   "band_high": 4676.52
+  },
+  {
+   "date": "2026-10-12",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-13",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4285.54,
+   "expected": 4704.0,
+   "band_low": 3998.4,
+   "band_high": 5409.6
+  },
+  {
+   "date": "2026-10-13",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-14",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5201.67,
+   "expected": 5341.47,
+   "band_low": 4540.25,
+   "band_high": 6142.68
+  },
+  {
+   "date": "2026-10-14",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-15",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4953.51,
+   "expected": 5507.94,
+   "band_low": 4681.75,
+   "band_high": 6334.13
+  },
+  {
+   "date": "2026-10-15",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-16",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5147.47,
+   "expected": 5087.11,
+   "band_low": 4324.04,
+   "band_high": 5850.17
+  },
+  {
+   "date": "2026-10-16",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-17",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4742.43,
+   "expected": 4404.89,
+   "band_low": 3744.16,
+   "band_high": 5065.63
+  },
+  {
+   "date": "2026-10-17",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-18",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3772.19,
+   "expected": 3984.06,
+   "band_low": 3386.45,
+   "band_high": 4581.67
+  },
+  {
+   "date": "2026-10-18",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-19",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4009.85,
+   "expected": 4150.53,
+   "band_low": 3527.95,
+   "band_high": 4773.12
+  },
+  {
+   "date": "2026-10-19",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-20",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5313.99,
+   "expected": 4788.0,
+   "band_low": 4069.8,
+   "band_high": 5506.2
+  },
+  {
+   "date": "2026-10-20",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-21",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5003.86,
+   "expected": 5425.47,
+   "band_low": 4611.65,
+   "band_high": 6239.28
+  },
+  {
+   "date": "2026-10-21",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-22",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5234.06,
+   "expected": 5591.94,
+   "band_low": 4753.15,
+   "band_high": 6430.73
+  },
+  {
+   "date": "2026-10-22",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-23",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 5281.72,
+   "expected": 5171.11,
+   "band_low": 4395.44,
+   "band_high": 5946.77
+  },
+  {
+   "date": "2026-10-23",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-24",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3954.64,
+   "expected": 4488.89,
+   "band_low": 3815.56,
+   "band_high": 5162.23
+  },
+  {
+   "date": "2026-10-24",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-25",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 3940.41,
+   "expected": 4068.06,
+   "band_low": 3457.85,
+   "band_high": 4678.27
+  },
+  {
+   "date": "2026-10-25",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  },
+  {
+   "date": "2026-10-26",
+   "market": "GB",
+   "channel": "*",
+   "kpi": "revenue",
+   "observed": 4695.01,
+   "expected": 4234.53,
+   "band_low": 3599.35,
+   "band_high": 4869.72
+  },
+  {
+   "date": "2026-10-26",
+   "market": "GB",
+   "channel": "paid_ad",
+   "kpi": "revenue",
+   "observed": 1,
+   "expected": 1,
+   "band_low": 1,
+   "band_high": 1
+  }
+ ],
+ "attribution_summary": [
+  {
+   "model": "position_based",
+   "channel": "paid_search",
+   "conversions": 1820,
+   "revenue": 96400,
+   "spend": 21000,
+   "roas": 4.59047619047619,
+   "label": "estimated"
+  },
+  {
+   "model": "position_based",
+   "channel": "paid_social",
+   "conversions": 1410,
+   "revenue": 61200,
+   "spend": 24800,
+   "roas": 2.467741935483871,
+   "label": "estimated"
+  },
+  {
+   "model": "position_based",
+   "channel": "email",
+   "conversions": 1190,
+   "revenue": 48700,
+   "spend": 3100,
+   "roas": 15.709677419354838,
+   "label": "estimated"
+  },
+  {
+   "model": "position_based",
+   "channel": "organic_search",
+   "conversions": 640,
+   "revenue": 27100,
+   "spend": null,
+   "roas": null,
+   "label": "estimated"
+  },
+  {
+   "model": "position_based",
+   "channel": "affiliate",
+   "conversions": 310,
+   "revenue": 12800,
+   "spend": 4300,
+   "roas": 2.9767441860465116,
+   "label": "estimated"
+  },
+  {
+   "model": "position_based",
+   "channel": "unattributed",
+   "conversions": 210,
+   "revenue": 8100,
+   "spend": null,
+   "roas": null,
+   "label": "estimated"
+  },
+  {
+   "model": "linear",
+   "channel": "email",
+   "conversions": 1,
+   "revenue": 1,
+   "spend": 1,
+   "roas": 1,
+   "label": "estimated"
+  }
+ ],
+ "pith_service_roi": [
+  {
+   "service": "search",
+   "media_spend": 21000,
+   "pith_fee": 6000,
+   "total_cost": 27000,
+   "credited_conversions": 0,
+   "credited_revenue": 96400,
+   "roi": 3.57,
+   "model": "position_based",
+   "label": "estimated"
+  },
+  {
+   "service": "paid_social",
+   "media_spend": 24800,
+   "pith_fee": 5500,
+   "total_cost": 30300,
+   "credited_conversions": 0,
+   "credited_revenue": 61200,
+   "roi": 2.02,
+   "model": "position_based",
+   "label": "estimated"
+  },
+  {
+   "service": "email",
+   "media_spend": 3100,
+   "pith_fee": 4000,
+   "total_cost": 7100,
+   "credited_conversions": 0,
+   "credited_revenue": 48700,
+   "roi": 6.859,
+   "model": "position_based",
+   "label": "estimated"
+  },
+  {
+   "service": "affiliate",
+   "media_spend": 4300,
+   "pith_fee": 2500,
+   "total_cost": 6800,
+   "credited_conversions": 0,
+   "credited_revenue": 12800,
+   "roi": 1.882,
+   "model": "position_based",
+   "label": "estimated"
+  },
+  {
+   "service": "brand",
+   "media_spend": 0,
+   "pith_fee": 7000,
+   "total_cost": 7000,
+   "credited_conversions": 0,
+   "credited_revenue": 0,
+   "roi": 0.0,
+   "model": "position_based",
+   "label": "estimated"
+  }
+ ],
+ "cohort_payback": [
+  {
+   "cohort": "2026-04-01",
+   "customers": 412,
+   "spend": 15800,
+   "cac": 38.35,
+   "payback_months": 3,
+   "ltv_to_date": 96.2,
+   "ltv_to_cac": 2.51,
+   "label": "observed"
+  },
+  {
+   "cohort": "2026-05-01",
+   "customers": 455,
+   "spend": 17100,
+   "cac": 37.58,
+   "payback_months": 3,
+   "ltv_to_date": 88.4,
+   "ltv_to_cac": 2.35,
+   "label": "observed"
+  },
+  {
+   "cohort": "2026-06-01",
+   "customers": 398,
+   "spend": 16400,
+   "cac": 41.21,
+   "payback_months": 4,
+   "ltv_to_date": 71.0,
+   "ltv_to_cac": 1.72,
+   "label": "observed"
+  },
+  {
+   "cohort": "2026-07-01",
+   "customers": 470,
+   "spend": 18900,
+   "cac": 40.21,
+   "payback_months": null,
+   "ltv_to_date": 39.5,
+   "ltv_to_cac": 0.98,
+   "label": "observed"
+  }
+ ],
+ "qa_metrics": [
+  {
+   "day": "2026-09-01",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9718
+  },
+  {
+   "day": "2026-09-02",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9683
+  },
+  {
+   "day": "2026-09-03",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9815
+  },
+  {
+   "day": "2026-09-04",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9878
+  },
+  {
+   "day": "2026-09-05",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9845
+  },
+  {
+   "day": "2026-09-06",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9691
+  },
+  {
+   "day": "2026-09-07",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 1.0022
+  },
+  {
+   "day": "2026-09-08",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.975
+  },
+  {
+   "day": "2026-09-09",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0076
+  },
+  {
+   "day": "2026-09-10",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9829
+  },
+  {
+   "day": "2026-09-11",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9671
+  },
+  {
+   "day": "2026-09-12",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.978
+  },
+  {
+   "day": "2026-09-13",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9703
+  },
+  {
+   "day": "2026-09-14",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 1.0017
+  },
+  {
+   "day": "2026-09-15",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9912
+  },
+  {
+   "day": "2026-09-16",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9818
+  },
+  {
+   "day": "2026-09-17",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9678
+  },
+  {
+   "day": "2026-09-18",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9743
+  },
+  {
+   "day": "2026-09-19",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9842
+  },
+  {
+   "day": "2026-09-20",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9914
+  },
+  {
+   "day": "2026-09-21",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9785
+  },
+  {
+   "day": "2026-09-22",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 0.9965
+  },
+  {
+   "day": "2026-09-23",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9908
+  },
+  {
+   "day": "2026-09-24",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0044
+  },
+  {
+   "day": "2026-09-25",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.978
+  },
+  {
+   "day": "2026-09-26",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 116,
+   "match_rate": 0.9703
+  },
+  {
+   "day": "2026-09-27",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 0.9991
+  },
+  {
+   "day": "2026-09-28",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.987
+  },
+  {
+   "day": "2026-09-29",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9951
+  },
+  {
+   "day": "2026-09-30",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9908
+  },
+  {
+   "day": "2026-10-01",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9791
+  },
+  {
+   "day": "2026-10-02",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9917
+  },
+  {
+   "day": "2026-10-03",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9855
+  },
+  {
+   "day": "2026-10-04",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0075
+  },
+  {
+   "day": "2026-10-05",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9949
+  },
+  {
+   "day": "2026-10-06",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 0.9966
+  },
+  {
+   "day": "2026-10-07",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0097
+  },
+  {
+   "day": "2026-10-08",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9778
+  },
+  {
+   "day": "2026-10-09",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9951
+  },
+  {
+   "day": "2026-10-10",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9858
+  },
+  {
+   "day": "2026-10-11",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 109,
+   "match_rate": 0.91
+  },
+  {
+   "day": "2026-10-12",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 109,
+   "match_rate": 0.91
+  },
+  {
+   "day": "2026-10-13",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9761
+  },
+  {
+   "day": "2026-10-14",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0042
+  },
+  {
+   "day": "2026-10-15",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9852
+  },
+  {
+   "day": "2026-10-16",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0048
+  },
+  {
+   "day": "2026-10-17",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 1.0039
+  },
+  {
+   "day": "2026-10-18",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9837
+  },
+  {
+   "day": "2026-10-19",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 121,
+   "match_rate": 1.0048
+  },
+  {
+   "day": "2026-10-20",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9718
+  },
+  {
+   "day": "2026-10-21",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9754
+  },
+  {
+   "day": "2026-10-22",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9868
+  },
+  {
+   "day": "2026-10-23",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 117,
+   "match_rate": 0.9768
+  },
+  {
+   "day": "2026-10-24",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 118,
+   "match_rate": 0.9839
+  },
+  {
+   "day": "2026-10-25",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 119,
+   "match_rate": 0.9905
+  },
+  {
+   "day": "2026-10-26",
+   "market": "GB",
+   "orders_source": 120,
+   "orders_warehouse": 120,
+   "match_rate": 0.9961
+  }
+ ]
+}

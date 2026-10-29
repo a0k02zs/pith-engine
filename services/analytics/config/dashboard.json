@@ -1,0 +1,188 @@
+{
+  "$comment": "The client dashboard: 1 per client, same KPI codes for every client (engine/contracts/enums.json). Each chart reads 1 SQL model in sql/. src/dashboard.ts checks this file and renders it. See docs/dashboard.md.",
+  "id": "analytics.client_dashboard",
+  "version": 1,
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "charts": [
+        {
+          "id": "headline_kpis",
+          "type": "stat",
+          "title": "This period against the prior period and the target",
+          "source": "kpi_table",
+          "filter": {
+            "market": "$market"
+          },
+          "kpis": [
+            "revenue",
+            "spend",
+            "roas",
+            "cpa"
+          ],
+          "fields": {
+            "kpi": "kpi",
+            "value": "current_value",
+            "prior": "prior_value",
+            "target": "target",
+            "label": "label"
+          }
+        },
+        {
+          "id": "revenue_trend",
+          "type": "line",
+          "title": "Daily revenue against the forecast",
+          "source": "daily_kpi_forecast",
+          "filter": {
+            "market": "$market",
+            "channel": "*",
+            "kpi": "revenue"
+          },
+          "kpis": [
+            "revenue"
+          ],
+          "fields": {
+            "x": "date",
+            "y": "observed",
+            "expected": "expected",
+            "band_low": "band_low",
+            "band_high": "band_high"
+          },
+          "label": "observed"
+        }
+      ]
+    },
+    {
+      "id": "channels",
+      "title": "Channels",
+      "charts": [
+        {
+          "id": "attributed_revenue",
+          "type": "bar",
+          "title": "Attributed revenue by channel",
+          "source": "attribution_summary",
+          "filter": {
+            "model": "$model"
+          },
+          "kpis": [
+            "attributed_revenue"
+          ],
+          "fields": {
+            "category": "channel",
+            "value": "revenue",
+            "label": "label"
+          }
+        },
+        {
+          "id": "channel_roas",
+          "type": "bar",
+          "title": "ROAS by channel",
+          "source": "attribution_summary",
+          "filter": {
+            "model": "$model"
+          },
+          "kpis": [
+            "roas"
+          ],
+          "fields": {
+            "category": "channel",
+            "value": "roas",
+            "label": "label"
+          }
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "title": "Pith services",
+      "charts": [
+        {
+          "id": "service_roi",
+          "type": "bar",
+          "title": "Credited revenue per unit of cost, by Pith service",
+          "source": "pith_service_roi",
+          "kpis": [
+            "attributed_revenue",
+            "spend"
+          ],
+          "fields": {
+            "category": "service",
+            "value": "roi",
+            "label": "label"
+          },
+          "format": "ratio"
+        },
+        {
+          "id": "cohort_payback",
+          "type": "table",
+          "title": "Payback and LTV to CAC by acquisition month",
+          "source": "cohort_payback",
+          "kpis": [
+            "payback_months",
+            "ltv_cac"
+          ],
+          "fields": {
+            "label": "label"
+          },
+          "columns": [
+            {
+              "field": "cohort",
+              "title": "Cohort",
+              "format": "month"
+            },
+            {
+              "field": "customers",
+              "title": "Customers",
+              "format": "integer"
+            },
+            {
+              "field": "cac",
+              "title": "CAC",
+              "format": "currency"
+            },
+            {
+              "field": "payback_months",
+              "title": "Payback (months)",
+              "format": "integer"
+            },
+            {
+              "field": "ltv_to_cac",
+              "title": "LTV to CAC",
+              "format": "ratio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data_health",
+      "title": "Data health",
+      "charts": [
+        {
+          "id": "tracking_match",
+          "type": "line",
+          "title": "Warehouse orders as a share of order-system orders",
+          "source": "qa_metrics",
+          "filter": {
+            "market": "$market"
+          },
+          "kpis": [
+            "tracking_match_rate"
+          ],
+          "fields": {
+            "x": "day",
+            "y": "match_rate"
+          },
+          "format": "percent",
+          "reference_band": {
+            "low": 0.95,
+            "high": 1.02,
+            "title": "Target 95% to 102%"
+          },
+          "label": "observed"
+        }
+      ]
+    }
+  ]
+}
