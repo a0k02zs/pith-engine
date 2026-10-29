@@ -1,4 +1,5 @@
 export * from "./attribution.js";
+export * from "./dashboard.js";
 export * from "./experiment.js";
 export * from "./market-rules.js";
 export * from "./mmm.js";

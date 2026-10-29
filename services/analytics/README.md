@@ -13,6 +13,7 @@ This package builds on the engine contracts in `engine/` (v0.1.0). The tests rea
 | `src/mmm.ts` | MMM readiness (weeks, active share, spend variation, channels per 10 weeks, holiday marks), fit acceptance (R-hat, holdout MAPE, baseline share, test agreement) and the 25% per quarter scenario limit. |
 | `src/experiment.ts` | Test sizing: minimum detectable lift and sample size at 90% confidence and 80% power, and the underpowered rule. |
 | `src/market-rules.ts`, `config/market-rules.json` | Consent before tags, Consent Mode, warehouse region, currency, week start and report language per market. Quebec (`CA-QC`) has its own rules. |
+| `src/dashboard.ts`, `config/dashboard.json` | The client dashboard: 4 pages and 7 charts built from the SQL models, with every figure labelled. See `docs/dashboard.md`. |
 | `src/registry.ts`, `src/prompt.ts` | Load workflows and prompts, validate agent output against `schemas/`, build the system prompt. |
 | `workflows/` | 6 engine workflows: onboarding, daily data QA, weekly report, monthly ROI, quarterly MMM, incrementality test. |
 | `prompts/` | 7 agent prompts. Agents only do judgement work. Rules with fixed thresholds are code. |
