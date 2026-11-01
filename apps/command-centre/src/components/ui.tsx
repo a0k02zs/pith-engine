@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import type { RunStatus, StepStatus } from "../../server/types";
 import { label } from "../format";
+import { Icon } from "./icons";
 
 export function Card({ title, action, children, className = "" }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
@@ -90,7 +91,7 @@ export function Modal({ title, onClose, children }: { title: string; onClose: ()
       <div className="modal" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <header className="card-head">
           <h2>{title}</h2>
-          <button className="btn btn-ghost" onClick={onClose} aria-label="Close">✕</button>
+          <button className="icon-btn" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
         </header>
         {children}
       </div>

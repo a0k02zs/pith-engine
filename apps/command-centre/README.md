@@ -11,8 +11,9 @@ The app reads the real engine contracts and pipelines from this repo. It uses **
 | Command deck | See spend, revenue, ROAS and leads for 28 days, what needs you now (overdue and urgent approvals, failed runs, paused clients), and a health tile for each of the 18 services. |
 | Approvals | The approval inbox from `engine/specs/approval-inbox.md`. Filter by your roles, overdue or urgent. Approve, request changes (with a comment) or reject. Bulk-approve items of one kind. |
 | Runs | Every workflow run. A run page shows each step with its type, tool risk, gate and status. You can send a waiting event, mark a task done, or cancel the run. |
-| Services | 1 workspace for each service: its pipelines (read from `services/*/workflows/*.json`), daily KPIs, runs and approvals. **Start run** starts any pipeline for a client and its markets. |
-| Clients | Markets, services, KPIs and runs for each client. **Pause everything** runs the engine action `client.pause_scheduled` for a crisis. |
+| Services | 1 workspace for each service: its pipelines (read from `services/*/workflows/*.json`), daily KPIs, runs and approvals, and links to the real tools the service uses (Meta Ads Manager, Google Ads, Runway and so on) and to its build pack in this repo. **Start run** starts any pipeline for a client and its markets. |
+| Clients | Overview: markets, services, KPIs and runs. **Strategy**: a custom 90-day plan per client. **Accounts and links**: the client's Meta, Google, LinkedIn, TikTok and HubSpot account IDs, Meta sign-in, and deep links into the client's own accounts. **Pause everything** runs the engine action `client.pause_scheduled` for a crisis. |
+| Video studio (beta) | AI ads with Runway and Higgsfield: brief, script and storyboard, 3 variants (mixed, Runway only, Higgsfield only), client approval, export with AI labels. |
 | Analytics | Any canonical KPI by day, service, market and client. |
 | Settings | Who you act as, the contract version, the market groups, the tool risk levels and the audit log. |
 
@@ -29,6 +30,48 @@ The in-memory store (`server/store.ts`) applies the same rules as the engine spe
 - A run can only start for a service the client buys and for the client's markets.
 
 The tests in `test/` check these rules, and they check that every gate in every workflow file uses an approval kind and roles from `enums.json`.
+
+## Search and navigation
+
+Press **Ctrl K** (or Cmd K) to search pages, services and clients. The client menu at the top opens any client. Breadcrumbs show where you are.
+
+## Client strategy
+
+`server/strategy.ts` builds the plan from 3 inputs:
+
+1. The client brain: positioning, audience, goals, monthly budget, tone, offers, competitors and notes. Edit it on the Strategy tab.
+2. The client's markets, in the Pith launch order, with the laws, ad labels and blocking rules from `engine/specs/compliance-rules.json`.
+3. The pipelines of each service the client buys, from `services/*/workflows/`.
+
+The plan has objectives with targets, one play per service with its budget, a 90-day roadmap and the risks. **Send for approval** opens a `plan` approval (2 people from account lead, strategist, client approver). **Improve with Claude** adds notes with the Claude API (`server/claude.ts`, model `claude-opus-5-5`, structured output, server-side fallbacks). It runs only on the server, and only when `ANTHROPIC_API_KEY` is set.
+
+## Client accounts
+
+- Account IDs (Business Manager, ad account, Page, Instagram, pixel, Google Ads customer, GA4 property, LinkedIn, TikTok, HubSpot) are checked for format and saved. They make deep links into the client's own accounts.
+- **Sign in with Meta** uses Facebook Login: `POST /api/oauth/meta/start` returns the login URL, Meta returns to `GET /api/oauth/meta/callback`, the server swaps the code for a long-lived token and checks the ad account (`GET /act_<id>?fields=name,currency,account_status` with `appsecret_proof`).
+- The token is encrypted with AES-GCM (`server/connections.ts`, Web Crypto) and stays on the server. No API response contains it; `test/workspace.test.ts` checks this.
+- The store is in memory today. In production, keep tokens in Secret Manager or the engine's vault, and set `PITH_TOKEN_KEY`.
+
+## Video studio (beta)
+
+- Flow: brief, then script and storyboard (each shot goes to Higgsfield for people and camera moves, or Runway for product and scene shots; you can change it), then 3 variants, then a `creative` approval with the same gate as `video.job` `approve_final_client` (creative lead and client approver, 2 people), then export.
+- Checks: written consent before a real person's face or voice (G8 blocks generation without it), claim warning, the AI label for each platform (Meta "AI info", TikTok AI-generated label, YouTube synthetic content disclosure), EU AI Act Art. 50 in EU markets, and each market's paid ad label.
+- Runway: `POST https://api.dev.runwayml.com/v1/image_to_video` (`X-Runway-Version: 2024-11-06`, model `gen4.5` or `RUNWAY_MODEL`), then `GET /v1/tasks/{id}`.
+- Higgsfield: `POST https://api.higgsfield.ai` + `HIGGSFIELD_I2V_PATH` (default `/higgsfield-ai/dop/standard`, check it against your Higgsfield console), then `GET /requests/{id}/status`.
+- Both animate an image, so a live job needs a key frame image URL in the brief. Without a key or a key frame the studio simulates the jobs.
+- Video never publishes. Social and paid publish the exports.
+
+## Server settings
+
+| Variable | What it does |
+|----------|--------------|
+| `META_APP_ID`, `META_APP_SECRET`, `META_REDIRECT_URI` (or `PUBLIC_BASE_URL`) | Turn on Sign in with Meta. `META_GRAPH_VERSION` defaults to `v23.0`. |
+| `PITH_TOKEN_KEY` | 32 bytes, base64. Encrypts client tokens. Without it the key lives only in memory. |
+| `ANTHROPIC_API_KEY` | Turns on Improve with Claude. `PITH_CLAUDE_MODEL` defaults to `claude-opus-5-5`. |
+| `RUNWAYML_API_SECRET`, `RUNWAY_MODEL` | Live Runway jobs. |
+| `HF_API_KEY_ID`, `HF_API_KEY_SECRET`, `HIGGSFIELD_I2V_PATH` | Live Higgsfield jobs. |
+
+Put these in Secret Manager for Cloud Run. Never put them in the UI build.
 
 ## Test users
 

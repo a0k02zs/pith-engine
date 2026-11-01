@@ -50,6 +50,23 @@ for (const folder of readdirSync(servicesDir).sort()) {
   }
 }
 
+// Compliance rules per market (engine/specs/compliance-rules.json), with "inherits" resolved.
+const rulesFile = JSON.parse(readFileSync(join(repo, "engine/specs/compliance-rules.json"), "utf8"));
+const rawMarkets = rulesFile.markets ?? {};
+function resolveMarket(code, seen = new Set()) {
+  const m = rawMarkets[code];
+  if (!m || seen.has(code)) return null;
+  seen.add(code);
+  const base = m.inherits ? resolveMarket(m.inherits, seen) : null;
+  return {
+    group: m.group ?? base?.group ?? null,
+    laws: [...(base?.laws ?? []), ...(m.laws ?? [])],
+    disclosure_labels: m.disclosure_labels ?? base?.disclosure_labels ?? [],
+    rules: [...(base?.rules ?? []), ...(m.rules ?? []).map((r) => ({ id: r.id, severity: r.severity ?? "warn", message: r.message ?? "", channels: r.channels ?? [] }))],
+  };
+}
+const compliance = Object.fromEntries(Object.keys(rawMarkets).map((k) => [k, resolveMarket(k)]));
+
 const out = {
   generated_from: "engine/contracts/enums.json + services/*/workflows/*.json",
   contract_version: enums.contract_version,
@@ -60,6 +77,7 @@ const out = {
   approval_kinds: enums.approval_kinds,
   kpis: Object.fromEntries(Object.entries(enums.kpis).filter(([k]) => !k.startsWith("$"))),
   tool_risk_meaning: enums.tool_risk_meaning,
+  compliance,
   workflows,
 };
 mkdirSync(join(here, "..", "server", "generated"), { recursive: true });

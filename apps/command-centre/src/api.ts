@@ -46,7 +46,12 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function post<T>(path: string, body: unknown = {}): Promise<T> {
-  const out = await api<T>(path, { method: "POST", body: JSON.stringify(body) });
+  return send<T>("POST", path, body);
+}
+
+/** Sends a change (POST, PUT or DELETE) and tells every open view to reload. */
+export async function send<T>(method: "POST" | "PUT" | "DELETE", path: string, body: unknown = {}): Promise<T> {
+  const out = await api<T>(path, { method, body: method === "DELETE" ? undefined : JSON.stringify(body) });
   window.dispatchEvent(new Event("pith:refresh"));
   return out;
 }
