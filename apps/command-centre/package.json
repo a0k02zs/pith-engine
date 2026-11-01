@@ -1,0 +1,33 @@
+{
+  "name": "@pith/command-centre",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pith M Command Centre: one web app to monitor and operate all 18 Pith Marketing services on the shared engine.",
+  "type": "module",
+  "scripts": {
+    "catalog": "node scripts/build-catalog.mjs",
+    "dev": "npm run catalog && concurrently -k \"tsx watch server/main.ts\" \"vite\"",
+    "build": "npm run catalog && vite build && tsc -p tsconfig.server.json",
+    "start": "node dist-server/server/main.js",
+    "typecheck": "npm run catalog && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "test": "npm run catalog && vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "1.14.3",
+    "hono": "4.7.10"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "@vitejs/plugin-react": "4.5.0",
+    "concurrently": "9.1.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-router-dom": "7.6.1",
+    "tsx": "4.19.4",
+    "typescript": "5.7.2",
+    "vite": "6.3.5",
+    "vitest": "3.1.4"
+  }
+}
