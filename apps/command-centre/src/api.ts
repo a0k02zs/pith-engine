@@ -25,11 +25,21 @@ export class HttpError extends Error {
   }
 }
 
+// Preview build (VITE_PREVIEW=1): the API and the test-data store run inside the browser,
+// so the app works as a single static page with no server. Data resets on reload.
+export const PREVIEW = import.meta.env.VITE_PREVIEW === "1";
+let previewApp: Promise<{ request: (url: string, init?: RequestInit) => Response | Promise<Response> }> | null = null;
+function localApp() {
+  previewApp ??= Promise.all([import("../server/app"), import("../server/store")]).then(([a, s]) => a.createApp(new s.Store()));
+  return previewApp;
+}
+
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const req: RequestInit = {
     ...init,
     headers: { "content-type": "application/json", "x-pith-user": currentUserId(), ...(init.headers ?? {}) },
-  });
+  };
+  const res = PREVIEW ? await (await localApp()).request(`/api${path}`, req) : await fetch(`/api${path}`, req);
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new HttpError(res.status, (body as { error?: string }).error ?? res.statusText);
   return body as T;

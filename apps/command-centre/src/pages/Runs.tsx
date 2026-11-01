@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import type { ApprovalItem, AuditEntry, Client, Run, ServiceInfo, WorkflowDef } from "../../server/types";
 import { post, useApi } from "../api";
-import { Card, Loading, PageHead, Pill, RunStatusPill, StepStatusPill, useToast } from "../components/ui";
+import { Card, Loading, Modal, PageHead, Pill, RunStatusPill, StepStatusPill, useToast } from "../components/ui";
 import { ago, label } from "../format";
 
 export function RunsTable({ runs, clients }: { runs: Run[]; clients: Client[] }) {
@@ -75,6 +75,7 @@ export function RunDetailPage() {
   const clients = useApi<Client[]>("/clients");
   const services = useApi<ServiceInfo[]>("/services");
   const toast = useToast();
+  const [ask, setAsk] = useState(false);
   const client = useMemo(() => clients.data?.find((c) => c.id === data?.client_id), [clients.data, data]);
   if (!data) return <Loading error={error} />;
   const waiting = data.steps.find((s) => s.status === "waiting" || s.status === "held");
@@ -103,7 +104,7 @@ export function RunDetailPage() {
               {waiting.status === "held" ? "Release held step" : waiting.type === "task" ? "Mark task done" : "Send the event"}
             </button>
           )}
-          {!finished && <button className="btn btn-bad" onClick={() => { if (confirm("Cancel this run? Open approvals close too.")) act("cancel", "Run cancelled"); }}>Cancel run</button>}
+          {!finished && <button className="btn btn-bad" onClick={() => setAsk(true)}>Cancel run</button>}
         </>}
       />
       <div className="grid-2 wide-left">
@@ -158,6 +159,15 @@ export function RunDetailPage() {
           </Card>
         </div>
       </div>
+      {ask && (
+        <Modal title="Cancel this run?" onClose={() => setAsk(false)}>
+          <p>The run stops now. Its open approvals close too. You cannot restart a cancelled run; start a new one instead.</p>
+          <div className="row end">
+            <button className="btn" onClick={() => setAsk(false)}>Keep the run</button>
+            <button className="btn btn-bad" onClick={() => { setAsk(false); act("cancel", "Run cancelled"); }}>Cancel run</button>
+          </div>
+        </Modal>
+      )}
       {toast.node}
     </>
   );
