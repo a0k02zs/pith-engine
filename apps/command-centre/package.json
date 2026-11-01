@@ -11,7 +11,8 @@
     "start": "node dist-server/server/main.js",
     "typecheck": "npm run catalog && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
     "test": "npm run catalog && vitest run",
-    "build:preview": "npm run catalog && node scripts/build-preview.mjs"
+    "build:preview": "npm run catalog && node scripts/build-preview.mjs",
+    "build:vercel": "npm run catalog && vite build && node scripts/build-vercel.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.137.0",
@@ -24,6 +25,7 @@
     "@types/react-dom": "19.1.5",
     "@vitejs/plugin-react": "4.5.0",
     "concurrently": "9.1.2",
+    "esbuild": "0.25.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-router-dom": "7.6.1",
