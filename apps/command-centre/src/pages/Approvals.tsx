@@ -124,10 +124,12 @@ function ApprovalDetail({ item, client, service, onDone }: { item: Row; client: 
         <div>
           <h3>Details</h3>
           <dl className="kv">
-            {Object.entries(item.payload).map(([k, v]) => (
+            {Object.entries(item.payload).filter(([k]) => !k.endsWith("_id")).map(([k, v]) => (
               <span key={k} className="contents"><dt>{label(k)}</dt><dd>{Array.isArray(v) ? v.join(", ") : k === "change_pct" ? `${v}%` : String(v)}</dd></span>
             ))}
           </dl>
+          {typeof item.payload.video_project_id === "string" && <p><Link to={`/video/${item.payload.video_project_id}`}>Open the video project and watch the variants</Link></p>}
+          {typeof item.payload.strategy_client_id === "string" && <p><Link to={`/clients/${item.payload.strategy_client_id}?tab=strategy`}>Open the full strategy</Link></p>}
         </div>
       )}
       {item.decisions.length > 0 && (

@@ -3,10 +3,11 @@ import type { Context } from "hono";
 import { catalog, SERVICES, serviceInfo, workflowById } from "./catalog.js";
 import { ApiError, Store } from "./store.js";
 import type { Decision, ServiceCode } from "./types.js";
+import { registerWorkspaceRoutes, Workspace } from "./workspace.js";
 
 // HTTP API. Paths mirror engine/contracts/openapi.yaml under /api so the UI can move to the
 // real engine by changing the base URL. Extra read models (overview, services) are UI-only.
-export function createApp(store: Store) {
+export function createApp(store: Store, ws: Workspace = new Workspace(store)) {
   const app = new Hono();
 
   const actor = (c: Context) => store.user(c.req.header("x-pith-user"));
@@ -151,6 +152,8 @@ export function createApp(store: Store) {
   });
 
   api.get("/audit", (c) => c.json(store.audit.slice(0, 200)));
+
+  registerWorkspaceRoutes(api, store, ws, actor, readJson);
 
   api.all("*", (c) => c.json({ error: "Not found" }, 404));
 

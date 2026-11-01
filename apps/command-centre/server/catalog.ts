@@ -10,7 +10,15 @@ export interface Catalog {
   approval_kinds: string[];
   kpis: Record<string, string>;
   tool_risk_meaning: Record<string, string>;
+  compliance: Record<string, MarketRules | null>;
   workflows: WorkflowDef[];
+}
+
+export interface MarketRules {
+  group: string | null;
+  laws: string[];
+  disclosure_labels: string[];
+  rules: Array<{ id: string; severity: string; message: string; channels: string[] }>;
 }
 
 export const catalog = catalogJson as unknown as Catalog;
@@ -62,4 +70,14 @@ export function workflowById(id: string): WorkflowDef | undefined {
 
 export function marketGroupOf(country: string): string | undefined {
   return Object.entries(catalog.market_groups).find(([, cs]) => cs.includes(country))?.[0];
+}
+
+/** Compliance rules for one country. A market not listed uses its group default (compliance-rules.json "resolution"). */
+export function complianceFor(country: string): MarketRules | null {
+  const own = catalog.compliance[country];
+  if (own) return own;
+  const group = marketGroupOf(country);
+  if (group === "EU") return catalog.compliance.EU_DEFAULT ?? null;
+  if (group === "GCC") return catalog.compliance.GCC_DEFAULT ?? null;
+  return null;
 }

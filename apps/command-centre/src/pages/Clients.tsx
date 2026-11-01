@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import type { Client, Overview, Run, ServiceInfo } from "../../server/types";
 import { post, useApi } from "../api";
 import { LineChart } from "../components/charts";
 import { Card, Loading, Modal, PageHead, Pill, Stat, useToast } from "../components/ui";
 import { gbp, label, num, pctChange } from "../format";
+import { ClientConnections } from "./ClientConnections";
+import { ClientStrategy } from "./ClientStrategy";
 import { RunsTable } from "./Runs";
+
+const TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "strategy", label: "Strategy" },
+  { id: "connections", label: "Accounts and links" },
+] as const;
 
 export function ClientsPage() {
   const clients = useApi<Client[]>("/clients");
@@ -33,6 +41,8 @@ export function ClientDetailPage() {
   const ov = useApi<Overview>(`/overview?client_id=${id}`);
   const runs = useApi<Run[]>(`/runs?client_id=${id}`);
   const services = useApi<ServiceInfo[]>("/services");
+  const [params, setParams] = useSearchParams();
+  const tab = TABS.find((t) => t.id === params.get("tab"))?.id ?? "overview";
   const [dialog, setDialog] = useState<"pause" | "resume" | null>(null);
   const [reason, setReason] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -60,6 +70,15 @@ export function ClientDetailPage() {
           ? <button className="btn btn-primary" onClick={() => setDialog("resume")}>Resume client</button>
           : <button className="btn btn-bad" onClick={() => setDialog("pause")}>Pause everything</button>} />
       {c.paused && <div className="notice notice-bad">Paused: {c.paused_reason}. Steps that send, publish, spend, sign or pay are held in every service. Removals still run (G10).</div>}
+      <div className="tabs" role="tablist" aria-label="Client sections">
+        {TABS.map((t) => (
+          <button key={t.id} role="tab" aria-selected={tab === t.id} className={`tab${tab === t.id ? " on" : ""}`}
+            onClick={() => setParams(t.id === "overview" ? {} : { tab: t.id }, { replace: true })}>{t.label}</button>
+        ))}
+      </div>
+      {tab === "strategy" && <ClientStrategy client={c} />}
+      {tab === "connections" && <ClientConnections client={c} />}
+      {tab === "overview" && <>
       <div className="stats">
         <Stat label="Spend (28 days)" value={gbp(o.totals.spend)} delta={pctChange(o.totals.spend, o.previous.spend)} />
         <Stat label="Revenue" value={gbp(o.totals.revenue)} delta={pctChange(o.totals.revenue, o.previous.revenue)} />
@@ -85,6 +104,7 @@ export function ClientDetailPage() {
         </Card>
       </div>
       <Card title="Runs" className="flush">{runs.data ? <RunsTable runs={runs.data} clients={[c]} /> : <Loading />}</Card>
+      </>}
       {dialog && (
         <Modal title={dialog === "pause" ? `Pause ${c.name}` : `Resume ${c.name}`} onClose={() => setDialog(null)}>
           <p>{dialog === "pause"

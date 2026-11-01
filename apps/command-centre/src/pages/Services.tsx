@@ -3,7 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import type { ApprovalItem, Client, Overview, Run, ServiceInfo, WorkflowDef } from "../../server/types";
 import { useApi } from "../api";
 import { BarList, LineChart } from "../components/charts";
+import { Icon } from "../components/icons";
 import { StartRunDialog } from "../components/StartRun";
+import type { ServiceLinks } from "../../server/links";
 import { Card, Loading, PageHead, Pill, Stat } from "../components/ui";
 import { kpiValue, label } from "../format";
 import { RunsTable } from "./Runs";
@@ -52,6 +54,7 @@ export function ServicePage() {
   const from = new Date(Date.now() - 27 * 864e5).toISOString().slice(0, 10);
   const daily = useApi<Array<Record<string, number | string>>>(`/metrics?service=${code}&from=${from}&group_by=date`);
   const byClient = useApi<Array<Record<string, number | string>>>(`/metrics?service=${code}&from=${from}&group_by=client_id`);
+  const links = useApi<ServiceLinks>(`/services/${code}/links`);
   const [start, setStart] = useState<WorkflowDef | null>(null);
   const [tab, setTab] = useState<"pipelines" | "runs" | "approvals">("pipelines");
   if (!svc.data || !clients.data) return <Loading error={svc.error} />;
@@ -74,6 +77,26 @@ export function ServicePage() {
           {byClient.data ? <BarList format={(n) => kpiValue(s.kpis[0], n)} items={byClient.data.map((r) => ({ label: cname[String(r.client_id)] ?? "?", value: Number(r[s.kpis[0]] ?? 0), href: `/clients/${r.client_id}` }))} /> : <Loading />}
         </Card>
       </div>
+      {links.data && (
+        <Card title="Tools for this service" action={<span className="small muted">Opens in a new tab</span>}>
+          <div className="tool-grid">
+            {links.data.platforms.map((p) => (
+              <a key={p.id} className="tool" href={p.url} target="_blank" rel="noopener noreferrer">
+                <span className="tool-name">{p.name} <Icon name="external" size={13} /></span>
+                <span className="small muted">{p.what}</span>
+              </a>
+            ))}
+            {links.data.build_pack.map((b) => (
+              <a key={b.url} className="tool tool-repo" href={b.url} target="_blank" rel="noopener noreferrer">
+                <span className="tool-name">{b.label} <Icon name="external" size={13} /></span>
+                <span className="small muted">pith-engine on GitHub</span>
+              </a>
+            ))}
+          </div>
+          {s.code === "video" && <p className="small"><Link to="/video">Make an AI ad in Video studio (beta)</Link> with Runway and Higgsfield.</p>}
+          <p className="small muted">To open a client's own ad accounts, save the client's account IDs under Clients, Accounts and links.</p>
+        </Card>
+      )}
       <div className="tabs" role="tablist">
         {(["pipelines", "runs", "approvals"] as const).map((t) => (
           <button key={t} role="tab" aria-selected={tab === t} className={`tab${tab === t ? " on" : ""}`} onClick={() => setTab(t)}>

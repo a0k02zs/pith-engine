@@ -47,6 +47,8 @@ export class Store {
   approvals: ApprovalItem[] = [];
   metrics: MetricRow[] = [];
   audit: AuditEntry[] = [];
+  /** Called when an approval with no run (a strategy plan, a video project) closes. */
+  approvalHooks: Array<(item: ApprovalItem) => void> = [];
   private rand: () => number;
   private fixedNow: number | null;
 
@@ -105,7 +107,7 @@ export class Store {
     return a.status === "open" && Date.parse(a.sla_due_at) < this.now();
   }
 
-  private log(actor: string, action: string, client_id: string | null, target: string | null, detail: string) {
+  log(actor: string, action: string, client_id: string | null, target: string | null, detail: string) {
     this.audit.unshift({ id: this.uuid(), at: this.iso(this.now()), actor, action, client_id, target, detail });
   }
 
@@ -247,6 +249,24 @@ export class Store {
 
   // ---------- approvals ----------
 
+  /** Opens an approval that belongs to no workflow run, for example a strategy plan or an AI video. */
+  openStandaloneApproval(input: {
+    client_id: string; service: ServiceCode; kind: string; title: string; summary: string; payload: Record<string, unknown>;
+    required_roles: string[]; required_count?: number; sla_hours: number; brand_score?: number | null;
+    compliance?: ApprovalItem["compliance"]; priority?: ApprovalItem["priority"];
+  }): ApprovalItem {
+    const at = this.now();
+    const item: ApprovalItem = {
+      id: this.uuid(), client_id: input.client_id, run_id: null, step_id: null, service: input.service, kind: input.kind,
+      title: input.title, summary: input.summary, payload: input.payload, brand_score: input.brand_score ?? null,
+      compliance: input.compliance ?? null, required_roles: input.required_roles, required_count: input.required_count ?? 1,
+      priority: input.priority ?? "normal", sla_due_at: this.iso(at + input.sla_hours * HOUR), status: "open", decisions: [],
+      created_at: this.iso(at), closed_at: null,
+    };
+    this.approvals.unshift(item);
+    return item;
+  }
+
   private openApproval(run: Run, def: WorkflowStep, at: number, client: Client): ApprovalItem {
     const g = def.gate!;
     const wf = workflowById(run.workflow_id)!;
@@ -343,7 +363,10 @@ export class Store {
 
     item.status = input.decision;
     item.closed_at = this.iso(at);
-    if (!item.run_id) return item;
+    if (!item.run_id) {
+      for (const hook of this.approvalHooks) hook(item);
+      return item;
+    }
     const run = this.run(item.run_id);
     if (run.status !== "waiting_approval") return item;
     const idx = run.steps.findIndex((s) => s.id === item.step_id);
