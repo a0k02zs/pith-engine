@@ -10,7 +10,8 @@
     "build": "npm run catalog && vite build && tsc -p tsconfig.server.json",
     "start": "node dist-server/server/main.js",
     "typecheck": "npm run catalog && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
-    "test": "npm run catalog && vitest run"
+    "test": "npm run catalog && vitest run",
+    "build:preview": "npm run catalog && node scripts/build-preview.mjs"
   },
   "dependencies": {
     "@hono/node-server": "1.14.3",

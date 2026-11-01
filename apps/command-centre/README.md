@@ -50,6 +50,10 @@ npm run build && npm start   # production build on :8787
 
 `npm run catalog` builds `server/generated/catalog.json` from `engine/contracts/enums.json` and every workflow file. The dev, test and build scripts run it first, so a new workflow file shows in the app after the next build.
 
+## Preview without a server
+
+`npm run build:preview` builds `dist-preview/command-centre.html`: 1 HTML file with the UI, the API and the test data. The API runs inside the browser, so the file opens anywhere and works without a server. Changes reset when the page reloads. The shared preview is at https://claude.ai/artifact/4dm5LHktQ4pqMBmthHsvPt.
+
 ## Deploy to Cloud Run
 
 Build from the repo root, because the catalog reads `engine/` and `services/`:
