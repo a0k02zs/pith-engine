@@ -71,7 +71,7 @@ The plan has objectives with targets, one play per service with its budget, a 90
 | `RUNWAYML_API_SECRET`, `RUNWAY_MODEL` | Live Runway jobs. |
 | `HF_API_KEY_ID`, `HF_API_KEY_SECRET`, `HIGGSFIELD_I2V_PATH` | Live Higgsfield jobs. |
 
-Put these in Secret Manager for Cloud Run. Never put them in the UI build.
+Put these in the host's secret store (Vercel environment variables or Secret Manager for Cloud Run). Never put them in the UI build.
 
 ## Test users
 
@@ -96,6 +96,21 @@ npm run build && npm start   # production build on :8787
 ## Preview without a server
 
 `npm run build:preview` builds `dist-preview/command-centre.html`: 1 HTML file with the UI, the API and the test data. The API runs inside the browser, so the file opens anywhere and works without a server. Changes reset when the page reloads. The shared preview is at https://claude.ai/artifact/4dm5LHktQ4pqMBmthHsvPt.
+
+## Deploy to Vercel
+
+The Vercel project uses `apps/command-centre` as its root directory. Keep "Include files outside the root directory" on, because the catalog reads `engine/` and `services/`. `vercel.json` sets the build:
+
+- `npm run build:vercel` builds the UI, then `scripts/build-vercel.mjs` writes `.vercel/output` with the Build Output API.
+- The UI is static files. The whole API (`server/vercel.ts`) is 1 Node.js function that answers `/api/*`. Every other path returns `index.html`, so client routes work after a reload.
+- Each push to `main` deploys to production. Each pull request gets a preview URL.
+
+To set it up on another Vercel account, import the repo at https://vercel.com/new/clone?repository-url=https://github.com/a0k02zs/pith-engine&root-directory=apps/command-centre&project-name=pith-command-centre and add the variables from "Server settings" under Project settings > Environment Variables. For Meta sign-in, set `PUBLIC_BASE_URL` to the production URL and add `PUBLIC_BASE_URL/api/oauth/meta/callback` as a valid OAuth redirect URI in the Meta app.
+
+Limits today:
+
+- State is in memory. A new function instance starts again from the test data, so changes do not last. A database comes before real client work.
+- The app has no sign-in of its own. Turn on Vercel Authentication for all deployments (Project settings > Deployment Protection) before you add real keys.
 
 ## Deploy to Cloud Run
 
