@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
 import { catalog, SERVICES, serviceInfo, workflowById } from "./catalog.js";
+import { packageSummary, packagesFor } from "./packages.js";
 import { ApiError, Store } from "./store.js";
 import type { Decision, ServiceCode } from "./types.js";
 import { registerWorkspaceRoutes, Workspace } from "./workspace.js";
@@ -43,6 +44,14 @@ export function createApp(store: Store, ws: Workspace = new Workspace(store)) {
   api.get("/overview", (c) => c.json(store.overview(c.req.query("client_id") || undefined)));
 
   api.get("/services", (c) => c.json(SERVICES));
+
+  // Sellable packages (UI-only read model; not part of the engine contract).
+  api.get("/packages", (c) => c.json(packageSummary()));
+  api.get("/packages/:region/:industry", (c) => {
+    const list = packagesFor(c.req.param("region"), c.req.param("industry"));
+    if (!list.length) throw new ApiError(404, "No packages for that region and industry");
+    return c.json(list);
+  });
 
   api.get("/services/:code", (c) => {
     const code = c.req.param("code") as ServiceCode;

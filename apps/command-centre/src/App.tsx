@@ -7,6 +7,7 @@ import { AnalyticsPage } from "./pages/Analytics";
 import { ApprovalsPage } from "./pages/Approvals";
 import { ClientDetailPage, ClientsPage } from "./pages/Clients";
 import { DeckPage } from "./pages/Deck";
+import { PackagesPage } from "./pages/Packages";
 import { RunDetailPage, RunsPage } from "./pages/Runs";
 import { ServicePage, ServicesPage } from "./pages/Services";
 import { SettingsPage } from "./pages/Settings";
@@ -45,6 +46,7 @@ export function App() {
     { title: "Work", items: [
       { to: "/services", label: "Services", icon: "services" },
       { to: "/clients", label: "Clients", icon: "clients" },
+      { to: "/packages", label: "Packages", icon: "globe" },
       { to: "/video", label: "Video studio", icon: "video", beta: true },
     ] },
     { title: "Insight", items: [{ to: "/analytics", label: "Analytics", icon: "analytics" }] },
@@ -103,6 +105,7 @@ export function App() {
             <Route path="/clients/:id" element={<ClientDetailPage />} />
             <Route path="/video" element={<VideoStudioPage />} />
             <Route path="/video/:id" element={<VideoProjectPage />} />
+            <Route path="/packages" element={<PackagesPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<div className="pad">Page not found. <Link to="/">Go to the command deck</Link>.</div>} />
@@ -115,7 +118,7 @@ export function App() {
 }
 
 const SECTION: Record<string, string> = {
-  approvals: "Approvals", runs: "Runs", services: "Services", clients: "Clients", video: "Video studio", analytics: "Analytics", settings: "Settings",
+  approvals: "Approvals", runs: "Runs", services: "Services", clients: "Clients", packages: "Packages", video: "Video studio", analytics: "Analytics", settings: "Settings",
 };
 
 function TopBar({ clients, services, onSearch }: { clients: Client[]; services: ServiceInfo[]; onSearch: () => void }) {
@@ -170,6 +173,7 @@ function Palette({ clients, services, onClose }: { clients: Client[]; services: 
     { label: "Approvals waiting for me", hint: "Page", to: "/approvals", icon: "approvals" },
     { label: "Runs", hint: "Page", to: "/runs", icon: "runs" },
     { label: "New AI video ad", hint: "Video studio", to: "/video?new=1", icon: "video" },
+    { label: "Packages by region and industry", hint: "Page", to: "/packages", icon: "globe" },
     { label: "Analytics", hint: "Page", to: "/analytics", icon: "analytics" },
     { label: "Settings and audit log", hint: "Page", to: "/settings", icon: "settings" },
     ...services.map((s) => ({ label: s.name, hint: `Service ${s.number}`, to: `/services/${s.code}`, icon: "services" as IconName })),
