@@ -81,5 +81,7 @@ const out = {
   workflows,
 };
 mkdirSync(join(here, "..", "server", "generated"), { recursive: true });
+// Sellable packages (region x industry x tier) from packages/catalog.json, built by packages/build-catalog.mjs.
+writeFileSync(join(here, "..", "server", "generated", "packages.json"), readFileSync(join(repo, "packages/catalog.json"), "utf8"));
 writeFileSync(join(here, "..", "server", "generated", "catalog.json"), JSON.stringify(out, null, 1));
 console.log(`catalog: ${workflows.length} workflows, ${Object.keys(enums.services).length} services`);

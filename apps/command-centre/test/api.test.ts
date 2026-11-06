@@ -54,3 +54,29 @@ describe("HTTP API", () => {
     expect(r.status).toBe(404);
   });
 });
+
+describe("Packages API", () => {
+  const app = createApp(new Store({ now: NOW, seed: 3 }));
+
+  it("lists 5 regions, 8 industries and 120 packages", async () => {
+    const s = await (await app.request("/api/packages")).json();
+    expect(s.regions.map((r: { id: string }) => r.id)).toEqual(["UK", "SG", "NA", "GCC", "EU"]);
+    expect(s.industries.length).toBe(8);
+    expect(s.package_count).toBe(120);
+  });
+
+  it("returns 3 tiers for a region and industry, with the foundation in each", async () => {
+    const r = await app.request("/api/packages/GCC/b2c_property");
+    expect(r.status).toBe(200);
+    const list = await r.json();
+    expect(list.map((p: { tier: string }) => p.tier)).toEqual(["launch", "growth", "scale"]);
+    for (const p of list) expect(p.lines.some((l: { service: string }) => l.service === "brand")).toBe(true);
+    // B2C in the GCC must carry the Arabic and RTL pack in its price.
+    expect(list[0].prices[0].addons.some((a: { id: string }) => a.id === "gcc_arabic")).toBe(true);
+    expect(list[0].prices.map((p: { currency: string }) => p.currency)).toEqual(["AED", "SAR"]);
+  });
+
+  it("returns 404 for an unknown industry", async () => {
+    expect((await app.request("/api/packages/UK/nope")).status).toBe(404);
+  });
+});

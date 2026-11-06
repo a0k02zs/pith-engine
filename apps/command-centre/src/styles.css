@@ -328,3 +328,8 @@ a, button, summary, [role="tab"], .tool, .tile { cursor: pointer; }
 .check-list .sev-warn { border-color: var(--warn); background: var(--warn-bg); }
 .check-list .sev-info { border-color: var(--info); }
 .brief-form .grid-2, .brief-form .grid-3 { gap: 12px; }
+
+/* Packages page */
+.link-btn { all: unset; cursor: pointer; border-radius: 999px; }
+.link-btn:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 2px; }
+.plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
