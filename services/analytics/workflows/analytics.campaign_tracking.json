@@ -1,0 +1,185 @@
+{
+  "id": "analytics.campaign_tracking",
+  "version": 1,
+  "service": "analytics",
+  "description": "Tracking for 1 campaign in 1 market. Campaigns (2) starts it as a subflow per market. Writes the campaign tracking plan (events, UTM set, conversion mapping), builds and tests the tags in staging, then publishes after the go-live gate. Requests a holdout test when the campaign brief asks for one.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "campaign_id",
+      "market"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "campaign_id": {
+        "type": "string"
+      },
+      "market": {
+        "type": "string"
+      },
+      "holdout_required": {
+        "type": "boolean"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "brain",
+      "type": "tool",
+      "name": "Read the client brain for the market",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Campaign tracking plan: events, UTM set and conversion mapping",
+      "needs": [
+        "brain"
+      ],
+      "agent": {
+        "prompt_ref": "analytics/tracking_plan@1",
+        "model": "claude-sonnet-5-5",
+        "output_schema": "analytics/tracking_plan@1"
+      }
+    },
+    {
+      "id": "g2_tracking_plan",
+      "type": "gate",
+      "name": "G2 tracking plan",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "analytics_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "build",
+      "type": "tool",
+      "name": "Build the tags in the staging container",
+      "needs": [
+        "g2_tracking_plan"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "gtm.build_from_plan:staging",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "test",
+      "type": "tool",
+      "name": "Assert that every planned event fires in staging",
+      "needs": [
+        "build"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "tags.assert_plan:staging",
+        "risk": "read"
+      },
+      "retry": {
+        "attempts": 3,
+        "backoff": "exponential"
+      }
+    },
+    {
+      "id": "compliance",
+      "type": "check",
+      "name": "Consent mode and cookie rules for the market",
+      "needs": [
+        "test"
+      ],
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "g3_go_live",
+      "type": "gate",
+      "name": "G3 tracking go-live",
+      "needs": [
+        "compliance"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "analytics_lead",
+          "ops_lead"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "required_count": 2,
+        "on_changes": "build"
+      }
+    },
+    {
+      "id": "publish",
+      "type": "tool",
+      "name": "Publish the container",
+      "needs": [
+        "g3_go_live"
+      ],
+      "tool": {
+        "name": "analytics",
+        "action": "gtm.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "holdout_route",
+      "type": "branch",
+      "name": "Does the campaign need a holdout test?",
+      "needs": [
+        "publish"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.holdout_required == true",
+            "goto": "request_holdout"
+          }
+        ],
+        "else": "ready"
+      }
+    },
+    {
+      "id": "request_holdout",
+      "type": "emit",
+      "name": "Start analytics.incrementality_test for the campaign",
+      "emit": {
+        "event": "svc.analytics/test.requested"
+      }
+    },
+    {
+      "id": "ready",
+      "type": "emit",
+      "name": "Tracking is live; campaigns can run launch QA",
+      "emit": {
+        "event": "svc.analytics/campaign_tracking.ready"
+      }
+    }
+  ]
+}

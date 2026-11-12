@@ -12,8 +12,8 @@ const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as 
 const index = (wf: Workflow, id: string) => wf.steps.findIndex((s) => s.id === id);
 
 describe("content workflows", () => {
-  it("has the 3 workflows", () => {
-    expect(workflows.map((w) => w.id)).toEqual(["content.piece", "content.plan", "content.refresh"]);
+  it("has the 4 workflows", () => {
+    expect(workflows.map((w) => w.id)).toEqual(["content.campaign_assets", "content.piece", "content.plan", "content.refresh"]);
   });
 
   for (const wf of workflows) {
@@ -84,7 +84,7 @@ describe("content workflows", () => {
 
     it("gets the customer release and records rights before a case study is published", () => {
       expect(byId(wf, "customer_release").gate?.required_roles).toEqual(["external_contact"]);
-      expect(byId(wf, "record_release_rights").tool?.action).toContain("case_study_release");
+      expect(byId(wf, "record_release_rights").tool).toEqual({ name: "engine", action: "rights.create", risk: "write_internal" });
       expect(index(wf, "record_release_rights")).toBeLessThan(index(wf, "publish"));
     });
 

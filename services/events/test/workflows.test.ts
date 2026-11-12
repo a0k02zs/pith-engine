@@ -4,8 +4,8 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { dir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 
-const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "workflow-definition.json"), "utf8"));
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
+const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine", "workflow-definition.json"), "utf8"));
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
@@ -14,8 +14,8 @@ const wfById = (id: string) => workflows.find((w) => w.id === id)!;
 const before = (wf: Workflow, i: number, test: (s: WorkflowStep) => boolean) => wf.steps.slice(0, i).some(test);
 
 describe("events workflows", () => {
-  it("has the 3 workflows", () => {
-    expect(workflows.map((w) => w.id)).toEqual(["events.campaign_assets", "events.trade_show", "events.webinar"]);
+  it("has the 4 workflows", () => {
+    expect(workflows.map((w) => w.id)).toEqual(["events.campaign_assets", "events.campaign_go_live", "events.trade_show", "events.webinar"]);
   });
 
   for (const wf of workflows) {
@@ -141,10 +141,13 @@ describe("events workflows", () => {
     });
 
     it("publishes campaign registration pages only after the campaign launches the market", () => {
-      const wf = wfById("events.campaign_assets");
-      expect(index(wf, "register_artifacts")).toBeLessThan(index(wf, "market_launched"));
-      expect(index(wf, "market_launched")).toBeLessThan(index(wf, "publish_registration"));
-      expect(byId(wf, "market_launched").wait).toMatchObject({ event: "svc.campaigns/market.launched" });
+      // The asset run must finish before campaigns can launch, so it never waits for the launch event and never publishes.
+      const assets = wfById("events.campaign_assets");
+      expect(assets.steps.some((s) => s.wait?.event === "svc.campaigns/market.launched")).toBe(false);
+      expect(assets.steps.some((s) => s.tool?.risk === "write_external")).toBe(false);
+      const goLive = wfById("events.campaign_go_live");
+      expect(goLive.trigger).toEqual({ event: "svc.campaigns/market.launched" });
+      expect(index(goLive, "publish_check")).toBeLessThan(index(goLive, "publish_registration"));
     });
 
     it("writes learnings back to the engine at the end of each event workflow", () => {

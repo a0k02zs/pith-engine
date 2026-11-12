@@ -1,0 +1,19 @@
+name: workflow-lint
+on:
+  pull_request:
+    paths: ["services/*/workflows/**", "services/*/vendor/**", "services/campaigns/config/playbook.json", "engine/**", ".github/workflows/workflow-lint.yml"]
+  push:
+    branches: [main]
+    paths: ["services/*/workflows/**", "services/*/vendor/**", "services/campaigns/config/playbook.json", "engine/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # Cross-service checks: subflow ids, roles, approval kinds, tools, engine actions, guardrails.
+      - run: node engine/scripts/lint_workflows.mjs
+      # Services that keep a copy of the engine contracts must keep it current.
+      - run: node engine/scripts/sync_vendor.mjs --check

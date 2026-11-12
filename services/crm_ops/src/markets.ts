@@ -31,7 +31,7 @@ interface RawMarket extends Partial<MarketOverlay> {
 }
 
 const overlay = JSON.parse(readFileSync(dir("config", "market-overlay.json"), "utf8")) as { markets: Record<string, RawMarket> };
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8")) as {
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8")) as {
   market_groups: Record<string, string[]>;
   market_launch_order: string[];
 };

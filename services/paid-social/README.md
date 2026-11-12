@@ -58,7 +58,8 @@ Spend steps without a gate in the same run: `creative_test_*.launch` (fixed test
 
 ## Open items
 
-- The engine has no tool for service code. The steps `engine` `paid_social.guardrails`, `paid_social.classify_moves`, `paid_social.check_creator_plan` and `paid_social.ads_by_grant` call the code in `src/` and need an engine runner for it.
+- Service code runs through the tool `paid_social` in `enums.tool_registry` (contract 0.1.1). The actions `guardrails.evaluate`, `moves.classify`, `creator_plan.check` and `rights.ads_by_grant` call the code in `src/`. The engine runner must load that code.
+- `paid_social.campaign_assets` (campaign child run, never spends) and `paid_social.boost` (paid promotion for 1 brief, for example a webinar) were added on 2026-11-12. They reuse the strategist, audience builder, creative writer and launch checker prompts.
 - A per-platform workflow should run only for clients with an account on that platform. The engine needs a way to enable a workflow per client.
 - X (Saudi Arabia and Kuwait) has no tool in the registry yet.
 - A local lawyer confirms each market's rules before launch.

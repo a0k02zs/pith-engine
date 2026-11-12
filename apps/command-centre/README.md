@@ -65,6 +65,8 @@ The plan has objectives with targets, one play per service with its budget, a 90
 
 | Variable | What it does |
 |----------|--------------|
+| `PITH_ACCESS_CODE` | Turns on the access gate (see "Access"). Use a long random text. Without it the app is open and the server ignores the live keys below. |
+| `PITH_SESSION_SECRET` | Optional. Signs the session cookie. Without it the server derives the secret from the access code. |
 | `META_APP_ID`, `META_APP_SECRET`, `META_REDIRECT_URI` (or `PUBLIC_BASE_URL`) | Turn on Sign in with Meta. `META_GRAPH_VERSION` defaults to `v23.0`. |
 | `PITH_TOKEN_KEY` | 32 bytes, base64. Encrypts client tokens. Without it the key lives only in memory. |
 | `ANTHROPIC_API_KEY` | Turns on Improve with Claude. `PITH_CLAUDE_MODEL` defaults to `claude-opus-5-5`. |
@@ -72,6 +74,15 @@ The plan has objectives with targets, one play per service with its budget, a 90
 | `HF_API_KEY_ID`, `HF_API_KEY_SECRET`, `HIGGSFIELD_I2V_PATH` | Live Higgsfield jobs. |
 
 Put these in the host's secret store (Vercel environment variables or Secret Manager for Cloud Run). Never put them in the UI build.
+
+## Access
+
+The app has 1 shared access code. It does not have personal accounts yet.
+
+- **Protected mode** (`PITH_ACCESS_CODE` is set): every `/api` route except `/api/health` and `/api/session` needs a session. The sign-in screen sends the code to `POST /api/session`. The server sets a signed `HttpOnly` cookie (`pith_session`) that stays valid for 12 hours. After 8 wrong codes a caller must wait 10 minutes.
+- **Open mode** (no `PITH_ACCESS_CODE`): anyone with the URL can use the app. To keep this safe, the server removes `ANTHROPIC_API_KEY`, `META_APP_SECRET`, `RUNWAYML_API_SECRET`, `HF_API_KEY_ID` and `HF_API_KEY_SECRET` from its environment. Every integration then runs simulated. For local work with live keys, set `PITH_ACCESS_CODE` to any text.
+
+`/api/health` shows the mode in `protected`. The access code proves that a person may open the app. It does not prove who the person is: the user menu still selects a test user. Personal sign-in comes with the engine.
 
 ## Test users
 
@@ -110,7 +121,7 @@ To set it up on another Vercel account, import the repo at https://vercel.com/ne
 Limits today:
 
 - State is in memory. A new function instance starts again from the test data, so changes do not last. A database comes before real client work.
-- The app has no sign-in of its own. Turn on Vercel Authentication for all deployments (Project settings > Deployment Protection) before you add real keys.
+- The app has 1 shared access code and no personal accounts. Set `PITH_ACCESS_CODE` before you add real keys: without it the server ignores them. The wrong-code limit is kept in memory for each function instance, so use a long random code.
 
 ## Deploy to Cloud Run
 
@@ -121,7 +132,7 @@ gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT/pith/command-centre -f 
 gcloud run deploy pith-command-centre --image REGION-docker.pkg.dev/PROJECT/pith/command-centre --region europe-west2 --no-allow-unauthenticated
 ```
 
-Put the service behind Identity-Aware Proxy (IAP) so only Pith staff and invited client users can open it. The app has no sign-in of its own yet. Today the `x-pith-user` header selects a test user. In production, map the IAP user to an engine user and read the roles from the engine.
+Put the service behind Identity-Aware Proxy (IAP) so only Pith staff and invited client users can open it. The app has only a shared access code (see "Access"). Today the `x-pith-user` header selects a test user. In production, map the IAP user to an engine user and read the roles from the engine.
 
 ## Connect it to the real engine
 

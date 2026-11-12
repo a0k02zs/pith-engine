@@ -112,7 +112,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "contacts.consents.put",
+        "action": "consents.put",
         "risk": "write_internal"
       }
     },

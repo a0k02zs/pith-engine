@@ -1,5 +1,17 @@
 # Engine contract changelog
 
+## 0.1.1 — 2026-11-12 (additive; nothing is breaking)
+
+Found by the whole-project audit. A new check, `engine/scripts/lint_workflows.mjs`, reads every workflow in the repository and fails CI on a broken reference.
+
+- **Engine actions:** `enums.engine_actions` adds `brain.save_draft`, `claims.propose`, `contacts.upsert`, `contacts.fulfil_dsr`, `consents.put`, `consents.withdraw`, `conversions.record`, `artifacts.query`, `artifacts.update`, `artifacts.retire`, `rights.list` and `reports.publish`. 34 workflow steps called engine actions that were not in the registry (URL strings, early-draft names, or names with arguments). They now use these codes.
+- **API:** `GET /artifacts`, `PATCH /artifacts/{artifact_id}` and `POST /clients/{client_id}/reports` back the new actions. `GET /clients/{client_id}/rights` takes `expiring_before`.
+- **Tools:** `enums.tool_registry` adds `paid_social` (service-local pure functions, the same pattern as `crm_ops`) and `research` (site crawl and public source collection, read only). Brand used 3 tool names that were not in the registry.
+- **Subflows:** 12 subflow steps started workflows that did not exist. 3 targets now point at the existing workflow (`video.job`, `content.piece`). 8 workflows were added in their services: `analytics.campaign_tracking`, `email.nurture_flow`, `abm.invite_sequence`, `social.post_set`, `paid_social.boost`, `paid_social.campaign_assets`, `influencer.campaign_assets`, `content.campaign_assets`.
+- **Campaign assets (service-integration item 9):** a `campaign_assets` child run finishes with its artifact ids and never waits for `svc.campaigns/market.launched`. 4 services waited for that event inside the child run, while `campaigns.launch` waits for the child runs before it sends the event (deadlock). The publish half is now `<service>.campaign_go_live` (messaging, community, events). Search creates its campaigns paused and Campaigns activates them.
+- **Expressions:** `specs/workflow.md` defines `event` for `wait.match` and lists the early-draft names that are not defined. 49 of 216 expressions still use those names; the lint warns, and the services fix them before the runner exists.
+- **Vendored copies:** 7 services kept a stale copy of `enums.json`. The copies moved to `services/<name>/vendor/engine/`, and `engine/scripts/sync_vendor.mjs --check` fails CI when a copy differs.
+
 ## 0.1.0 — 2026-10-21 (all changes below are inside 0.1.0; nothing is breaking)
 
 First publish. Then these service requests were added the same day:

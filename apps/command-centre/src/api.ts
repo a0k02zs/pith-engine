@@ -41,6 +41,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   };
   const res = PREVIEW ? await (await localApp()).request(`/api${path}`, req) : await fetch(`/api${path}`, req);
   const body = await res.json().catch(() => ({}));
+  if (res.status === 401 && path !== "/session") window.dispatchEvent(new Event("pith:signed-out"));
   if (!res.ok) throw new HttpError(res.status, (body as { error?: string }).error ?? res.statusText);
   return body as T;
 }

@@ -27,8 +27,8 @@
         "plan"
       ],
       "tool": {
-        "name": "engine",
-        "action": "paid_social.check_creator_plan",
+        "name": "paid_social",
+        "action": "creator_plan.check",
         "risk": "read"
       }
     },

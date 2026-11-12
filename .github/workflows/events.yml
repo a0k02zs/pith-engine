@@ -1,10 +1,10 @@
 name: events
 on:
   pull_request:
-    paths: ["services/events/**"]
+    paths: ["services/events/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/events/**"]
+    paths: ["services/events/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

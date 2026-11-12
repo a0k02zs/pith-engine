@@ -15,7 +15,7 @@ This service orchestrates the channel services. It never sends or publishes itse
 | `config/markets.json` | Campaign rules per market group: weekends, currencies, Ramadan launch block, lead countries |
 | `src/` | Loaders, the system prompt builder and the rule functions (budget plan check, move class, auto-pause, fatigue, off-pace, flight phases, next market, lead countries, launch dates, UTM links) |
 | `test/` | Workflow, schema and rule tests |
-| `vendor/engine-v0.1.0/` | The engine files the tests check against |
+| `vendor/engine/` | The engine files the tests check against |
 | `docs/` | The playbook, approvals, KPIs, market rules, engine integration notes and templates |
 
 ## Run

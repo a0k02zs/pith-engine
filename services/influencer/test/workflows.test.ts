@@ -16,9 +16,9 @@ const wfById = (id: string) => workflows.find((w) => w.id === id)!;
 const before = (wf: Workflow, i: number, test: (s: WorkflowStep) => boolean) => wf.steps.slice(0, i).some(test);
 
 describe("influencer workflows", () => {
-  it("has the 5 workflows", () => {
+  it("has the 6 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
-      "influencer.deliver", "influencer.payout", "influencer.plan", "influencer.recruit", "influencer.weekly",
+      "influencer.campaign_assets", "influencer.deliver", "influencer.payout", "influencer.plan", "influencer.recruit", "influencer.weekly",
     ]);
   });
 

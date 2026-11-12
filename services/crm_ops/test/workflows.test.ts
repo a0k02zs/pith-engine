@@ -5,8 +5,8 @@ import { dir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 import { localTools } from "../src/tools.js";
 
-const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "workflow-definition.json"), "utf8"));
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
+const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine", "workflow-definition.json"), "utf8"));
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
 const index = (wf: Workflow, id: string) => wf.steps.findIndex((s) => s.id === id);

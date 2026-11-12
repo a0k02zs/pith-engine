@@ -13,7 +13,7 @@ Pith M service for SMS, WhatsApp and push messages in the UK, the EU, the US, Ca
 | `templates/*.json` | Template library: 25 SMS, 8 push, 11 WhatsApp (Meta Cloud API format) |
 | `src/` | Rule functions that the workflows and the engine call (see below) |
 | `test/` | Vitest tests for the rules, the template library, the schemas and the workflows |
-| `vendor/engine-v0.1.0/` | Copies of the engine `enums.json` and `workflow-definition.json` that the tests check against |
+| `vendor/engine/` | Copies of the engine `enums.json` and `workflow-definition.json` that the tests check against |
 | `docs/` | Playbook, approvals (gates G1 to G7), KPIs, engine contract notes, template notes |
 
 ## Rule functions (`src/`)
@@ -43,7 +43,8 @@ Pith M service for SMS, WhatsApp and push messages in the UK, the EU, the US, Ca
 | `messaging.two_way_chat` | `svc.messaging/inbound.received` | Keywords first, then the chat agent, or G5 handoff to a person |
 | `messaging.opt_out` | `svc.messaging/optout.received` | No gate and no LLM. Every sync uses risk `remove` (G10). |
 | `messaging.optimize_and_report` | cron 06:00 UTC | Daily optimizer, Monday report (G6) |
-| `messaging.campaign_assets` | subflow from Campaigns (2) | Templates first; the broadcast waits for `svc.campaigns/market.launched` |
+| `messaging.campaign_assets` | subflow from Campaigns (2) | Templates and approvals; the run finishes with the artifact ids |
+| `messaging.campaign_go_live` | `svc.campaigns/market.launched` | Sends the campaign broadcast in the launched market |
 
 ## Run
 

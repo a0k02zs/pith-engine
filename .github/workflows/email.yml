@@ -1,10 +1,10 @@
 name: email
 on:
   pull_request:
-    paths: ["services/email/**"]
+    paths: ["services/email/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/email/**"]
+    paths: ["services/email/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

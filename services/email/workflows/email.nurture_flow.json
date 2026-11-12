@@ -1,0 +1,100 @@
+{
+  "id": "email.nurture_flow",
+  "version": 1,
+  "service": "email",
+  "description": "Enrol 1 contact in an approved nurture flow. CRM ops (9) picks the track and starts this as a subflow. The flow content was approved in email.flow_build. This run checks consent and compliance for the contact's market, then enrols the contact. No consent means no enrolment.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "contact_id",
+      "flow_code"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "contact_id": {
+        "type": "string"
+      },
+      "flow_code": {
+        "type": "string",
+        "description": "The nurture track that crm_ops.nurture_enrol chose"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "type": "tool",
+      "name": "Resolve the contact for email marketing in their market",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "eligible",
+      "type": "branch",
+      "name": "Stop when the contact has no valid consent",
+      "needs": [
+        "resolve"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.resolve.output.contacts) == 0",
+            "goto": "skipped"
+          }
+        ],
+        "else": "check"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Compliance for the contact's market at enrol time",
+      "check": {
+        "kinds": [
+          "compliance"
+        ]
+      }
+    },
+    {
+      "id": "enrol",
+      "type": "tool",
+      "name": "Add the contact to the flow in the email platform",
+      "needs": [
+        "check"
+      ],
+      "tool": {
+        "name": "esp",
+        "action": "flow.enrol",
+        "risk": "send"
+      }
+    },
+    {
+      "id": "enrolled",
+      "type": "emit",
+      "name": "Tell CRM ops that the contact is in the flow",
+      "needs": [
+        "enrol"
+      ],
+      "emit": {
+        "event": "svc.email/nurture.enrolled"
+      }
+    },
+    {
+      "id": "skipped",
+      "type": "emit",
+      "name": "Tell CRM ops that the contact was not enrolled, with the reason",
+      "emit": {
+        "event": "svc.email/nurture.skipped"
+      }
+    }
+  ]
+}

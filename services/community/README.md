@@ -29,6 +29,7 @@ The service builds on the shared engine contracts in `/engine/contracts` (v0.1.0
 | `community.moderate` | Label posts and comments. Hide red items, then escalate. |
 | `community.host` | The community AI host. It says that it is an AI in its first message. |
 | `community.campaign_assets` | Campaign child run: supply rights-cleared customer content for a campaign brief. |
+| `community.campaign_go_live` | Starts on `svc.campaigns/market.launched`: checks the grants again and releases the assets. |
 | `community.weekly_report` | Weekly insights. The strategist reviews the report before the client sees it. |
 
 ## Run the tests

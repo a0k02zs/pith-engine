@@ -47,10 +47,10 @@ Version 1, 21 Oct 2026. Built against shared engine contract v0.1.0 (`/mnt/proje
 | 11 Paid social | `paid_social.boost` | Paid promotion (budget gate in that flow) |
 | 8 ABM | `abm.invite_sequence` | Invites to target accounts |
 | 10 Messaging | `messaging.reminder` | T−10min SMS or WhatsApp |
-| 3 Video | `video.clip_set` | Clips from the recording |
-| 7 Content | `content.repurpose` | Blog post, one-pager |
+| 3 Video | `video.job` | Clips from the recording (brief format `event_clips`) |
+| 7 Content | `content.piece` | Blog post, one-pager |
 
-The workflow ids are this service's best guess. Each owning thread confirms its id. The calls do not change if the id changes; only the name does.
+`engine/scripts/lint_workflows.mjs` fails the build when a workflow starts a subflow id that does not exist. `messaging.reminder` is a planned id: no events workflow calls it yet, and the messaging service has no workflow with that id.
 
 ## 5. Guardrails (engine `specs/workflow.md` §5)
 

@@ -58,8 +58,8 @@
         "intake"
       ],
       "tool": {
-        "name": "asset_crawler",
-        "action": "inventory",
+        "name": "research",
+        "action": "assets.inventory",
         "risk": "read"
       }
     },
@@ -200,7 +200,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "POST /clients/{client_id}/claims",
+        "action": "claims.propose",
         "risk": "write_internal"
       }
     },
@@ -398,7 +398,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "PUT /clients/{client_id}/brain",
+        "action": "brain.save_draft",
         "risk": "write_internal"
       }
     },

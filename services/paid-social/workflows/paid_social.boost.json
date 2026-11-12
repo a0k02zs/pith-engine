@@ -1,0 +1,255 @@
+{
+  "id": "paid_social.boost",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Paid promotion for 1 brief on 1 platform, for example a webinar. Events (16) starts it as a subflow per market. Plan, audiences, ads, checks, creative approval, budget approval, launch check and go-live, then launch on the chosen platform.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "brief",
+      "platform",
+      "market"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "brief": {
+        "type": "object"
+      },
+      "platform": {
+        "enum": [
+          "meta",
+          "linkedin",
+          "tiktok",
+          "snapchat"
+        ]
+      },
+      "market": {
+        "type": "string"
+      },
+      "campaign_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Plan the objective, platforms, audiences and budget split from the brief",
+      "agent": {
+        "prompt_ref": "paid_social/strategist@1",
+        "output_schema": "paid_social/strategy@1"
+      }
+    },
+    {
+      "id": "audiences",
+      "type": "agent",
+      "name": "Build the audiences; list uploads use audiences.resolve with channel paid_ad",
+      "needs": [
+        "plan"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/audience_builder@1",
+        "output_schema": "paid_social/audiences@1"
+      }
+    },
+    {
+      "id": "variants",
+      "type": "agent",
+      "name": "Write the ad variants",
+      "needs": [
+        "audiences"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/creative_writer@1",
+        "output_schema": "paid_social/variants@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Brand, compliance and fact checks",
+      "needs": [
+        "variants"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "name": "Approve the ads",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "performance_marketer",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "variants"
+      }
+    },
+    {
+      "id": "approve_budget",
+      "type": "gate",
+      "name": "Approve the budget; budget gates never skip",
+      "needs": [
+        "approve_creative"
+      ],
+      "gate": {
+        "approval_kind": "budget",
+        "required_roles": [
+          "client_finance",
+          "performance_marketer"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "launch_check",
+      "type": "agent",
+      "name": "Pre-launch checklist: tracking, naming, caps, placements",
+      "needs": [
+        "approve_budget"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/launch_checker@1",
+        "model": "claude-haiku-5-5",
+        "output_schema": "paid_social/launch_check@1"
+      }
+    },
+    {
+      "id": "approve_go_live",
+      "type": "gate",
+      "name": "Go-live",
+      "needs": [
+        "launch_check"
+      ],
+      "gate": {
+        "approval_kind": "go_live",
+        "required_roles": [
+          "performance_marketer"
+        ],
+        "sla_hours": 24,
+        "on_reject": "fail",
+        "on_changes": "launch_check"
+      }
+    },
+    {
+      "id": "route",
+      "type": "branch",
+      "name": "Choose the platform",
+      "needs": [
+        "approve_go_live"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "input.platform == 'meta'",
+            "goto": "launch_meta"
+          },
+          {
+            "if": "input.platform == 'linkedin'",
+            "goto": "launch_linkedin"
+          },
+          {
+            "if": "input.platform == 'tiktok'",
+            "goto": "launch_tiktok"
+          },
+          {
+            "if": "input.platform == 'snapchat'",
+            "goto": "launch_snapchat"
+          }
+        ],
+        "else": "unsupported"
+      }
+    },
+    {
+      "id": "launch_meta",
+      "type": "tool",
+      "name": "Launch on meta inside the approved budget",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "campaigns.launch",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "launch_linkedin",
+      "type": "tool",
+      "name": "Launch on linkedin inside the approved budget",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "campaigns.launch",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "launch_tiktok",
+      "type": "tool",
+      "name": "Launch on tiktok inside the approved budget",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "campaigns.launch",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "launch_snapchat",
+      "type": "tool",
+      "name": "Launch on snapchat inside the approved budget",
+      "needs": [
+        "route"
+      ],
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "campaigns.launch",
+        "risk": "spend"
+      }
+    },
+    {
+      "id": "unsupported",
+      "type": "emit",
+      "name": "Unknown platform: raise an escalation",
+      "needs": [
+        "route"
+      ],
+      "emit": {
+        "event": "engine/escalation.raised"
+      }
+    }
+  ]
+}

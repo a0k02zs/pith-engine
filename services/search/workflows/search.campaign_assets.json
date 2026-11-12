@@ -2,9 +2,9 @@
   "id": "search.campaign_assets",
   "version": 1,
   "service": "search",
-  "description": "Search share of a campaign (service-integration item 9): SEM ads from the channel brief, checks, copy gate, artifacts; enable only after svc.campaigns/market.launched. Budgets stay with the campaign optimizer.",
+  "description": "Search share of a campaign (service-integration item 9): SEM ads from the channel brief, checks, copy gate, artifacts, then campaigns created paused. The run finishes with the artifact_ids. Campaigns activates the paused campaigns at go-live. Budgets stay with the campaign optimizer.",
   "trigger": {
-    "event": "svc.campaigns/concept.approved"
+    "manual": true
   },
   "steps": [
     {
@@ -82,30 +82,15 @@
       ]
     },
     {
-      "id": "wait_launch",
-      "type": "wait",
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns; campaigns activates the paused campaigns at go-live",
       "needs": [
         "push_paused"
       ],
-      "wait": {
-        "event": "svc.campaigns/market.launched",
-        "match": "data.campaign_id == input.campaign_id && data.market == input.market",
-        "timeout": "60d"
-      },
-      "name": "wait launch"
-    },
-    {
-      "id": "enable",
-      "type": "tool",
-      "name": "enable",
-      "tool": {
-        "name": "ads_google",
-        "action": "campaigns.enable",
-        "risk": "spend"
-      },
-      "needs": [
-        "wait_launch"
-      ]
+      "emit": {
+        "event": "svc.search/campaign_assets.ready"
+      }
     }
   ]
 }

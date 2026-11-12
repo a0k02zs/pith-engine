@@ -1,0 +1,67 @@
+{
+  "id": "community.campaign_go_live",
+  "version": 1,
+  "service": "community",
+  "description": "Second half of campaign delivery (engine service-integration item 9). Starts on svc.campaigns/market.launched. Finds the UGC that community.campaign_assets got approved for the campaign, checks the rights grants again, then releases the assets to the channel services.",
+  "trigger": {
+    "event": "svc.campaigns/market.launched"
+  },
+  "steps": [
+    {
+      "id": "find",
+      "type": "tool",
+      "name": "Find this service's approved assets for the campaign and market",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "has_assets",
+      "type": "branch",
+      "name": "Stop when the campaign has no assets from this service",
+      "needs": [
+        "find"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.find.output.artifacts) == 0",
+            "goto": "nothing_to_do"
+          }
+        ],
+        "else": "rights"
+      }
+    },
+    {
+      "id": "rights",
+      "type": "tool",
+      "name": "Check the grants again on the launch day",
+      "tool": {
+        "name": "engine",
+        "action": "rights.check",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "release",
+      "type": "emit",
+      "name": "Release the assets to the channel services",
+      "needs": [
+        "rights"
+      ],
+      "emit": {
+        "event": "svc.community/ugc.released"
+      }
+    },
+    {
+      "id": "nothing_to_do",
+      "type": "emit",
+      "name": "No assets for this campaign and market",
+      "emit": {
+        "event": "svc.community/campaign_go_live.skipped"
+      }
+    }
+  ]
+}

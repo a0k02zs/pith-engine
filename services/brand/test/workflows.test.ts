@@ -95,7 +95,7 @@ describe("brand.build", () => {
   });
 
   it("saves the draft brain only after compiling, and calibrates the scorer before go-live", () => {
-    expect(byId(build, "save_draft").tool!.action).toBe("PUT /clients/{client_id}/brain");
+    expect(byId(build, "save_draft").tool!.action).toBe("brain.save_draft");
     expect(index(build, "compile_brain")).toBeLessThan(index(build, "save_draft"));
     expect(index(build, "calibrate_scorer")).toBeLessThan(index(build, "approve_brain"));
   });
@@ -107,6 +107,6 @@ describe("brand.build", () => {
   });
 
   it("proposes new claims through the engine claims endpoint", () => {
-    expect(byId(build, "propose_claims").tool!.action).toBe("POST /clients/{client_id}/claims");
+    expect(byId(build, "propose_claims").tool!.action).toBe("claims.propose");
   });
 });

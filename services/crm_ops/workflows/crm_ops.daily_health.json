@@ -62,7 +62,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "artifacts.create(kind=report, notify=ops_lead)",
+        "action": "artifacts.create",
         "risk": "write_internal"
       }
     },

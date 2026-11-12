@@ -38,8 +38,8 @@
         "pull"
       ],
       "tool": {
-        "name": "engine",
-        "action": "paid_social.guardrails",
+        "name": "paid_social",
+        "action": "guardrails.evaluate",
         "risk": "read"
       }
     },
@@ -88,8 +88,8 @@
         "decide"
       ],
       "tool": {
-        "name": "engine",
-        "action": "paid_social.classify_moves",
+        "name": "paid_social",
+        "action": "moves.classify",
         "risk": "read"
       }
     },

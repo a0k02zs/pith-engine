@@ -16,7 +16,11 @@ The workflow layer runs every service pipeline from the plan. A pipeline is data
 | `task` | Opens a human task (not an approval) in the portal, such as recording an interview or filming. Waits until the assignee marks it done with the output. | Shown in the inbox under Tasks. |
 | `subflow` | Starts another workflow as a child run, optionally once per market or channel. | Campaigns (2) uses this to start runs in other services. |
 
-Expressions use [CEL](https://cel.dev) over `input`, `steps.<id>.output`, `client` and `brain`.
+Expressions use [CEL](https://cel.dev) over `input`, `steps.<id>.output`, `client` and `brain`. A `wait.match` expression also reads `event` (the incoming event, for example `event.data.campaign_id == input.campaign_id`). No other names are defined: `async.data`, `run.input`, `output.<step>` and bare `data` are early-draft forms, and `engine/scripts/lint_workflows.mjs` warns about them.
+
+A `branch` jumps to the step named in `goto` or `else`. That step may leave out `needs`; the branch is its predecessor.
+
+A `subflow` step finishes when every child run finishes. A child run must never wait for an event that the parent sends after the subflow step (deadlock).
 
 ## 2. Run lifecycle
 
@@ -72,11 +76,11 @@ The plan's "never alone" list is code. `POST /workflows` rejects a definition th
 | G6. Every live item passes the compliance gate | A step with risk `send` or `write_external` (publish) must have a `check` with `compliance` before it. |
 | G7. Hard spend caps | The engine sets platform-side caps from `spend_policies`. Auto-pause when CPA is 50% over target for 3 days (plan, service 2). |
 | G8. Likeness and voice | Media with `people[]` needs an active `rights_grants` row with the right scope and market. No grant means `block`. |
-
-## 6. Agent context
-
-Each `agent` step receives, in this order: the system prompt for the step, the brand profile for the step's markets (from `GET /brain?market=`), the top 8 brain search results for the step's topic, the step input, and the output schema. Agents never get raw contact lists. They get segment definitions and counts.
 | G9. Live site changes | Tool actions that change a client website (robots.txt, redirects, canonicals, templates, tracking tags) are risk `write_external` and always need a `go_live` gate with `client_developer` or `ops_lead`. This gate can never be skipped. |
 | G10. Removals are never blocked | Risk `remove` (hide or unpublish a post, pull an asset whose rights expired, pause an ad) needs no compliance check and no gate. It is logged and sends `engine/outbound.recorded` with `type=failed` only on error. Removing is always the safe direction. |
 
 Note on G10: opt-out and suppression syncs to a provider (for example a STOP keyword sent to Twilio or Klaviyo) use risk `remove`. They never wait on a check.
+
+## 6. Agent context
+
+Each `agent` step receives, in this order: the system prompt for the step, the brand profile for the step's markets (from `GET /brain?market=`), the top 8 brain search results for the step's topic, the step input, and the output schema. Agents never get raw contact lists. They get segment definitions and counts.

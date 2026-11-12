@@ -4,8 +4,8 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { dir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 
-const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "workflow-definition.json"), "utf8"));
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
+const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine", "workflow-definition.json"), "utf8"));
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 const toolNames = Object.keys(enums.tool_registry);
 
@@ -140,12 +140,13 @@ describe("search workflows", () => {
       expect(ancestors(wf, "apply_approved").map((a) => a.id)).toContain("approve_change");
     });
 
-    it("enables campaign assets only after the campaign launches in that market (service-integration item 9)", () => {
+    it("creates campaign assets paused and never spends; campaigns activates them at launch (service-integration item 9)", () => {
       const wf = wfById("search.campaign_assets");
-      const wait = byId(wf, "wait_launch") as WorkflowStep & { wait: { event: string; match: string } };
-      expect(wait.wait.event).toBe("svc.campaigns/market.launched");
-      expect(wait.wait.match).toContain("data.market == input.market");
-      expect(ancestors(wf, "enable").map((a) => a.id)).toEqual(expect.arrayContaining(["approve_copy", "register", "wait_launch"]));
+      // The asset run must finish before campaigns can launch, so it never waits for the launch event.
+      expect(wf.steps.some((s) => (s as { wait?: { event?: string } }).wait?.event === "svc.campaigns/market.launched")).toBe(false);
+      expect(wf.steps.some((s) => s.tool?.risk === "spend")).toBe(false);
+      expect(byId(wf, "push_paused").tool).toEqual({ name: "ads_google", action: "campaigns.create_paused", risk: "write_internal" });
+      expect(ancestors(wf, "push_paused").map((a) => a.id)).toEqual(expect.arrayContaining(["approve_copy", "register"]));
     });
 
     it("needs the SEO lead and the client on the roadmap", () => {

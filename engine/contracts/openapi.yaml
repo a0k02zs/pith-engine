@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Pith M shared engine API
-  version: 0.1.0
+  version: 0.1.1
   description: |
     The HTTP API that the 18 service threads and the client portal use.
     Every response has the header Pith-Contract-Version. Object schemas live in ./schemas.
@@ -209,7 +209,7 @@ paths:
   /clients/{client_id}/rights:
     get:
       tags: [data]
-      summary: Rights grants. Filter by party, contact, scope, market, active_on date.
+      summary: Rights grants. Filter by party, contact, scope, market, active_on date, expiring_before date.
       parameters: [ { $ref: '#/components/parameters/ClientId' } ]
       responses: { '200': { description: Grants } }
     post:
@@ -277,6 +277,17 @@ paths:
       tags: [workflow]
       requestBody: { content: { application/json: { schema: { $ref: './schemas/artifact.json' } } } }
       responses: { '201': { description: Created } }
+    get:
+      tags: [workflow]
+      summary: Find artifacts. Filters client_id, kind, campaign_id, market, status, service. Engine action artifacts.query.
+      responses: { '200': { description: Artifacts } }
+
+  /artifacts/{artifact_id}:
+    patch:
+      tags: [workflow]
+      summary: Change artifact fields such as campaign_id or status. Status retired removes the artifact from use in every service (risk remove, G10). Engine actions artifacts.update and artifacts.retire.
+      parameters: [ { name: artifact_id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses: { '200': { description: Updated } }
 
   /artifacts/{artifact_id}/brand-score:
     post:
@@ -381,6 +392,13 @@ paths:
     post:
       tags: [measurement]
       responses: { '202': { description: Accepted; sends engine/conversion.recorded } }
+
+  /clients/{client_id}/reports:
+    post:
+      tags: [measurement]
+      summary: Publish a reviewed report to the client portal. Engine action reports.publish.
+      parameters: [ { $ref: '#/components/parameters/ClientId' } ]
+      responses: { '201': { description: Published } }
 
   /clients/{client_id}/reports/weekly:
     get:

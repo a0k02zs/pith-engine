@@ -1,10 +1,10 @@
 name: campaigns
 on:
   pull_request:
-    paths: ["services/campaigns/**"]
+    paths: ["services/campaigns/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/campaigns/**"]
+    paths: ["services/campaigns/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

@@ -38,7 +38,7 @@
         "variants"
       ],
       "subflow": {
-        "workflow_id": "video.ad_variants",
+        "workflow_id": "video.job",
         "per": "variant"
       }
     },

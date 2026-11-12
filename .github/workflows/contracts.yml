@@ -14,4 +14,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install jsonschema pyyaml
-      - run: python engine/scripts/validate_contracts.py
+      - run: python engine/scripts/validate_contracts.py services/*/workflows/*.json

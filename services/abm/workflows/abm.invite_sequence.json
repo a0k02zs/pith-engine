@@ -1,0 +1,111 @@
+{
+  "id": "abm.invite_sequence",
+  "version": 1,
+  "service": "abm",
+  "description": "Event invites for target accounts. Events (16) starts it as a subflow for a webinar or a trade show. Personalize the invite assets, check them, get the template approval, then start the invite play. abm.play_run sends each touch with its own send-time compliance check.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "event_id",
+    "limit": 1
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "event_id",
+      "play_id"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "event_id": {
+        "type": "string"
+      },
+      "play_id": {
+        "type": "string"
+      },
+      "account_ids": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "resolve_contacts",
+      "type": "tool",
+      "name": "Consented contacts at the target accounts",
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "personalize",
+      "type": "agent",
+      "name": "Write the invite assets per account tier",
+      "needs": [
+        "resolve_contacts"
+      ],
+      "agent": {
+        "prompt_ref": "abm/personalizer@1",
+        "model": "claude-opus-5-5",
+        "reads_brain": true,
+        "output_schema": "abm/personalizer@1"
+      }
+    },
+    {
+      "id": "check_assets",
+      "type": "check",
+      "name": "Brand, compliance, spam, links and fact checks",
+      "needs": [
+        "personalize"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "spam",
+          "links",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "g3_templates",
+      "type": "gate",
+      "name": "G3 Approve the invite templates",
+      "needs": [
+        "check_assets"
+      ],
+      "gate": {
+        "approval_kind": "template",
+        "required_roles": [
+          "account_lead"
+        ],
+        "required_count": 1,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "personalize"
+      }
+    },
+    {
+      "id": "start_play",
+      "type": "emit",
+      "name": "Start the invite play for each contact",
+      "needs": [
+        "g3_templates"
+      ],
+      "emit": {
+        "event": "svc.abm/play.started"
+      }
+    }
+  ]
+}

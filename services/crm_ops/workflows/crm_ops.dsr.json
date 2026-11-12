@@ -40,7 +40,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "contacts.delete_or_export",
+        "action": "contacts.fulfil_dsr",
         "risk": "remove"
       }
     },

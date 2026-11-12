@@ -13,7 +13,7 @@ Approved by the project owner on 22 Oct 2026 (strategy, flows, templates, prompt
 | `config/market-rules.json` | Email rules per market. The engine `compliance-rules.json` links to it as the email channel overlay. |
 | `src/` | Loaders, the system prompt builder and the rule functions (consent re-check, footers, `<ADV>` subjects, work days, send times, frequency cap, deliverability levels, A/B winner, reply routing, sunset) |
 | `test/` | Workflow, schema and rule tests |
-| `vendor/engine-v0.1.0/` | The engine files the tests check against |
+| `vendor/engine/` | The engine files the tests check against |
 | `docs/` | The approved playbook, market rules, flow library, approvals and KPIs, agent prompts and copy templates |
 
 ## Run

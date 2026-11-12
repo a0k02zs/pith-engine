@@ -603,7 +603,7 @@
         "repurpose_plan"
       ],
       "subflow": {
-        "workflow_id": "video.clip_set"
+        "workflow_id": "video.job"
       }
     },
     {
@@ -614,7 +614,7 @@
         "repurpose_plan"
       ],
       "subflow": {
-        "workflow_id": "content.repurpose"
+        "workflow_id": "content.piece"
       }
     },
     {

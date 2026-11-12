@@ -1,0 +1,81 @@
+{
+  "id": "events.campaign_go_live",
+  "version": 1,
+  "service": "events",
+  "description": "Second half of campaign delivery (engine service-integration item 9). Starts on svc.campaigns/market.launched. Finds the registration page that events.campaign_assets got approved for the campaign, runs the compliance check for the market, then publishes the page.",
+  "trigger": {
+    "event": "svc.campaigns/market.launched"
+  },
+  "steps": [
+    {
+      "id": "find",
+      "type": "tool",
+      "name": "Find this service's approved assets for the campaign and market",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "has_assets",
+      "type": "branch",
+      "name": "Stop when the campaign has no assets from this service",
+      "needs": [
+        "find"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.find.output.artifacts) == 0",
+            "goto": "nothing_to_do"
+          }
+        ],
+        "else": "publish_check"
+      }
+    },
+    {
+      "id": "publish_check",
+      "type": "check",
+      "name": "Compliance and links on the launch day",
+      "check": {
+        "kinds": [
+          "compliance",
+          "links"
+        ]
+      }
+    },
+    {
+      "id": "publish_registration",
+      "type": "tool",
+      "name": "Publish the registration page",
+      "needs": [
+        "publish_check"
+      ],
+      "tool": {
+        "name": "events",
+        "action": "session.publish",
+        "risk": "write_external"
+      }
+    },
+    {
+      "id": "record",
+      "type": "emit",
+      "name": "Record the publish",
+      "needs": [
+        "publish_registration"
+      ],
+      "emit": {
+        "event": "engine/outbound.recorded"
+      }
+    },
+    {
+      "id": "nothing_to_do",
+      "type": "emit",
+      "name": "No assets for this campaign and market",
+      "emit": {
+        "event": "svc.events/campaign_go_live.skipped"
+      }
+    }
+  ]
+}
