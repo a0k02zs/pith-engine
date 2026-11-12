@@ -2,9 +2,9 @@
   "id": "community.campaign_assets",
   "version": 1,
   "service": "community",
-  "description": "Campaign child run: supply rights-cleared customer content for a campaign brief. Nothing is used before the market launches.",
+  "description": "Campaign child run: supply rights-cleared customer content for a campaign brief, then finish with the artifact_ids. community.campaign_go_live releases the assets after svc.campaigns/market.launched.",
   "trigger": {
-    "event": "engine/run.started"
+    "manual": true
   },
   "steps": [
     {
@@ -90,28 +90,15 @@
       ]
     },
     {
-      "id": "wait_launch",
-      "type": "wait",
-      "name": "Wait for the market to launch",
-      "wait": {
-        "event": "svc.campaigns/market.launched",
-        "match": "data.campaign_id == run.input.campaign_id",
-        "timeout": "60d"
-      },
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
       "needs": [
         "register"
-      ]
-    },
-    {
-      "id": "release",
-      "type": "emit",
-      "name": "Release the assets to the channel services",
+      ],
       "emit": {
-        "event": "svc.community/ugc.released"
-      },
-      "needs": [
-        "wait_launch"
-      ]
+        "event": "svc.community/campaign_assets.ready"
+      }
     }
   ]
 }

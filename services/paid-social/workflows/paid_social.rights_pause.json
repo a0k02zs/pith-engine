@@ -32,8 +32,8 @@
         "relevant"
       ],
       "tool": {
-        "name": "engine",
-        "action": "paid_social.ads_by_grant",
+        "name": "paid_social",
+        "action": "rights.ads_by_grant",
         "risk": "read"
       }
     },

@@ -1,0 +1,69 @@
+{
+  "id": "influencer.campaign_assets",
+  "version": 1,
+  "service": "influencer",
+  "description": "Campaign assets for service 2 (engine service-integration item 9). Campaigns starts it as a subflow with 1 channel brief, campaign_id and markets. Runs influencer.plan (strategy, plan gate, discovery, vetting, shortlist gate) and registers the approved plan. The run finishes with output.artifact_ids. Creator posts come later through influencer.recruit and influencer.deliver, each with its own contract and content gates; post dates sit inside the campaign flight, after svc.campaigns/market.launched.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "channel_brief",
+      "campaign_id",
+      "markets"
+    ],
+    "properties": {
+      "channel_brief": {
+        "type": "object",
+        "description": "Part 3 of the campaigns master brief, for the influencer channel"
+      },
+      "campaign_id": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-[a-z0-9-]+$"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "run_plan",
+      "type": "subflow",
+      "name": "Plan, discover, vet and shortlist creators from the channel brief",
+      "needs": [],
+      "subflow": {
+        "workflow_id": "influencer.plan"
+      }
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "Register the approved plan and shortlist with campaign_id",
+      "needs": [
+        "run_plan"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
+      "needs": [
+        "register"
+      ],
+      "emit": {
+        "event": "svc.influencer/campaign_assets.ready"
+      }
+    }
+  ]
+}

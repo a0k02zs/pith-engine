@@ -13,7 +13,7 @@ The design is in `docs/` (playbook, pipelines, agent prompts, templates, market 
 | `config/market-rules.json` | Events rules per market: time zone, weekend, session slots, best days, booth consent, co-host sharing, SMS basis |
 | `src/` | Loaders, the system prompt builder and the rule functions (session times, pacing, engagement score and segments, follow-up send time, business-hours hand-off, the template skip rule, booth and SMS consent, CASL expiry, live Q&A routing) |
 | `test/` | Workflow, schema, prompt and rule tests |
-| `vendor/engine-v0.1.0/` | The engine files the tests check against |
+| `vendor/engine/` | The engine files the tests check against |
 | `docs/` | The design documents |
 
 ## Run
@@ -36,10 +36,10 @@ npm test
 - Engagement scores and segments are code, not model output. An ABM target account is always fit A.
 - Complaint, press, legal and abuse questions in live Q&A always escalate (engine G4).
 - A badge scan is never consent in a market that asks the consent question at the booth.
-- Campaign registration pages publish only after `svc.campaigns/market.launched`.
+- Campaign registration pages publish only after `svc.campaigns/market.launched`: `events.campaign_assets` finishes with the approved assets, and `events.campaign_go_live` publishes the page when the market launches.
 
 ## Notes
 
 - `template_approved` and `only_merge_fields_changed` in `events/follow_up@1` are set by the service code from the approval record and `onlyMergeFieldsChanged()`, not by the model.
-- The subflow ids of other services (`email.campaign_send`, `social.post_set`, `abm.invite_sequence`, `abm.account_list`, `paid_social.boost`, `video.clip_set`, `content.repurpose`) are expected names until each service confirms them.
+- The subflow ids of other services now all exist (checked by `engine/scripts/lint_workflows.mjs`): `email.campaign_send`, `social.post_set`, `abm.invite_sequence`, `abm.account_list`, `paid_social.boost`, `video.job` (clips) and `content.piece` (blog post and one-pager).
 - The market rules are a planning summary, not legal advice. A local lawyer confirms each market before launch.

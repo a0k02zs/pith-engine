@@ -28,7 +28,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "audiences.resolve(contact_ids=[event.data.contact_id], channel=email, purpose=service)",
+        "action": "audiences.resolve",
         "risk": "read"
       }
     },

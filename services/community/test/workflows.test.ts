@@ -15,9 +15,9 @@ const index = (wf: Workflow, id: string) => wf.steps.findIndex((s) => s.id === i
 const wfById = (id: string) => workflows.find((w) => w.id === id)!;
 
 describe("community workflows", () => {
-  it("has the 10 workflows", () => {
+  it("has the 11 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
-      "community.campaign_assets", "community.host", "community.moderate", "community.onboard", "community.review_reply",
+      "community.campaign_assets", "community.campaign_go_live", "community.host", "community.moderate", "community.onboard", "community.review_reply",
       "community.review_request", "community.rights_expiry", "community.ugc_reuse", "community.ugc_rights", "community.weekly_report",
     ]);
   });
@@ -160,9 +160,13 @@ describe("community workflows", () => {
     });
 
     it("releases campaign assets only after the market launches", () => {
-      const wf = wfById("community.campaign_assets");
-      expect(byId(wf, "wait_launch").wait?.event).toBe("svc.campaigns/market.launched");
-      expect(byId(wf, "release").needs).toEqual(["wait_launch"]);
+      // The asset run must finish before campaigns can launch, so it never waits for the launch event.
+      const assets = wfById("community.campaign_assets");
+      expect(assets.steps.some((s) => s.wait?.event === "svc.campaigns/market.launched")).toBe(false);
+      expect(assets.steps.some((s) => s.emit?.event === "svc.community/ugc.released")).toBe(false);
+      const goLive = wfById("community.campaign_go_live");
+      expect(goLive.trigger).toEqual({ event: "svc.campaigns/market.launched" });
+      expect(byId(goLive, "release").needs).toEqual(["rights"]);
     });
 
     it("reviews the report before the client sees it", () => {

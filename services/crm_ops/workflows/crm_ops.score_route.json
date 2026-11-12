@@ -68,7 +68,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "conversions.post(kind=mql)",
+        "action": "conversions.record",
         "risk": "write_internal"
       }
     },

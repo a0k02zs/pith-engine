@@ -28,8 +28,8 @@
       "type": "tool",
       "name": "Pull competitor pages, reviews, social comments and search queries",
       "tool": {
-        "name": "research_collector",
-        "action": "collect",
+        "name": "research",
+        "action": "sources.collect",
         "risk": "read"
       }
     },

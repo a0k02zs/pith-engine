@@ -4,8 +4,8 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { dir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 
-const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "workflow-definition.json"), "utf8"));
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
+const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine", "workflow-definition.json"), "utf8"));
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
@@ -15,9 +15,9 @@ const subflowId = (s: WorkflowStep) => (s.subflow as { workflow_id?: string } | 
 const hasCompliance = (steps: WorkflowStep[]) => steps.some((t) => t.check?.kinds?.includes("compliance"));
 
 describe("messaging workflows", () => {
-  it("has the 10 workflows", () => {
+  it("has the 11 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
-      "messaging.broadcast", "messaging.campaign_assets", "messaging.client_onboarding", "messaging.opt_out",
+      "messaging.broadcast", "messaging.campaign_assets", "messaging.campaign_go_live", "messaging.client_onboarding", "messaging.opt_out",
       "messaging.optimize_and_report", "messaging.send", "messaging.sender_registration", "messaging.template_lifecycle",
       "messaging.triggered_send", "messaging.two_way_chat",
     ]);
@@ -134,9 +134,13 @@ describe("messaging workflows", () => {
     });
 
     it("never sends campaign assets before the market launches (engine checklist 9)", () => {
-      const wf = wfById("messaging.campaign_assets");
-      expect(byId(wf, "wait_launch").wait).toEqual(expect.objectContaining({ event: "svc.campaigns/market.launched" }));
-      expect(index(wf, "wait_launch")).toBeLessThan(index(wf, "broadcast"));
+      // The asset run must finish before campaigns can launch, so it never waits for the launch event and never sends.
+      const assets = wfById("messaging.campaign_assets");
+      expect(assets.steps.some((s) => s.wait?.event === "svc.campaigns/market.launched")).toBe(false);
+      expect(assets.steps.some((s) => s.subflow?.workflow_id === "messaging.broadcast")).toBe(false);
+      const goLive = wfById("messaging.campaign_go_live");
+      expect(goLive.trigger).toEqual({ event: "svc.campaigns/market.launched" });
+      expect(byId(goLive, "broadcast").subflow).toEqual({ workflow_id: "messaging.broadcast", per: "market" });
     });
   });
 });

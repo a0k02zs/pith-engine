@@ -31,9 +31,9 @@ a:hover { text-decoration: underline; }
 h1 { font-size: 24px; margin: 0; letter-spacing: -.015em; font-weight: 700; text-wrap: balance; }
 h2 { font-size: 15px; margin: 0; }
 h3 { font-size: 13px; margin: 8px 0 4px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-select, textarea, input[type="text"] { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-height: 36px; transition: border-color .15s, box-shadow .15s; }
-select:hover, textarea:hover, input[type="text"]:hover { border-color: var(--muted); }
-select:focus, textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+select, textarea, input[type="text"], input[type="password"] { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-height: 36px; transition: border-color .15s, box-shadow .15s; }
+select:hover, textarea:hover, input[type="text"]:hover, input[type="password"]:hover { border-color: var(--muted); }
+select:focus, textarea:focus, input[type="text"]:focus, input[type="password"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
 select { cursor: pointer; }
 textarea { width: 100%; resize: vertical; }
 .mono, kbd, code { font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -333,3 +333,10 @@ a, button, summary, [role="tab"], .tool, .tile { cursor: pointer; }
 .link-btn { all: unset; cursor: pointer; border-radius: 999px; }
 .link-btn:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 2px; }
 .plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+
+/* Access gate */
+.gate { min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--bg); }
+.gate-card { width: min(380px, 100%); display: grid; gap: 10px; padding: 24px; }
+.gate-card label { font-weight: 600; }
+.gate-brand { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 6px; }
+.side-foot .link-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 12px; color: var(--side-ink); text-decoration: underline; cursor: pointer; text-align: left; min-height: 24px; }

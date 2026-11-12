@@ -1,0 +1,133 @@
+{
+  "id": "social.post_set",
+  "version": 1,
+  "service": "social",
+  "description": "A set of posts for 1 brief outside the monthly calendar, for example webinar promotion. Events (16) starts it as a subflow per market. Plan the slots, get Gate A, then start 1 social.create_post run per slot. Each post still passes its own checks and Gate B when flagged.",
+  "trigger": {
+    "manual": true
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "client_id",
+      "brief",
+      "market"
+    ],
+    "properties": {
+      "client_id": {
+        "type": "string"
+      },
+      "brief": {
+        "type": "object",
+        "description": "What to promote, dates, links and the audience"
+      },
+      "market": {
+        "type": "string"
+      },
+      "campaign_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "gather",
+      "type": "tool",
+      "name": "Load the brand profile, pillars and time windows",
+      "tool": {
+        "name": "engine",
+        "action": "brain.read",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Plan the slots for the brief",
+      "needs": [
+        "gather"
+      ],
+      "agent": {
+        "prompt_ref": "social/planner@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "social/calendar@1"
+      }
+    },
+    {
+      "id": "validate",
+      "type": "check",
+      "name": "Code checks: slot counts, time windows, pause list",
+      "needs": [
+        "plan"
+      ],
+      "check": {
+        "kinds": [
+          "fact"
+        ]
+      },
+      "retry": {
+        "attempts": 2
+      }
+    },
+    {
+      "id": "native_review",
+      "type": "gate",
+      "name": "Native editor reviews slots in languages that need one",
+      "needs": [
+        "validate"
+      ],
+      "gate": {
+        "approval_kind": "content",
+        "required_roles": [
+          "native_editor"
+        ],
+        "sla_hours": 24,
+        "skip_if": "!steps.plan.output.slots.exists(s, s.language in brain.native_editor_languages)",
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "approve_calendar",
+      "type": "gate",
+      "name": "GATE A: social lead and client approve the slots",
+      "needs": [
+        "native_review"
+      ],
+      "gate": {
+        "approval_kind": "calendar",
+        "required_roles": [
+          "social_lead",
+          "client_approver"
+        ],
+        "sla_hours": 48,
+        "required_count": 2,
+        "on_changes": "plan"
+      }
+    },
+    {
+      "id": "save",
+      "type": "tool",
+      "name": "Save the approved slots",
+      "needs": [
+        "approve_calendar"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "produce",
+      "type": "subflow",
+      "name": "One create run per slot",
+      "needs": [
+        "save"
+      ],
+      "subflow": {
+        "workflow_id": "social.create_post",
+        "per": "slot"
+      }
+    }
+  ]
+}

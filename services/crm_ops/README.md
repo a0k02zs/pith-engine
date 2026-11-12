@@ -15,7 +15,7 @@ Code for the Pith M CRM operations service, built on engine contracts v0.1.0 (`e
 | `workflows/` | 11 workflow definitions (engine `workflow-definition.json`). |
 | `prompts/`, `schemas/` | 12 agent prompts and 11 output schemas. |
 | `config/` | Score model, market overlay, CRM field list (HubSpot and Salesforce names). |
-| `vendor/engine-v0.1.0/` | Copies of the engine enums and workflow schema that the tests check against. |
+| `vendor/engine/` | Copies of the engine enums and workflow schema that the tests check against. |
 
 ## Run
 

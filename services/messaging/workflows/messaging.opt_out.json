@@ -13,7 +13,7 @@
       "name": "PUT consent withdrawn (channel, purpose marketing, evidence = inbound message id)",
       "tool": {
         "name": "engine",
-        "action": "contacts.consents.withdraw",
+        "action": "consents.withdraw",
         "risk": "write_internal"
       },
       "retry": {

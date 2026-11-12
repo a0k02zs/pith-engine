@@ -41,7 +41,7 @@
       "needs": [],
       "tool": {
         "name": "engine",
-        "action": "brain.get",
+        "action": "brain.read",
         "risk": "read"
       },
       "retry": {

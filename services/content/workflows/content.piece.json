@@ -216,7 +216,7 @@
       ],
       "tool": {
         "name": "engine",
-        "action": "rights_grants.create(scope=case_study_release)",
+        "action": "rights.create",
         "risk": "write_internal"
       }
     },

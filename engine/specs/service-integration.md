@@ -1,4 +1,4 @@
-# How a service plugs into the engine — v0.1.0
+# How a service plugs into the engine — v0.1.1
 
 Use this checklist in every service thread. Put your service files in `/mnt/project-files/services/<service>/`.
 
@@ -10,9 +10,10 @@ Use this checklist in every service thread. Put your service files in `/mnt/proj
 6. **Approvals.** Use `gate` steps with shared kinds from `approval-inbox.md`. Do not prefix kinds or roles with your service.
 7. **Events.** Your own events are `svc.<service>/<noun>.<verb>`. Results go to `engine/outbound.recorded` and `engine/metric.recorded` with shared KPI codes, or `<service>.<name>` for service-only KPIs.
 8. **New people.** Creators, talent, journalists, partners, affiliates and experts are `parties`. Usage rights are `rights_grants`.
-9. **Campaign assets.** Every channel service registers a workflow `<service>.campaign_assets`. Campaigns (2) starts it as a subflow child run (with `parent_run_id`). A channel never publishes campaign assets until it receives `svc.campaigns/market.launched` for its market. Details: `/mnt/project-files/services/campaigns/workflows/contracts.md`.
-10. **Tool names and risk.** Tool step `name` values are in `enums.tool_registry`; risk meanings are in `enums.tool_risk_meaning`. ESP list syncs are `write_internal`; suppression, pause and opt-out syncs are `remove`.
-11. **Need a change?** Message the engine thread with the exact field, code or endpoint. Minor additions ship the same day.
+9. **Campaign assets.** Every channel service registers a workflow `<service>.campaign_assets`. Campaigns (2) starts it as a subflow child run (with `parent_run_id`) and waits for it before launch QA. The child run builds and approves the assets, registers them as artifacts, and finishes with `output.artifact_ids[]`. It never waits for the launch. A channel never publishes campaign assets until it receives `svc.campaigns/market.launched` for its market: put the publish steps in a second workflow `<service>.campaign_go_live` with that event as its trigger (contract 0.1.1). Paid channels create their campaigns paused; Campaigns activates them. Details: `/mnt/project-files/services/campaigns/workflows/contracts.md`.
+10. **Tool names and risk.** Tool step `name` values are in `enums.tool_registry`; actions of the tool `engine` are in `enums.engine_actions`; risk meanings are in `enums.tool_risk_meaning`. ESP list syncs are `write_internal`; suppression, pause and opt-out syncs are `remove`.
+11. **Check your wiring.** Run `node engine/scripts/lint_workflows.mjs` before you open a PR. It checks every workflow in the repository: step references, subflow ids, roles, approval kinds, tool names, engine actions and guardrails G1, G2 and G6. CI runs it on every change to a workflow or a contract.
+12. **Need a change?** Message the engine thread with the exact field, code or endpoint. Minor additions ship the same day.
 
 ## Name mapping for early drafts
 

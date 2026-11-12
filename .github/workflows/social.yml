@@ -1,10 +1,10 @@
 name: social
 on:
   pull_request:
-    paths: ["services/social/**"]
+    paths: ["services/social/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/social/**"]
+    paths: ["services/social/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

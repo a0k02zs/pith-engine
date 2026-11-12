@@ -14,9 +14,9 @@ const index = (wf: Workflow, id: string) => wf.steps.findIndex((s) => s.id === i
 const wfById = (id: string) => workflows.find((w) => w.id === id)!;
 
 describe("analytics workflows", () => {
-  it("has the 6 workflows", () => {
+  it("has the 7 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
-      "analytics.daily_data_qa", "analytics.incrementality_test", "analytics.monthly_roi",
+      "analytics.campaign_tracking", "analytics.daily_data_qa", "analytics.incrementality_test", "analytics.monthly_roi",
       "analytics.onboarding", "analytics.quarterly_mmm", "analytics.weekly_report",
     ]);
   });

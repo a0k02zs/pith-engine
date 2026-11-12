@@ -33,10 +33,10 @@ const SPEND_INSIDE_POLICY = new Set(["creative_test_*.launch", "daily_optimize_*
 const policyKey = (wf: Workflow, s: WorkflowStep) => `${wf.id.replace(/^paid_social\./, "").replace(/_(meta|linkedin|tiktok|snapchat)$/, "_*")}.${s.id}`;
 
 describe("paid social workflows", () => {
-  it("has 6 platform-neutral workflows and 4 templates × 4 platforms", () => {
+  it("has 8 platform-neutral workflows and 4 templates × 4 platforms", () => {
     expect(workflows.map((w) => w.id).sort()).toEqual(
       [
-        "paid_social.creative_refresh", "paid_social.creator_amplify", "paid_social.monthly_plan", "paid_social.onboard",
+        "paid_social.boost", "paid_social.campaign_assets", "paid_social.creative_refresh", "paid_social.creator_amplify", "paid_social.monthly_plan", "paid_social.onboard",
         "paid_social.rights_pause", "paid_social.weekly_report",
         ...perPlatform("creative_refresh"), ...perPlatform("creative_test"), ...perPlatform("creator_launch"), ...perPlatform("daily_optimize"),
       ].sort(),

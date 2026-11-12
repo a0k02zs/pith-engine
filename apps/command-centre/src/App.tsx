@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import type { Client, Overview, ServiceInfo, User } from "../server/types";
 import { currentUserId, setCurrentUserId, useApi } from "./api";
+import { AccessGate, type Session } from "./components/AccessGate";
 import { Icon, type IconName } from "./components/icons";
 import { AnalyticsPage } from "./pages/Analytics";
 import { ApprovalsPage } from "./pages/Approvals";
@@ -16,6 +17,10 @@ import { VideoProjectPage, VideoStudioPage } from "./pages/Video";
 interface NavItem { to: string; label: string; icon: IconName; end?: boolean; badge?: number; alert?: boolean; beta?: boolean }
 
 export function App() {
+  return <AccessGate>{(session, signOut) => <Shell session={session} signOut={signOut} />}</AccessGate>;
+}
+
+function Shell({ session, signOut }: { session: Session; signOut: () => void }) {
   const meta = useApi<{ users: User[]; contract_version: string }>("/meta");
   const ov = useApi<Overview>("/overview");
   const clients = useApi<Client[]>("/clients");
@@ -87,7 +92,11 @@ export function App() {
           <select id="user" value={uid} onChange={(e) => setCurrentUserId(e.target.value)}>
             {meta.data?.users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
           </select>
-          <div className="test-flag">Test data. No real client account is connected.</div>
+          <div className="test-flag">
+            Test data. No real client account is connected.
+            {!session.protected && " Open mode: no access code is set, so live integrations are off."}
+          </div>
+          {session.protected && <button className="link-btn" onClick={signOut}>Sign out</button>}
         </div>
       </aside>
       <div className="body">

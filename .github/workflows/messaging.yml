@@ -1,10 +1,10 @@
 name: messaging
 on:
   pull_request:
-    paths: ["services/messaging/**", "engine/specs/compliance-rules.json"]
+    paths: ["services/messaging/**", "engine/contracts/**", "engine/specs/compliance-rules.json"]
   push:
     branches: [main]
-    paths: ["services/messaging/**", "engine/specs/compliance-rules.json"]
+    paths: ["services/messaging/**", "engine/contracts/**", "engine/specs/compliance-rules.json"]
 jobs:
   test:
     runs-on: ubuntu-latest

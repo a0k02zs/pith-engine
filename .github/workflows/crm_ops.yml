@@ -1,10 +1,10 @@
 name: crm_ops
 on:
   pull_request:
-    paths: ["services/crm_ops/**"]
+    paths: ["services/crm_ops/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/crm_ops/**"]
+    paths: ["services/crm_ops/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

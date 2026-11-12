@@ -26,9 +26,9 @@ function ancestors(wf: Workflow, id: string, seen = new Set<string>()): Set<stri
 }
 
 describe("abm workflows", () => {
-  it("has the 6 workflows", () => {
+  it("has the 7 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
-      "abm.account_activation", "abm.account_list", "abm.intent_daily", "abm.play_run", "abm.sales_handoff", "abm.weekly_report",
+      "abm.account_activation", "abm.account_list", "abm.intent_daily", "abm.invite_sequence", "abm.play_run", "abm.sales_handoff", "abm.weekly_report",
     ]);
   });
 

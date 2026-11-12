@@ -15,7 +15,7 @@ Status: draft. The design pack is at `docs/`. The Starter, Growth and Scale pack
 | `config/market-rules.json` | Social rules per market: platforms, paid post labels, work days, no-post windows, native editor languages, caption limits, hashtag ranges |
 | `src/` | Loaders, the system prompt builder and the rule functions (post checks, schedule checks, final decision, calendar checks, inbox routing, crisis actions, KPIs) |
 | `test/` | Workflow, schema and rule tests |
-| `vendor/engine-v0.1.0/` | The engine files the tests check against |
+| `vendor/engine/` | The engine files the tests check against |
 | `docs/` | The design pack: playbook, market rules, agents, approvals and KPIs, crisis protocol, templates |
 
 ## Run

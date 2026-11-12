@@ -4,8 +4,8 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { dir } from "../src/paths.js";
 import { loadWorkflows, unresolvedRefs, type Workflow, type WorkflowStep } from "../src/registry.js";
 
-const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "workflow-definition.json"), "utf8"));
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8"));
+const engineSchema = JSON.parse(readFileSync(dir("vendor", "engine", "workflow-definition.json"), "utf8"));
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8"));
 const workflows = loadWorkflows();
 
 const byId = (wf: Workflow, id: string) => wf.steps.find((s) => s.id === id) as WorkflowStep;
@@ -13,10 +13,10 @@ const index = (wf: Workflow, id: string) => wf.steps.findIndex((s) => s.id === i
 const wfById = (id: string) => workflows.find((w) => w.id === id)!;
 
 describe("email workflows", () => {
-  it("has the 9 workflows", () => {
+  it("has the 10 workflows", () => {
     expect(workflows.map((w) => w.id)).toEqual([
       "email.audience_sync", "email.campaign_send", "email.consent_change", "email.deliverability_monitor",
-      "email.flow_build", "email.monthly_calendar", "email.outbound_sequence", "email.reply_triage", "email.weekly_report",
+      "email.flow_build", "email.monthly_calendar", "email.nurture_flow", "email.outbound_sequence", "email.reply_triage", "email.weekly_report",
     ]);
   });
 

@@ -1,0 +1,187 @@
+{
+  "id": "paid_social.campaign_assets",
+  "version": 1,
+  "service": "paid_social",
+  "description": "Campaign assets for service 2 (engine service-integration item 9). Campaigns starts it as a subflow with 1 channel brief, campaign_id and markets. Plan, audiences, ads, checks and the creative gate, then register the assets and create the campaigns paused on each platform. The run finishes with output.artifact_ids. This run never spends: campaigns activates the paused campaigns at go-live, inside the budget that its own budget gate approved.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "channel_brief",
+      "campaign_id",
+      "markets"
+    ],
+    "properties": {
+      "channel_brief": {
+        "type": "object",
+        "description": "Part 3 of the campaigns master brief, for the paid social channel"
+      },
+      "campaign_id": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-[a-z0-9-]+$"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Plan the objective, platforms, audiences and budget split from the brief",
+      "agent": {
+        "prompt_ref": "paid_social/strategist@1",
+        "output_schema": "paid_social/strategy@1"
+      }
+    },
+    {
+      "id": "audiences",
+      "type": "agent",
+      "name": "Build the audiences; list uploads use audiences.resolve with channel paid_ad",
+      "needs": [
+        "plan"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/audience_builder@1",
+        "output_schema": "paid_social/audiences@1"
+      }
+    },
+    {
+      "id": "variants",
+      "type": "agent",
+      "name": "Write the ad variants",
+      "needs": [
+        "audiences"
+      ],
+      "agent": {
+        "prompt_ref": "paid_social/creative_writer@1",
+        "output_schema": "paid_social/variants@1"
+      }
+    },
+    {
+      "id": "check",
+      "type": "check",
+      "name": "Brand, compliance and fact checks",
+      "needs": [
+        "variants"
+      ],
+      "check": {
+        "kinds": [
+          "brand",
+          "compliance",
+          "fact"
+        ],
+        "min_brand_score": 80
+      }
+    },
+    {
+      "id": "approve_creative",
+      "type": "gate",
+      "name": "Approve the ads",
+      "needs": [
+        "check"
+      ],
+      "gate": {
+        "approval_kind": "creative",
+        "required_roles": [
+          "performance_marketer",
+          "client_approver"
+        ],
+        "required_count": 2,
+        "sla_hours": 48,
+        "on_reject": "fail",
+        "on_changes": "variants"
+      }
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "Register each ad as an engine artifact with campaign_id, market and language",
+      "needs": [
+        "approve_creative"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "push_paused_meta",
+      "type": "tool",
+      "name": "Create the campaign paused on meta, when the plan uses meta",
+      "needs": [
+        "register"
+      ],
+      "tool": {
+        "name": "ads_meta",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "push_paused_linkedin",
+      "type": "tool",
+      "name": "Create the campaign paused on linkedin, when the plan uses linkedin",
+      "needs": [
+        "register"
+      ],
+      "tool": {
+        "name": "ads_linkedin",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "push_paused_tiktok",
+      "type": "tool",
+      "name": "Create the campaign paused on tiktok, when the plan uses tiktok",
+      "needs": [
+        "register"
+      ],
+      "tool": {
+        "name": "ads_tiktok",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "push_paused_snapchat",
+      "type": "tool",
+      "name": "Create the campaign paused on snapchat, when the plan uses snapchat",
+      "needs": [
+        "register"
+      ],
+      "tool": {
+        "name": "ads_snapchat",
+        "action": "campaigns.create_paused",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
+      "needs": [
+        "push_paused_meta",
+        "push_paused_linkedin",
+        "push_paused_tiktok",
+        "push_paused_snapchat"
+      ],
+      "emit": {
+        "event": "svc.paid_social/campaign_assets.ready"
+      }
+    }
+  ]
+}

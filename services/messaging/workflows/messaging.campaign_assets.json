@@ -2,7 +2,7 @@
   "id": "messaging.campaign_assets",
   "version": 1,
   "service": "messaging",
-  "description": "Channel assets for a Campaigns (service 2) run: write and approve the templates, then send the broadcast only after the market launches.",
+  "description": "Channel assets for a Campaigns (service 2) run: write and approve the templates, then finish with the artifact_ids. messaging.campaign_go_live sends the broadcast after svc.campaigns/market.launched.",
   "trigger": {
     "manual": true
   },
@@ -37,32 +37,7 @@
         "templates"
       ],
       "emit": {
-        "event": "channel/messaging.assets.ready"
-      }
-    },
-    {
-      "id": "wait_launch",
-      "type": "wait",
-      "name": "Never publish before the market launches",
-      "needs": [
-        "assets_ready"
-      ],
-      "wait": {
-        "event": "svc.campaigns/market.launched",
-        "match": "async.data.campaign_id == input.campaign_id && async.data.market == input.market",
-        "timeout": "60d"
-      }
-    },
-    {
-      "id": "broadcast",
-      "type": "subflow",
-      "name": "Send the campaign broadcast in the launched market",
-      "needs": [
-        "wait_launch"
-      ],
-      "subflow": {
-        "workflow_id": "messaging.broadcast",
-        "per": "market"
+        "event": "svc.messaging/campaign_assets.ready"
       }
     }
   ]

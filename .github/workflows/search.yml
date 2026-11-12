@@ -1,10 +1,10 @@
 name: search
 on:
   pull_request:
-    paths: ["services/search/**"]
+    paths: ["services/search/**", "engine/contracts/**"]
   push:
     branches: [main]
-    paths: ["services/search/**"]
+    paths: ["services/search/**", "engine/contracts/**"]
 jobs:
   test:
     runs-on: ubuntu-latest

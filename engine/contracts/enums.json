@@ -1,6 +1,6 @@
 {
-  "$comment": "Pith M shared codes, contract v0.1.0. Services add values only through the engine thread.",
-  "contract_version": "0.1.0",
+  "$comment": "Pith M shared codes, contract v0.1.1. Services add values only through the engine thread.",
+  "contract_version": "0.1.1",
   "services": {
     "email": 1,
     "campaigns": 2,
@@ -482,7 +482,9 @@
     "outbound": "Apollo, sequencers",
     "enrichment": "Apollo, ZoomInfo, Clay, 6sense",
     "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft",
-    "crm_ops": "service-local pure functions in services/crm_ops (score.calculate, score_model.publish_version)"
+    "crm_ops": "service-local pure functions in services/crm_ops (score.calculate, score_model.publish_version)",
+    "paid_social": "service-local pure functions in services/paid-social (guardrails.evaluate, moves.classify, creator_plan.check, rights.ads_by_grant)",
+    "research": "site crawl, asset inventory and public source collection (competitor pages, reviews, social comments, search queries); read only"
   },
   "engine_actions": {
     "$comment": "Tool name 'engine'. Actions any service may call.",
@@ -499,7 +501,19 @@
     "parties.upsert": "write_internal: create or update a party (same as POST /parties)",
     "metrics.query": "read: read KPI values (same as GET /metrics)",
     "rights.create": "write_internal: record a rights grant, such as paid_usage or whitelisting after a signed contract (same as POST /clients/{client_id}/rights)",
-    "spend_policies.upsert": "spend: write the daily and total caps that a budget or budget_change gate approved; G1 needs that gate earlier in the same run, and set_by is the person who approved it"
+    "spend_policies.upsert": "spend: write the daily and total caps that a budget or budget_change gate approved; G1 needs that gate earlier in the same run, and set_by is the person who approved it",
+    "brain.save_draft": "write_internal: save a draft brand profile version (same as PUT /clients/{client_id}/brain); approval goes through the inbox",
+    "claims.propose": "write_internal: propose a claim (same as POST /clients/{client_id}/claims); always opens a claim approval",
+    "contacts.upsert": "write_internal: create or update contacts (same as POST /clients/{client_id}/contacts)",
+    "contacts.fulfil_dsr": "remove: erase or export 1 contact for a data subject request (erase is the same as DELETE /clients/{client_id}/contacts/{contact_id})",
+    "consents.put": "write_internal: record a consent change with evidence (same as PUT /clients/{client_id}/contacts/{contact_id}/consents)",
+    "consents.withdraw": "write_internal: record a withdrawal with evidence (the same PUT with status withdrawn); never waits on a check or a gate",
+    "conversions.record": "write_internal: record a conversion such as mql or closed_won (same as POST /conversions)",
+    "artifacts.query": "read: find artifacts by kind, campaign, market, status or rights state (same as GET /artifacts)",
+    "artifacts.update": "write_internal: change artifact fields such as campaign_id or status (same as PATCH /artifacts/{artifact_id})",
+    "artifacts.retire": "remove: retire an artifact so no service can use it (PATCH with status retired); G10, never blocked",
+    "rights.list": "read: list rights grants, with filters such as expiring_before (same as GET /clients/{client_id}/rights)",
+    "reports.publish": "write_internal: publish a reviewed report to the client portal (same as POST /clients/{client_id}/reports)"
   },
   "conversion_kinds": [
     "purchase",

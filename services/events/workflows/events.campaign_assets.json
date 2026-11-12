@@ -2,7 +2,7 @@
   "id": "events.campaign_assets",
   "version": 1,
   "service": "events",
-  "description": "A launch webinar for a campaign (campaigns contract): run of show and registration assets, gates, artifacts; publish only after svc.campaigns/market.launched.",
+  "description": "A launch webinar for a campaign (campaigns contract): run of show and registration assets, gates, artifacts. The run finishes with the artifact_ids. events.campaign_go_live publishes the page after svc.campaigns/market.launched.",
   "trigger": {
     "manual": true
   },
@@ -115,29 +115,14 @@
       }
     },
     {
-      "id": "market_launched",
-      "type": "wait",
-      "name": "Campaign launches in this market",
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
       "needs": [
         "register_artifacts"
       ],
-      "wait": {
-        "event": "svc.campaigns/market.launched",
-        "timeout": "90d",
-        "match": "event.data.campaign_id == run.input.campaign_id"
-      }
-    },
-    {
-      "id": "publish_registration",
-      "type": "tool",
-      "name": "Publish the registration page",
-      "needs": [
-        "market_launched"
-      ],
-      "tool": {
-        "name": "events",
-        "action": "session.publish",
-        "risk": "write_external"
+      "emit": {
+        "event": "svc.events/campaign_assets.ready"
       }
     }
   ]

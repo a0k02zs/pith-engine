@@ -29,7 +29,7 @@ export interface MarketRules {
 }
 
 const data = JSON.parse(readFileSync(dir("config", "markets.json"), "utf8")) as { groups: Record<MarketGroup, GroupRules> };
-const enums = JSON.parse(readFileSync(dir("vendor", "engine-v0.1.0", "enums.json"), "utf8")) as {
+const enums = JSON.parse(readFileSync(dir("vendor", "engine", "enums.json"), "utf8")) as {
   market_groups: Record<MarketGroup, string[]>;
   market_launch_order: MarketGroup[];
 };

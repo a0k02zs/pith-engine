@@ -12,14 +12,14 @@ Service 5 of Pith Marketing, engine code `search`. It builds on the shared engin
 | `config/market-rules.json` | Rules for UK, SG, US, CA, the GCC and the EU: locales, engines, ad week, ad categories, compliance rules |
 | `src/` | Deterministic rules: SEM spend policy, pause rules and ad checks, GEO metrics, robots.txt and hreflang checks, roadmap order, brief checks, prompt assembly |
 | `docs/` | The service design: playbook, templates, prompts, workflows, approvals, KPIs, engine contract notes |
-| `vendor/engine-v0.1.0/` | Copies of the engine enums and the workflow-definition schema that the tests use |
+| `vendor/engine/` | Copies of the engine enums and the workflow-definition schema that the tests use |
 
 ## Guardrails the code keeps
 
 - An agent never decides which SEM change is safe. `splitChanges` applies pauses and negatives at once (risk `remove`), applies a budget move only when it stays inside 20% and does not raise the approved total, and sends everything else to the `budget_change` gate (engine G1, G10).
 - Every live site change goes through a `go_live` gate for the client developer, with no skip (engine G9).
 - Every page gets the subject expert gate. A draft with new claims goes to the claim gate first.
-- Campaign assets go live only after `svc.campaigns/market.launched` for the same campaign and market (service-integration item 9).
+- Campaign assets are created paused and the run finishes. Campaigns (2) activates them at go-live for the same campaign and market (service-integration item 9).
 - A compliance check runs before every external write (engine G6).
 
 ## Run the tests

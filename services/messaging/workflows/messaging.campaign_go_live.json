@@ -1,0 +1,55 @@
+{
+  "id": "messaging.campaign_go_live",
+  "version": 1,
+  "service": "messaging",
+  "description": "Second half of campaign delivery (engine service-integration item 9). Starts on svc.campaigns/market.launched. Finds the templates that messaging.campaign_assets got approved for the campaign, then sends the campaign broadcast in the launched market. messaging.broadcast runs its own consent, compliance and send-window checks.",
+  "trigger": {
+    "event": "svc.campaigns/market.launched"
+  },
+  "steps": [
+    {
+      "id": "find",
+      "type": "tool",
+      "name": "Find this service's approved assets for the campaign and market",
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.query",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "has_assets",
+      "type": "branch",
+      "name": "Stop when the campaign has no assets from this service",
+      "needs": [
+        "find"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "size(steps.find.output.artifacts) == 0",
+            "goto": "nothing_to_do"
+          }
+        ],
+        "else": "broadcast"
+      }
+    },
+    {
+      "id": "broadcast",
+      "type": "subflow",
+      "name": "Send the campaign broadcast in the launched market",
+      "subflow": {
+        "workflow_id": "messaging.broadcast",
+        "per": "market"
+      }
+    },
+    {
+      "id": "nothing_to_do",
+      "type": "emit",
+      "name": "No assets for this campaign and market",
+      "emit": {
+        "event": "svc.messaging/campaign_go_live.skipped"
+      }
+    }
+  ]
+}

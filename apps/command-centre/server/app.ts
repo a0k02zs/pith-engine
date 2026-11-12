@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Context } from "hono";
+import { Access } from "./access.js";
 import { catalog, SERVICES, serviceInfo, workflowById } from "./catalog.js";
 import { packageSummary, packagesFor } from "./packages.js";
 import { ApiError, Store } from "./store.js";
@@ -8,7 +9,8 @@ import { registerWorkspaceRoutes, Workspace } from "./workspace.js";
 
 // HTTP API. Paths mirror engine/contracts/openapi.yaml under /api so the UI can move to the
 // real engine by changing the base URL. Extra read models (overview, services) are UI-only.
-export function createApp(store: Store, ws: Workspace = new Workspace(store)) {
+// With no access code the gate is off: use that only with test data (see README, "Access").
+export function createApp(store: Store, ws: Workspace = new Workspace(store), access: Access = new Access()) {
   const app = new Hono();
 
   const actor = (c: Context) => store.user(c.req.header("x-pith-user"));
@@ -23,7 +25,13 @@ export function createApp(store: Store, ws: Workspace = new Workspace(store)) {
 
   const api = new Hono();
 
-  api.get("/health", (c) => c.json({ ok: true, contract_version: catalog.contract_version, test_data: true }));
+  api.use("*", access.guard());
+
+  api.get("/health", (c) => c.json({ ok: true, contract_version: catalog.contract_version, test_data: true, protected: access.enabled }));
+
+  api.get("/session", async (c) => c.json(await access.status(c)));
+  api.post("/session", async (c) => access.signIn(c, String((await readJson(c)).code ?? "")));
+  api.delete("/session", (c) => access.signOut(c));
 
   api.get("/meta", (c) =>
     c.json({

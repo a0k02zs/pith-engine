@@ -1,0 +1,104 @@
+{
+  "id": "content.campaign_assets",
+  "version": 1,
+  "service": "content",
+  "description": "Campaign assets for service 2 (engine service-integration item 9). Campaigns starts it as a subflow with 1 channel brief, campaign_id and markets. Plan the campaign pieces, get the plan approval, register the briefs, then request 1 content.piece run per brief. The run finishes with output.artifact_ids. Each piece passes its own fact, brand, compliance, claim and copy gates in content.piece; a brief's due_date is on or after the campaign launch date.",
+  "trigger": {
+    "manual": true
+  },
+  "concurrency": {
+    "key": "input.client_id",
+    "limit": 1
+  },
+  "inputs": {
+    "type": "object",
+    "required": [
+      "channel_brief",
+      "campaign_id",
+      "markets"
+    ],
+    "properties": {
+      "channel_brief": {
+        "type": "object",
+        "description": "Part 3 of the campaigns master brief, for the content channel"
+      },
+      "campaign_id": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-[a-z0-9-]+$"
+      },
+      "markets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "plan",
+      "type": "agent",
+      "name": "Plan the campaign pieces and write the briefs",
+      "agent": {
+        "prompt_ref": "content/planner@1",
+        "model": "claude-opus-5-5",
+        "output_schema": "content/plan@1"
+      }
+    },
+    {
+      "id": "approve_plan",
+      "type": "gate",
+      "name": "Approve the campaign content plan",
+      "needs": [
+        "plan"
+      ],
+      "gate": {
+        "approval_kind": "plan",
+        "required_roles": [
+          "content_lead",
+          "client_marketing_lead"
+        ],
+        "required_count": 2,
+        "sla_hours": 72,
+        "on_changes": "plan",
+        "on_reject": "fail"
+      }
+    },
+    {
+      "id": "register",
+      "type": "tool",
+      "name": "Register each brief as an engine artifact with campaign_id",
+      "needs": [
+        "approve_plan"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "artifacts.create",
+        "risk": "write_internal"
+      }
+    },
+    {
+      "id": "request_pieces",
+      "type": "emit",
+      "name": "Request 1 content.piece run per brief",
+      "needs": [
+        "register"
+      ],
+      "emit": {
+        "event": "svc.content/piece.requested"
+      }
+    },
+    {
+      "id": "finish",
+      "type": "emit",
+      "name": "Report the artifact_ids with campaign_id to campaigns",
+      "needs": [
+        "request_pieces"
+      ],
+      "emit": {
+        "event": "svc.content/campaign_assets.ready"
+      }
+    }
+  ]
+}

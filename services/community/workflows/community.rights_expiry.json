@@ -13,7 +13,7 @@
       "name": "Find grants that expire within 30 days, expired or revoked",
       "tool": {
         "name": "engine",
-        "action": "rights.list_expiring",
+        "action": "rights.list",
         "risk": "read"
       }
     },
