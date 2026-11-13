@@ -65,7 +65,8 @@
       "id": "learn",
       "type": "agent",
       "needs": [
-        "has_changes"
+        "has_changes",
+        "publish_model"
       ],
       "agent": {
         "prompt_ref": "crm_ops/learn@1",

@@ -198,7 +198,8 @@
       "id": "qa",
       "type": "agent",
       "needs": [
-        "needs_claim"
+        "needs_claim",
+        "approve_claim"
       ],
       "agent": {
         "prompt_ref": "cro/qa@1",

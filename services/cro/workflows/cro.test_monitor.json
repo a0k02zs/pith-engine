@@ -72,7 +72,7 @@
             "goto": "stop_early"
           },
           {
-            "if": "now() >= input.end_date",
+            "if": "now.iso >= input.end_date",
             "goto": "stop_end"
           }
         ],

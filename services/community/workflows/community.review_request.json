@@ -54,7 +54,7 @@
       "name": "Wait until the send time",
       "wait": {
         "event": "engine/timer.fired",
-        "match": "data.at >= steps.decide.output.send_at",
+        "match": "event.data.at >= steps.decide.output.send_at",
         "timeout": "30d"
       },
       "needs": [
@@ -88,7 +88,7 @@
         "required_count": 1,
         "sla_hours": 48,
         "on_reject": "fail",
-        "skip_if": "template_approved && new_claim_ids.length == 0"
+        "skip_if": "steps.decide.output.template_approved && size(steps.decide.output.new_claim_ids) == 0"
       },
       "needs": [
         "check"
@@ -173,7 +173,7 @@
       "name": "Wait 5 days for a review",
       "wait": {
         "event": "svc.community/review.received",
-        "match": "data.contact_id == run.input.contact_id",
+        "match": "event.data.contact_id == input.contact_id",
         "timeout": "5d"
       },
       "needs": [
@@ -187,7 +187,7 @@
       "branch": {
         "cases": [
           {
-            "if": "steps.wait_review.timed_out && !contact.opted_out && !contact.open_ticket",
+            "if": "steps.wait_review.timed_out && !steps.decide.output.open_ticket",
             "goto": "resolve_again"
           }
         ],

@@ -12,13 +12,26 @@
   },
   "steps": [
     {
+      "id": "find_flow",
+      "type": "tool",
+      "name": "Find the active flow for this event (service code: flows.match)",
+      "tool": {
+        "name": "messaging",
+        "action": "flows.match",
+        "risk": "read"
+      }
+    },
+    {
       "id": "match_flow",
       "type": "branch",
-      "name": "Find the active flow for this event; stop if none",
+      "name": "Stop if no flow is active for this event",
+      "needs": [
+        "find_flow"
+      ],
       "branch": {
         "cases": [
           {
-            "if": "!flows.activeFor(event.data.name)",
+            "if": "steps.find_flow.output.flow == null",
             "goto": "end"
           }
         ],
@@ -33,9 +46,9 @@
         "match_flow"
       ],
       "wait": {
-        "event": "flow.exit_event",
-        "match": "async.data.contact_id == event.data.contact_id",
-        "timeout": "flow.delay"
+        "event": "{{ steps.find_flow.output.flow.exit_event }}",
+        "match": "event.data.contact_id == input.contact_id",
+        "timeout": "${steps.find_flow.output.flow.delay}"
       }
     },
     {
@@ -52,20 +65,33 @@
       }
     },
     {
-      "id": "choose",
-      "type": "branch",
-      "name": "Channel waterfall and caps: messaging.chooseChannel() then messaging.checkCaps()",
+      "id": "plan_channel",
+      "type": "tool",
+      "name": "Channel waterfall, caps and send window (service code: messaging.chooseChannel, checkCaps, nextAllowed)",
       "needs": [
         "contact"
+      ],
+      "tool": {
+        "name": "messaging",
+        "action": "channel.plan",
+        "risk": "read"
+      }
+    },
+    {
+      "id": "choose",
+      "type": "branch",
+      "name": "Stop on the exit event, on no channel or on a cap. Email goes to the email service",
+      "needs": [
+        "plan_channel"
       ],
       "branch": {
         "cases": [
           {
-            "if": "messaging.chooseChannel(contact, need).channel == 'none' || !messaging.checkCaps(history, next, now).allowed",
+            "if": "!steps.delay.timed_out || steps.plan_channel.output.channel == 'none' || !steps.plan_channel.output.caps_allowed",
             "goto": "end"
           },
           {
-            "if": "messaging.chooseChannel(contact, need).channel == 'email'",
+            "if": "steps.plan_channel.output.channel == 'email'",
             "goto": "to_email"
           }
         ],
@@ -81,8 +107,25 @@
       ],
       "wait": {
         "event": "svc.messaging/flow.cancelled",
-        "match": "async.data.contact_id == event.data.contact_id",
-        "timeout": "window.next_allowed"
+        "match": "event.data.contact_id == input.contact_id",
+        "timeout": "${steps.plan_channel.output.hold}"
+      }
+    },
+    {
+      "id": "hold_done",
+      "type": "branch",
+      "name": "Stop if the flow was cancelled during the hold",
+      "needs": [
+        "hold"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "!steps.hold.timed_out",
+            "goto": "end"
+          }
+        ],
+        "else": "compliance"
       }
     },
     {
@@ -90,7 +133,7 @@
       "type": "check",
       "name": "Engine compliance gate for this template, market and contact",
       "needs": [
-        "hold"
+        "hold_done"
       ],
       "check": {
         "kinds": [
@@ -112,14 +155,44 @@
     {
       "id": "fallback",
       "type": "branch",
-      "name": "Utility WhatsApp not delivered in 10 minutes: send the SMS version",
+      "name": "Utility WhatsApp message with SMS consent: watch the delivery for 10 minutes",
       "needs": [
         "send"
       ],
       "branch": {
         "cases": [
           {
-            "if": "input.category == 'UTILITY' && channel == 'whatsapp' && !delivered_within('10m') && contact.consents.sms == 'granted'",
+            "if": "input.category == 'UTILITY' && steps.plan_channel.output.channel == 'whatsapp' && steps.plan_channel.output.sms_consent == 'granted'",
+            "goto": "wait_delivery"
+          }
+        ],
+        "else": "end"
+      }
+    },
+    {
+      "id": "wait_delivery",
+      "type": "wait",
+      "name": "Wait 10 minutes for the delivery receipt",
+      "needs": [
+        "fallback"
+      ],
+      "wait": {
+        "event": "engine/outbound.recorded",
+        "match": "event.data.contact_id == input.contact_id && event.data.type == 'delivered'",
+        "timeout": "10m"
+      }
+    },
+    {
+      "id": "delivered",
+      "type": "branch",
+      "name": "Not delivered in 10 minutes: send the SMS version",
+      "needs": [
+        "wait_delivery"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.wait_delivery.timed_out",
             "goto": "send_sms_fallback"
           }
         ],
@@ -131,7 +204,7 @@
       "type": "subflow",
       "name": "SMS fallback for a utility message",
       "needs": [
-        "fallback"
+        "delivered"
       ],
       "subflow": {
         "workflow_id": "messaging.send"
@@ -154,7 +227,11 @@
       "name": "Flow step finished",
       "emit": {
         "event": "svc.messaging/flow.step.completed"
-      }
+      },
+      "needs": [
+        "send_sms_fallback",
+        "to_email"
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Pith M shared engine API
-  version: 0.1.1
+  version: 0.1.2
   description: |
     The HTTP API that the 18 service threads and the client portal use.
     Every response has the header Pith-Contract-Version. Object schemas live in ./schemas.

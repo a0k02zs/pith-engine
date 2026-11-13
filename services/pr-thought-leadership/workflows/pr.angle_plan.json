@@ -128,7 +128,8 @@
       "id": "campaigns",
       "type": "subflow",
       "needs": [
-        "has_claims"
+        "has_claims",
+        "new_claims"
       ],
       "subflow": {
         "workflow_id": "pr.pitch_campaign",

@@ -69,7 +69,7 @@
       "branch": {
         "cases": [
           {
-            "if": "input.split.needs_approval.length > 0",
+            "if": "size(input.split.needs_approval) > 0",
             "goto": "approve_change"
           }
         ],

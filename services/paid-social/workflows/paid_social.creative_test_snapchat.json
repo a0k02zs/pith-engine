@@ -108,7 +108,8 @@
       "id": "launch_check",
       "type": "agent",
       "needs": [
-        "has_new_claims"
+        "has_new_claims",
+        "approve_claims"
       ],
       "agent": {
         "prompt_ref": "paid_social/launch_checker@1",
@@ -163,7 +164,7 @@
       ],
       "wait": {
         "event": "svc.paid_social/test.decided",
-        "match": "async.data.test_id == steps.test_card.output.test_card.test_id",
+        "match": "event.data.test_id == steps.test_card.output.test_card.test_id",
         "timeout": "14d"
       }
     },

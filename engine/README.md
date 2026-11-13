@@ -1,4 +1,4 @@
-# Pith M shared engine — contracts v0.1.1
+# Pith M shared engine — contracts v0.1.2
 
 Status: **draft for build**. Date: 2026-10-21. Owner: the "Shared marketing engine" thread.
 Source plan: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "The shared engine" and "Governance and risk".
@@ -24,7 +24,7 @@ The engine has 6 parts. Every service uses all 6.
 The plan names these tools. The contracts do not depend on them, so a part can change later.
 
 - Database: Postgres 16 (Supabase), with `pgvector` for brand-store retrieval and row-level security per client.
-- Workflow engine: Inngest (durable steps, retries, `waitForEvent` for gates). n8n or Zapier only for simple integrations.
+- Workflow engine: `engine/runtime` (TypeScript, Postgres). It replaces the Inngest plan: runs, gates, waits and retries are rows in Postgres, and 1 engine process moves them forward. n8n or Zapier only for simple integrations.
 - Agents: Claude API. Default model: `claude-opus-5-5` for strategy and writing, `claude-haiku-5-5` for classification and checks.
 - Approval inbox: web portal plus Slack notifications.
 - Warehouse and dashboards: BigQuery, dbt, Looker Studio. GA4 and ad platform APIs as sources.
@@ -36,6 +36,8 @@ The plan names these tools. The contracts do not depend on them, so a part can c
 engine/
   README.md                         this file
   db/001_core.sql                   Postgres schema (all 6 parts)
+  db/002_runtime.sql                columns and tables that the runtime adds (additive)
+  runtime/                          the engine runtime: runner, guardrails, simulator, HTTP API (see runtime/README.md)
   contracts/openapi.yaml            HTTP API for service threads and the portal
   contracts/events.md               event catalog (Inngest event names and payloads)
   contracts/enums.json              shared codes: services, markets, channels, roles, KPIs

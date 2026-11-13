@@ -85,7 +85,7 @@
       "branch": {
         "cases": [
           {
-            "if": "estimate.cost > budget.remaining",
+            "if": "steps.precheck.output.estimate.cost > steps.precheck.output.budget.remaining",
             "goto": "gate_budget"
           }
         ],
@@ -115,7 +115,9 @@
       "type": "subflow",
       "name": "Hold out 10% (min 1000) with messaging.splitAudience(), then send variants A and B to a 20% test cell",
       "needs": [
-        "gate_broadcast"
+        "gate_broadcast",
+        "cost_gate",
+        "gate_budget"
       ],
       "subflow": {
         "workflow_id": "messaging.send"

@@ -118,7 +118,8 @@
       "type": "tool",
       "name": "Official LinkedIn API with the executive's own authorization",
       "needs": [
-        "needs_legal"
+        "needs_legal",
+        "legal"
       ],
       "tool": {
         "name": "social",
@@ -134,7 +135,7 @@
       ],
       "wait": {
         "event": "svc.pr/exec_week.ended",
-        "match": "async.data.executive_id == input.executive_id",
+        "match": "event.data.executive_id == input.executive_id",
         "timeout": "5d"
       }
     },

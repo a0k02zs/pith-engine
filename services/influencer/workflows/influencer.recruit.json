@@ -66,7 +66,7 @@
       ],
       "wait": {
         "event": "svc.influencer/creator.replied",
-        "match": "data.party_id",
+        "match": "event.data.party_id == input.party_id",
         "timeout": "4d"
       }
     },
@@ -168,7 +168,7 @@
       ],
       "wait": {
         "event": "svc.influencer/contract.signed",
-        "match": "data.envelope_id",
+        "match": "event.data.envelope_id == input.envelope_id",
         "timeout": "14d"
       }
     },

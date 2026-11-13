@@ -87,7 +87,7 @@
           "native_editor"
         ],
         "sla_hours": 48,
-        "skip_if": "!artifacts.any(a => a.needs_native_review)",
+        "skip_if": "!steps.draft.output.artifacts.exists(a, a.needs_native_review)",
         "on_reject": "goto",
         "on_changes": "draft"
       }
@@ -105,7 +105,7 @@
           "client_approver"
         ],
         "sla_hours": 48,
-        "skip_if": "artifacts.all(a => a.reused_approved_template && a.new_claim_ids.length == 0)",
+        "skip_if": "steps.draft.output.artifacts.all(a, a.reused_approved_template && size(a.new_claim_ids) == 0)",
         "on_reject": "fail",
         "on_changes": "draft"
       }
@@ -149,7 +149,7 @@
       ],
       "wait": {
         "event": "svc.messaging/whatsapp.template.status",
-        "match": "async.data.template_name == steps.submit_meta.output.name",
+        "match": "event.data.template_name == steps.submit_meta.output.name",
         "timeout": "3d"
       }
     },

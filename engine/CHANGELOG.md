@@ -1,5 +1,19 @@
 # Engine contract changelog
 
+## 0.1.2 — 2026-11-13 (additive; the engine runtime exists)
+
+`engine/runtime` now runs the workflow definitions. The contract changes below make the definitions exact enough to run. No API path, schema field or event changed.
+
+- **Runtime:** `engine/runtime` has the runner (runs, gates, waits, branches, loops, subflows, retries), the guardrails G1, G2, G5, G6 and G10 in code, a memory store and a Postgres store, the HTTP API for workflows, runs and approvals, and a run simulator. `db/002_runtime.sql` adds the columns and the table it needs.
+- **Workflow spec:** `specs/workflow.md` §1a states how a run moves through `needs` and branches, and §1b states the expression language (names `run`, `now` and `event`, 1 number type, a missing field is null). The workflow linter and `POST /workflows` now use the same code.
+- **Expressions:** all 236 expressions parse and use only defined names. 49 used early-draft names in 0.1.1.
+- **Joins:** in 26 workflows a step did not run on 1 path, because the next step needed only the branch. Each join step now needs the last step of the side path. Examples: `pr.crisis` did not escalate a level 3 issue after the pause; `crm_ops.sla_watch` did not watch the SLA after an after-hours reply; `cro.optimization_test` did not record a test that shipped.
+- **G5:** 3 affiliate workflows sent partner messages with no `audiences.resolve` step. Each now resolves the partners first.
+- **Tools:** `enums.tool_registry` adds `messaging` (service-local pure functions: `flows.match`, `channel.plan`). `messaging.triggered_send` uses them and no longer reads undefined names.
+- **Simulator:** `node engine/runtime/scripts/simulate.ts` runs 143 workflows on about 6,900 paths with 0 failures. CI runs it.
+
+Not built yet: the Claude agent adapter, the provider tool adapters, the compliance service, cron triggers and the loader for service-local functions. A run that reaches such a step fails with "no adapter is connected".
+
 ## 0.1.1 — 2026-11-12 (additive; nothing is breaking)
 
 Found by the whole-project audit. A new check, `engine/scripts/lint_workflows.mjs`, reads every workflow in the repository and fails CI on a broken reference.

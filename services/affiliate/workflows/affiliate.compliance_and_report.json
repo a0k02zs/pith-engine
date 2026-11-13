@@ -77,11 +77,24 @@
       }
     },
     {
+      "id": "resolve_partners",
+      "type": "tool",
+      "name": "Resolve the partners that can get a warning (consent)",
+      "needs": [
+        "warn_check"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
       "id": "send_warn",
       "type": "tool",
       "name": "Send fix requests",
       "needs": [
-        "warn_check"
+        "resolve_partners"
       ],
       "tool": {
         "name": "esp",
@@ -99,7 +112,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(steps.sweep.output.findings, .severity == 'serious' || .repeat == true)",
+            "if": "steps.sweep.output.findings.exists(i, i.severity == 'serious' || i.repeat == true)",
             "goto": "remove_partner"
           }
         ],
@@ -159,7 +172,8 @@
       "type": "agent",
       "name": "Check B2B deal registrations against CRM",
       "needs": [
-        "serious"
+        "serious",
+        "apply_removal"
       ],
       "agent": {
         "prompt_ref": "affiliate/deal_desk@1",
@@ -177,7 +191,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(steps.deal_desk.output.results, .decision == 'conflict')",
+            "if": "steps.deal_desk.output.results.exists(i, i.decision == 'conflict')",
             "goto": "decide_conflict"
           }
         ],
@@ -206,7 +220,8 @@
       "type": "branch",
       "name": "Monthly report this run?",
       "needs": [
-        "conflicts"
+        "conflicts",
+        "decide_conflict"
       ],
       "branch": {
         "cases": [
@@ -269,7 +284,8 @@
       "type": "emit",
       "name": "Run finished",
       "needs": [
-        "is_report_week"
+        "is_report_week",
+        "publish_report"
       ],
       "emit": {
         "event": "svc.affiliate/sweep.completed"

@@ -1,0 +1,41 @@
+name: engine-runtime
+on:
+  pull_request:
+    paths: ["engine/**", "services/*/workflows/**", ".github/workflows/engine-runtime.yml"]
+  push:
+    branches: [main]
+    paths: ["engine/**", "services/*/workflows/**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: pith
+          POSTGRES_PASSWORD: pith
+          POSTGRES_DB: pith_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U pith -d pith_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    defaults:
+      run:
+        working-directory: engine/runtime
+    env:
+      # A database for this job only. The Postgres tests replace the schema 'engine'.
+      DATABASE_URL: postgres://pith:pith@localhost:5432/pith_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: engine/runtime/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      # Every path of every workflow in services/*/workflows on the real runner.
+      - run: npm run simulate

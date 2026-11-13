@@ -95,7 +95,7 @@
       "branch": {
         "cases": [
           {
-            "if": "steps.request.output.rights_level == 'R3' || item.payment_amount > 0",
+            "if": "steps.request.output.rights_level == 'R3' || steps.request.output.payment_amount > 0",
             "goto": "approve_deal"
           }
         ],
@@ -156,7 +156,7 @@
       "name": "Wait for the owner's signature",
       "wait": {
         "event": "svc.community/rights.signed",
-        "match": "data.request_id == item.request_id",
+        "match": "event.data.request_id == steps.request.output.request_id",
         "timeout": "21d"
       },
       "needs": [
@@ -228,7 +228,7 @@
       "branch": {
         "cases": [
           {
-            "if": "item.payment_amount > 0",
+            "if": "steps.request.output.payment_amount > 0",
             "goto": "approve_payout"
           }
         ],

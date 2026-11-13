@@ -307,7 +307,8 @@
       "id": "qa",
       "type": "agent",
       "needs": [
-        "needs_claim"
+        "needs_claim",
+        "approve_claim"
       ],
       "name": "QA checklist (04-templates.md section 5)",
       "agent": {
@@ -457,7 +458,8 @@
       "id": "record",
       "type": "emit",
       "needs": [
-        "result_branch"
+        "result_branch",
+        "ship"
       ],
       "name": "Record the result KPIs",
       "emit": {

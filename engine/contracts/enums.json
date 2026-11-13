@@ -1,6 +1,6 @@
 {
-  "$comment": "Pith M shared codes, contract v0.1.1. Services add values only through the engine thread.",
-  "contract_version": "0.1.1",
+  "$comment": "Pith M shared codes, contract v0.1.2. Services add values only through the engine thread.",
+  "contract_version": "0.1.2",
   "services": {
     "email": 1,
     "campaigns": 2,
@@ -483,6 +483,7 @@
     "enrichment": "Apollo, ZoomInfo, Clay, 6sense",
     "mailbox": "Gmail, Outlook: drafts.create only (risk write_internal); a person sends the draft",
     "crm_ops": "service-local pure functions in services/crm_ops (score.calculate, score_model.publish_version)",
+    "messaging": "service-local pure functions in services/messaging (flows.match, channel.plan)",
     "paid_social": "service-local pure functions in services/paid-social (guardrails.evaluate, moves.classify, creator_plan.check, rights.ads_by_grant)",
     "research": "site crawl, asset inventory and public source collection (competitor pages, reviews, social comments, search queries); read only"
   },

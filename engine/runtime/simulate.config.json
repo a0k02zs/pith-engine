@@ -1,0 +1,20 @@
+{
+  "$comment": "Fixtures for the run simulator, by workflow id. 'input' and 'outputs' give the values that a later step needs. 'impossible' names paths that the data cannot take; give the reason.",
+  "community.ugc_rights": {
+    "impossible": [
+      {
+        "when": ["branch paid=resolve_owner", "branch countersign_needed=countersign"],
+        "reason": "Both branches test rights_level == 'R3'. An R3 request always goes through the contract gate approve_deal."
+      }
+    ]
+  },
+  "crm_ops.sla_watch": {
+    "input": { "sla_escalate_1": "15m", "sla_escalate_2": "1h" }
+  },
+  "messaging.triggered_send": {
+    "outputs": {
+      "find_flow": { "flow": { "exit_event": "svc.messaging/flow.exited", "delay": "1h" } },
+      "plan_channel": { "channel": "whatsapp", "hold": "10m", "caps_allowed": true }
+    }
+  }
+}

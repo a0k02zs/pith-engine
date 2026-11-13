@@ -117,7 +117,8 @@
       "type": "tool",
       "name": "Create drafts in the sender's own mailbox; there is no send action",
       "needs": [
-        "is_listed"
+        "is_listed",
+        "listed"
       ],
       "tool": {
         "name": "mailbox",
@@ -149,7 +150,7 @@
       ],
       "wait": {
         "event": "svc.pr/pitch.replied",
-        "match": "async.data.angle_id == input.angle_id",
+        "match": "event.data.angle_id == input.angle_id",
         "timeout": "5d"
       }
     },
@@ -230,7 +231,7 @@
       ],
       "wait": {
         "event": "svc.pr/coverage.found",
-        "match": "async.data.angle_id == input.angle_id",
+        "match": "event.data.angle_id == input.angle_id",
         "timeout": "30d"
       }
     },

@@ -89,7 +89,7 @@
       ],
       "wait": {
         "event": "svc.influencer/content.submitted",
-        "match": "data.deal_id",
+        "match": "event.data.deal_id == input.deal_id",
         "timeout": "21d"
       }
     },
@@ -144,7 +144,7 @@
       ],
       "wait": {
         "event": "svc.influencer/post.due",
-        "match": "data.deal_id",
+        "match": "event.data.deal_id == input.deal_id",
         "timeout": "30d"
       }
     },

@@ -62,8 +62,25 @@
       ],
       "wait": {
         "event": "svc.campaigns/brief.updated",
-        "match": "async.data.campaign_id == input.campaign_id",
+        "match": "event.data.campaign_id == input.campaign_id",
         "timeout": "5d"
+      }
+    },
+    {
+      "id": "brief_updated",
+      "type": "branch",
+      "name": "Read the updated brief again. With no update in time, a person decides at the brief gate",
+      "needs": [
+        "wait_brief_update"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "steps.wait_brief_update.timed_out",
+            "goto": "approve_brief"
+          }
+        ],
+        "else": "intake"
       }
     },
     {
@@ -367,7 +384,7 @@
       ],
       "wait": {
         "event": "svc.campaigns/flight.ended",
-        "match": "async.data.campaign_id == input.campaign_id",
+        "match": "event.data.campaign_id == input.campaign_id",
         "timeout": "120d"
       }
     },

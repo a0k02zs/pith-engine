@@ -104,6 +104,9 @@
     {
       "id": "resolve",
       "type": "tool",
+      "needs": [
+        "hold"
+      ],
       "tool": {
         "name": "engine",
         "action": "audiences.resolve",

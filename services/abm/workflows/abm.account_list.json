@@ -77,7 +77,7 @@
       "branch": {
         "cases": [
           {
-            "if": "input.mode == 'tier_review' && output.score_accounts.changed_accounts == 0",
+            "if": "input.mode == 'tier_review' && steps.score_accounts.output.changed_accounts == 0",
             "goto": "emit_no_change"
           }
         ],

@@ -58,7 +58,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(output.score_intent.accounts, a => a.surge && !a.stale)",
+            "if": "steps.score_intent.output.accounts.exists(a, a.surge && !a.stale)",
             "goto": "emit_surge"
           }
         ],

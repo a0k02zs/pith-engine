@@ -118,7 +118,7 @@ describe("events workflows", () => {
     it("needs the account lead and client finance on a budget, and goes to the budget gate when there is paid spend", () => {
       const wf = wfById("events.webinar");
       expect(byId(wf, "approve_budget").gate?.required_roles).toEqual(["account_lead", "client_finance"]);
-      expect(byId(wf, "paid_items").branch?.cases?.[0]).toEqual({ if: "run.input.paid_spend > 0 || run.input.paid_speaker == true", goto: "approve_budget" });
+      expect(byId(wf, "paid_items").branch?.cases?.[0]).toEqual({ if: "input.paid_spend > 0 || input.paid_speaker == true", goto: "approve_budget" });
       expect(byId(wfById("events.trade_show"), "approve_budget").gate?.required_count).toBe(2);
     });
 
