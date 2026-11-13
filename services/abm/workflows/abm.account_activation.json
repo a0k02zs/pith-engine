@@ -140,7 +140,7 @@
         ],
         "required_count": 1,
         "sla_hours": 72,
-        "skip_if": "input.tier == 1 || (all(output.personalize.assets, a => a.template_approved && !a.template_changed))",
+        "skip_if": "input.tier == 1 || (steps.personalize.output.assets.all(a, a.template_approved && !a.template_changed))",
         "on_reject": "fail",
         "on_changes": "personalize"
       },
@@ -157,7 +157,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(output.personalize.assets, a => a.new_spend != null) || any(gift_decisions, g => g.decision == 'needs_approval')",
+            "if": "steps.personalize.output.assets.exists(a, a.new_spend != null) || steps.personalize.output.gift_decisions.exists(g, g.decision == 'needs_approval')",
             "goto": "g4_spend_gifts"
           }
         ],

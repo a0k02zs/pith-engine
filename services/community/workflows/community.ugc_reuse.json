@@ -86,7 +86,7 @@
         "required_count": 1,
         "sla_hours": 48,
         "on_reject": "fail",
-        "skip_if": "run.input.use != 'paid_ad' && steps.moderate.output.label == 'green'"
+        "skip_if": "input.use != 'paid_ad' && steps.moderate.output.label == 'green'"
       },
       "needs": [
         "check"

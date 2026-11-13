@@ -177,7 +177,7 @@
       ],
       "wait": {
         "event": "svc.affiliate/reply.received",
-        "match": "async.data.run_id == run.id",
+        "match": "event.data.run_id == run.id",
         "timeout": "7d"
       }
     },
@@ -204,7 +204,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(steps.sort_replies.output.items, .status == 'needs_human')",
+            "if": "steps.sort_replies.output.items.exists(i, i.status == 'needs_human')",
             "goto": "escalate_reply"
           }
         ],

@@ -65,7 +65,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(steps.fraud.output.results, .decision == 'hold' || (.decision == 'reverse' && .amount_gbp > 500))",
+            "if": "steps.fraud.output.results.exists(i, i.decision == 'hold' || (i.decision == 'reverse' && i.amount_gbp > 500))",
             "goto": "review_holds"
           }
         ],
@@ -94,7 +94,8 @@
       "type": "agent",
       "name": "Build payout file (T8)",
       "needs": [
-        "any_holds"
+        "any_holds",
+        "review_holds"
       ],
       "agent": {
         "prompt_ref": "affiliate/payout_clerk@1",
@@ -189,11 +190,24 @@
       }
     },
     {
+      "id": "resolve_partners",
+      "type": "tool",
+      "name": "Resolve the partners that can get a statement (consent)",
+      "needs": [
+        "statement_check"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
       "id": "send_statements",
       "type": "tool",
       "name": "Send statements",
       "needs": [
-        "statement_check"
+        "resolve_partners"
       ],
       "tool": {
         "name": "esp",

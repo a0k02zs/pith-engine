@@ -198,7 +198,7 @@
       "wait": {
         "event": "svc.events/session.started",
         "timeout": "180d",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {
@@ -224,7 +224,7 @@
       "wait": {
         "event": "svc.events/session.ended",
         "timeout": "10d",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {
@@ -237,7 +237,7 @@
       "wait": {
         "event": "svc.events/booth.synced",
         "timeout": "12h",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {

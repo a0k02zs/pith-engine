@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 // Cross-check every service workflow against the engine contracts.
 // The JSON Schema check (validate_contracts.py) proves the shape. This script proves the meaning:
-// references resolve, codes exist in enums.json, and the guardrails G1, G2, G6 and G9 hold.
+// references resolve, codes exist in enums.json, expressions parse, the step graph has no dead ends,
+// and the guardrails G1, G2, G6 and G9 hold. The graph, expression and guardrail rules are the same
+// code that the engine runtime uses for POST /workflows (engine/runtime/src/graph.ts), so the linter
+// and the engine cannot disagree. Node 22.18 or later runs the .ts files with no install step.
 //
 // Run: node engine/scripts/lint_workflows.mjs            (errors fail, warnings do not)
 //      node engine/scripts/lint_workflows.mjs --json     (machine-readable)
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ancestors, buildGraph, checkDefinition } from "../runtime/src/graph.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const enums = JSON.parse(readFileSync(join(ROOT, "engine/contracts/enums.json"), "utf8"));
@@ -47,27 +51,6 @@ for (const d of docs) {
   else byId.set(d.wf.id, d);
 }
 
-// Steps that can run before a step: its 'needs', plus any branch that jumps to it.
-function predecessors(stepsById) {
-  const preds = new Map();
-  const link = (to, from) => preds.set(to, [...(preds.get(to) ?? []), from]);
-  for (const s of stepsById.values()) {
-    for (const n of s.needs ?? []) link(s.id, n);
-    for (const c of s.branch?.cases ?? []) if (c.goto) link(c.goto, s.id);
-    if (s.branch?.else) link(s.branch.else, s.id);
-  }
-  return preds;
-}
-
-function upstream(preds, id, seen = new Set()) {
-  for (const n of preds.get(id) ?? []) {
-    if (seen.has(n)) continue;
-    seen.add(n);
-    upstream(preds, n, seen);
-  }
-  return seen;
-}
-
 for (const { file, wf } of docs) {
   const err = (rule, m) => add("error", file, wf.id, rule, m);
   const warn = (rule, m) => add("warn", file, wf.id, rule, m);
@@ -76,39 +59,19 @@ for (const { file, wf } of docs) {
   if (typeof wf.id === "string" && !wf.id.startsWith(`${wf.service}.`)) err("id-prefix", `id must start with '${wf.service}.'`);
   if (!wf.trigger || !(wf.trigger.event || wf.trigger.cron || wf.trigger.manual)) warn("trigger", "no trigger (event, cron or manual)");
 
-  const stepsById = new Map();
-  for (const s of wf.steps) {
-    if (stepsById.has(s.id)) err("step-id", `step id '${s.id}' is used 2 times`);
-    stepsById.set(s.id, s);
-  }
-  const has = (id) => stepsById.has(id);
-  const preds = predecessors(stepsById);
+  // Structure, expressions, the step graph and the guardrails G2, G6 and G9: the rules of the runtime.
+  for (const p of checkDefinition(wf)) add(p.level, file, wf.id, p.rule, p.message);
+  const g = buildGraph(wf);
 
   for (const s of wf.steps) {
     const at = `step '${s.id}'`;
-    // specs/workflow.md: expressions read input, steps.<id>.output, client and brain; wait.match also reads event.
-    const exprs = [s.gate?.skip_if, s.wait?.match, ...(s.branch?.cases ?? []).map((c) => c.if)].filter(Boolean);
-    for (const e of exprs) {
-      const rest = e.replace(/event\.data|steps\.[a-z0-9_]+\.output/g, "");
-      if (!/\b(input|steps|client|brain|event)\./.test(e) || /\b(async\.data|run\.input|output\.[a-z_]+|data\.[a-z_]+)/.test(rest))
-        warn("expression", `${at} uses names outside the expression spec: ${e.length > 80 ? `${e.slice(0, 80)}...` : e}`);
-    }
-    if (!s[s.type] && s.type !== "wait") err("step-body", `${at} has type '${s.type}' but no '${s.type}' block`);
-    for (const n of s.needs ?? []) if (!has(n)) err("needs", `${at} needs unknown step '${n}'`);
-
     if (s.type === "gate" && s.gate) {
       if (!kinds.has(s.gate.approval_kind)) err("approval-kind", `${at} uses approval kind '${s.gate.approval_kind}', not in enums.approval_kinds`);
-      if (!s.gate.required_roles?.length) err("gate-roles", `${at} has no required_roles`);
       for (const r of s.gate.required_roles ?? []) if (!roles.has(r)) err("role", `${at} uses role '${r}', not in enums.roles`);
-      if (s.gate.on_changes && !has(s.gate.on_changes)) err("on-changes", `${at} returns to unknown step '${s.gate.on_changes}'`);
       if (s.gate.sla_hours == null) warn("gate-sla", `${at} has no sla_hours`);
     }
     if (s.type === "task" && s.task) {
       for (const r of s.task.assignee_roles ?? []) if (!roles.has(r)) err("role", `${at} assigns role '${r}', not in enums.roles`);
-    }
-    if (s.type === "branch" && s.branch) {
-      for (const c of s.branch.cases ?? []) if (c.goto && c.goto !== "end" && !has(c.goto)) err("branch", `${at} goes to unknown step '${c.goto}'`);
-      if (s.branch.else && s.branch.else !== "end" && !has(s.branch.else)) err("branch", `${at} else goes to unknown step '${s.branch.else}'`);
     }
     if (s.type === "subflow" && s.subflow) {
       const target = s.subflow.workflow_id;
@@ -123,34 +86,13 @@ for (const { file, wf } of docs) {
     if (s.type === "tool" && s.tool) {
       const t = s.tool;
       if (!tools.has(t.name)) err("tool", `${at} uses tool '${t.name}', not in enums.tool_registry`);
-      if (!t.risk) err("tool-risk", `${at} has no risk level`);
       if (t.name === "engine" && t.action && !engineActions.has(t.action)) err("engine-action", `${at} calls engine action '${t.action}', not in enums.engine_actions`);
 
-      const up = [...upstream(preds, s.id)].map((id) => stepsById.get(id)).filter(Boolean);
-      const gateKinds = new Set(up.filter((u) => u.type === "gate").map((u) => u.gate?.approval_kind));
-      const hasCompliance = up.some((u) => u.type === "check" && u.check?.kinds?.includes("compliance"));
-      if (t.risk === "spend" && !gateKinds.has("budget") && !gateKinds.has("budget_change"))
+      const kindsBefore = new Set([...ancestors(g, s.id)].map((id) => g.byId.get(id)).filter((u) => u.type === "gate").map((u) => u.gate?.approval_kind));
+      if (t.risk === "spend" && !kindsBefore.has("budget") && !kindsBefore.has("budget_change"))
         warn("G1", `${at} spends with no budget or budget_change gate before it (allowed only inside spend_policies)`);
-      if (t.risk === "sign" && !gateKinds.has("contract")) err("G2", `${at} signs with no contract gate before it`);
-      if (t.risk === "pay" && !gateKinds.has("payout")) err("G2", `${at} pays with no payout gate before it`);
-      if ((t.risk === "send" || t.risk === "write_external") && !hasCompliance)
-        err("G6", `${at} has risk '${t.risk}' with no compliance check before it`);
     }
   }
-
-  // Cycles in 'needs' make a run that can never start.
-  const state = new Map();
-  const visit = (id, path) => {
-    if (state.get(id) === 2) return;
-    if (state.get(id) === 1) {
-      err("cycle", `steps depend on each other: ${[...path, id].join(" -> ")}`);
-      return;
-    }
-    state.set(id, 1);
-    for (const n of stepsById.get(id)?.needs ?? []) if (has(n)) visit(n, [...path, id]);
-    state.set(id, 2);
-  };
-  for (const s of wf.steps) visit(s.id, []);
 }
 
 // Every channel that the campaigns playbook gives budget to must expose <service>.campaign_assets.

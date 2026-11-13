@@ -91,7 +91,7 @@
       "branch": {
         "cases": [
           {
-            "if": "steps.draft.output.new_claims.length > 0",
+            "if": "size(steps.draft.output.new_claims) > 0",
             "goto": "claim_gate"
           }
         ],

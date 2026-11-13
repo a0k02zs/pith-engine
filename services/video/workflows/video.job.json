@@ -212,7 +212,8 @@
       "id": "route_rights",
       "type": "branch",
       "needs": [
-        "route_spend"
+        "route_spend",
+        "approve_budget"
       ],
       "branch": {
         "cases": [
@@ -405,7 +406,9 @@
       "type": "agent",
       "name": "Rough cut, captions, music, overlays",
       "needs": [
-        "route_track"
+        "produce_ai",
+        "produce_ugc",
+        "produce_shoot"
       ],
       "agent": {
         "prompt_ref": "video/edit_assembler@1",

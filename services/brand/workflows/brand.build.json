@@ -87,11 +87,28 @@
       "branch": {
         "cases": [
           {
-            "if": "coalesce(inputs.package_override, steps.intake.output.package) == 'A'",
+            "if": "(has(input.package_override) ? input.package_override : steps.intake.output.package) == 'A'",
             "goto": "verbal_identity"
           }
         ],
         "else": "research"
+      }
+    },
+    {
+      "id": "route_interviews",
+      "type": "branch",
+      "name": "Package A has no interviews",
+      "needs": [
+        "audit"
+      ],
+      "branch": {
+        "cases": [
+          {
+            "if": "(has(input.package_override) ? input.package_override : steps.intake.output.package) == 'A'",
+            "goto": "verbal_identity"
+          }
+        ],
+        "else": "interviews"
       }
     },
     {
@@ -111,11 +128,11 @@
       "type": "wait",
       "name": "Strategist uploads interview transcripts",
       "needs": [
-        "route_package"
+        "route_interviews"
       ],
       "wait": {
         "event": "svc.brand/interviews.uploaded",
-        "match": "data.client_id == event.data.client_id",
+        "match": "event.data.client_id == input.client_id",
         "timeout": "21d"
       }
     },
@@ -214,7 +231,7 @@
       "branch": {
         "cases": [
           {
-            "if": "inputs.naming_in_scope || size(steps.verbal_identity.output.new_taglines) > 0",
+            "if": "input.naming_in_scope || size(steps.verbal_identity.output.new_taglines) > 0",
             "goto": "name_screen"
           }
         ],
@@ -257,12 +274,13 @@
       "type": "branch",
       "name": "Package A skips visual design",
       "needs": [
-        "verbal_identity"
+        "route_naming",
+        "approve_name"
       ],
       "branch": {
         "cases": [
           {
-            "if": "coalesce(inputs.package_override, steps.intake.output.package) == 'A'",
+            "if": "(has(input.package_override) ? input.package_override : steps.intake.output.package) == 'A'",
             "goto": "guidelines"
           }
         ],
@@ -313,7 +331,7 @@
       ],
       "wait": {
         "event": "svc.brand/identity.delivered",
-        "match": "data.client_id == event.data.client_id",
+        "match": "event.data.client_id == input.client_id",
         "timeout": "30d"
       }
     },

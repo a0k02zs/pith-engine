@@ -14,15 +14,15 @@
     {
       "id": "keywords",
       "type": "branch",
-      "name": "STOP, HELP and START words, or the Stop promotions button (messaging.classifyInbound)",
+      "name": "STOP, HELP and START words, or the Stop promotions button. The inbound webhook sets keyword_intent with messaging.classifyInbound",
       "branch": {
         "cases": [
           {
-            "if": "messaging.classifyInbound(event.data.text, market, event.data.button_payload) == 'opt_out'",
+            "if": "input.keyword_intent == 'opt_out'",
             "goto": "opt_out"
           },
           {
-            "if": "messaging.classifyInbound(event.data.text, market, event.data.button_payload) == 'help'",
+            "if": "input.keyword_intent == 'help'",
             "goto": "help_check"
           }
         ],

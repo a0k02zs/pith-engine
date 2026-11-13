@@ -1,4 +1,4 @@
-# How a service plugs into the engine — v0.1.1
+# How a service plugs into the engine — v0.1.2
 
 Use this checklist in every service thread. Put your service files in `/mnt/project-files/services/<service>/`.
 

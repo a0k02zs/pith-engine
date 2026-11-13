@@ -84,7 +84,9 @@
       "id": "enrich",
       "type": "tool",
       "needs": [
-        "dedupe_route"
+        "dedupe_route",
+        "auto_merge",
+        "review_merge"
       ],
       "tool": {
         "name": "enrichment",

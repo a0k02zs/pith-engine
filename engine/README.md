@@ -1,4 +1,4 @@
-# Pith M shared engine — contracts v0.1.1
+# Pith M shared engine — contracts v0.1.2
 
 Status: **draft for build**. Date: 2026-10-21. Owner: the "Shared marketing engine" thread.
 Source plan: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "The shared engine" and "Governance and risk".

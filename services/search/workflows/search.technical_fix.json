@@ -47,7 +47,7 @@
       "branch": {
         "cases": [
           {
-            "if": "steps.triage.output.issues.some(i => i.severity == 'critical')",
+            "if": "steps.triage.output.issues.exists(i, i.severity == 'critical')",
             "goto": "alert"
           }
         ],

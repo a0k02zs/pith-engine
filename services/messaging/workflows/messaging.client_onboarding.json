@@ -124,7 +124,7 @@
       ],
       "wait": {
         "event": "svc.messaging/sender.registered",
-        "match": "async.data.client_id == event.data.client_id",
+        "match": "event.data.client_id == input.client_id",
         "timeout": "35d"
       }
     },

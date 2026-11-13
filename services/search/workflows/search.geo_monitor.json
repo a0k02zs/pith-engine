@@ -74,7 +74,7 @@
       "branch": {
         "cases": [
           {
-            "if": "steps.analyse.output.runs.some(r => r.wrong_facts.length > 0)",
+            "if": "steps.analyse.output.runs.exists(r, size(r.wrong_facts) > 0)",
             "goto": "wrong_fact"
           }
         ],

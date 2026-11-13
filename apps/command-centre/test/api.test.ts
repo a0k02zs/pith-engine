@@ -11,7 +11,7 @@ describe("HTTP API", () => {
   it("serves health with the contract version", async () => {
     const r = await app.request("/api/health");
     expect(r.status).toBe(200);
-    expect((await r.json()).contract_version).toBe("0.1.1");
+    expect((await r.json()).contract_version).toBe("0.1.2");
   });
 
   it("returns 18 services", async () => {

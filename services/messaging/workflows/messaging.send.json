@@ -109,7 +109,12 @@
       "name": "engine/outbound.recorded per provider webhook (sent, delivered, clicked, failed)",
       "emit": {
         "event": "engine/outbound.recorded"
-      }
+      },
+      "needs": [
+        "send_sms",
+        "send_whatsapp",
+        "send_push"
+      ]
     }
   ]
 }

@@ -97,7 +97,8 @@
       "id": "done",
       "type": "emit",
       "needs": [
-        "new_tier1"
+        "new_tier1",
+        "approve_list"
       ],
       "emit": {
         "event": "svc.pr/media_list.refreshed"

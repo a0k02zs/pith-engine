@@ -62,11 +62,12 @@
       "id": "wait_touch_1",
       "type": "wait",
       "needs": [
-        "after_hours"
+        "after_hours",
+        "auto_reply"
       ],
       "wait": {
         "event": "svc.crm_ops/lead.touched",
-        "match": "async.data.contact_id == event.data.contact_id",
+        "match": "event.data.contact_id == input.contact_id",
         "timeout": "${event.data.sla_escalate_1}"
       }
     },
@@ -90,7 +91,7 @@
       ],
       "wait": {
         "event": "svc.crm_ops/lead.touched",
-        "match": "async.data.contact_id == event.data.contact_id",
+        "match": "event.data.contact_id == input.contact_id",
         "timeout": "${event.data.sla_escalate_2}"
       }
     },

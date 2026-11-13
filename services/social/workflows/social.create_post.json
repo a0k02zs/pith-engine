@@ -38,7 +38,7 @@
       ],
       "wait": {
         "event": "svc.video/asset.approved",
-        "match": "async.data.slot_id == input.slot.slot_id",
+        "match": "event.data.slot_id == input.slot.slot_id",
         "timeout": "10d"
       }
     },
@@ -46,7 +46,8 @@
       "id": "write",
       "type": "agent",
       "needs": [
-        "video_needed"
+        "video_needed",
+        "wait_video"
       ],
       "agent": {
         "prompt_ref": "social/creator@1",
@@ -142,7 +143,8 @@
       "id": "approve_post",
       "type": "gate",
       "needs": [
-        "route"
+        "route",
+        "approve_claim"
       ],
       "name": "GATE B: flagged posts, and every post unless autonomy is auto_publish_approved_calendar (rules.finalDecision)",
       "gate": {
@@ -177,7 +179,7 @@
       ],
       "wait": {
         "event": "svc.social/post.published",
-        "match": "async.data.post_id == steps.schedule.output.post_id",
+        "match": "event.data.post_id == steps.schedule.output.post_id",
         "timeout": "35d"
       }
     },

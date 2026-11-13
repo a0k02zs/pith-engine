@@ -42,7 +42,7 @@
       ],
       "wait": {
         "event": "svc.abm/touch.slot_open",
-        "match": "data.contact_id == event.data.contact_id",
+        "match": "event.data.contact_id == input.contact_id",
         "timeout": "8w"
       }
     },
@@ -90,7 +90,7 @@
       "branch": {
         "cases": [
           {
-            "if": "opportunity_open || opted_out || complaint || bounce_rate > 0.03 || touches_left == 0",
+            "if": "steps.send_touch.output.opportunity_open || steps.send_touch.output.opted_out || steps.send_touch.output.complaint || steps.send_touch.output.bounce_rate > 0.03 || steps.send_touch.output.touches_left == 0",
             "goto": "play_done"
           }
         ],

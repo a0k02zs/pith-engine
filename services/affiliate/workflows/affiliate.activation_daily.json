@@ -62,11 +62,24 @@
       }
     },
     {
+      "id": "resolve_partners",
+      "type": "tool",
+      "name": "Resolve the partners that can get a message (consent)",
+      "needs": [
+        "msg_check"
+      ],
+      "tool": {
+        "name": "engine",
+        "action": "audiences.resolve",
+        "risk": "read"
+      }
+    },
+    {
       "id": "send_msgs",
       "type": "tool",
       "name": "Send activation messages",
       "needs": [
-        "msg_check"
+        "resolve_partners"
       ],
       "tool": {
         "name": "esp",
@@ -84,7 +97,7 @@
       "branch": {
         "cases": [
           {
-            "if": "any(steps.plan_actions.output.actions, .action in ['propose_bonus','propose_tier'])",
+            "if": "steps.plan_actions.output.actions.exists(i, i.action in ['propose_bonus','propose_tier'])",
             "goto": "approve_incentive"
           }
         ],
@@ -143,7 +156,8 @@
       "type": "emit",
       "name": "Activation run finished",
       "needs": [
-        "has_proposals"
+        "has_proposals",
+        "apply_incentive"
       ],
       "emit": {
         "event": "svc.affiliate/activation.completed"

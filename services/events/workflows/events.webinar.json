@@ -85,7 +85,7 @@
       "branch": {
         "cases": [
           {
-            "if": "run.input.paid_spend > 0 || run.input.paid_speaker == true",
+            "if": "input.paid_spend > 0 || input.paid_speaker == true",
             "goto": "approve_budget"
           }
         ],
@@ -344,7 +344,7 @@
       "wait": {
         "event": "svc.events/session.reminder_due",
         "timeout": "60d",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {
@@ -386,7 +386,7 @@
       "wait": {
         "event": "svc.events/session.started",
         "timeout": "60d",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {
@@ -412,7 +412,7 @@
       "wait": {
         "event": "svc.events/session.ended",
         "timeout": "12h",
-        "match": "event.data.event_id == run.input.event_id"
+        "match": "event.data.event_id == input.event_id"
       }
     },
     {
