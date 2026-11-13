@@ -6,7 +6,7 @@ The code for Pith Marketing: 18 marketing services that run as agent workflows o
 
 | Path | What it holds |
 |------|---------------|
-| `engine/` | The shared engine contracts (v0.1.1): `contracts/` (enums, JSON Schemas, OpenAPI), `specs/` (workflow, approval inbox, compliance, service integration), `db/` (SQL) and `scripts/`. The engine runtime is not built yet. |
+| `engine/` | The shared engine. Contracts (v0.1.2): `contracts/` (enums, JSON Schemas, OpenAPI), `specs/` (workflow, approval inbox, compliance, service integration), `db/` (SQL) and `scripts/`. Runtime: `runtime/` runs the workflows of every service with the guardrails in code, on memory or Postgres, with an HTTP API and a run simulator. The agent, tool and compliance adapters are not built yet. |
 | `services/<name>/` | 1 folder for each service: workflows (`workflows/*.json`), prompts, schemas, rules code and tests. |
 | `apps/command-centre/` | The operations web app (React UI and Hono API). It runs on test data. Live at https://pithaimarketing.vercel.app. |
 | `packages/` | The 120 sellable packages (5 regions x 8 industries x 3 tiers). Prices are indicative. |
