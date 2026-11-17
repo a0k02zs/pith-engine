@@ -48,7 +48,7 @@ Default pillar sets:
 
 ## 4. Cadence (default per package)
 
-These are the v1 default packages, adopted on 28 Oct 2026 (`config/packages.json`). Pith sets the final names and prices.
+These are the v1 default packages, adopted on 28 Oct 2026 (`config/packages.json`). Wigglewerk sets the final names and prices.
 
 | Package | Platforms | Feed posts / week / platform | Stories / week | Community hours | Markets included |
 |---------|-----------|------------------------------|----------------|-----------------|------------------|
@@ -88,7 +88,7 @@ The planner leaves 10% of slots as "reactive" by default (`reactive_share`), to 
 
 | Day | Step | Owner |
 |-----|------|-------|
-| 1 | Client fills `templates/onboarding-brief.md` in the portal. Pith gets admin or editor access to each account through the platform's business tools (Meta Business Suite, LinkedIn Page admin, TikTok Business Center). Never ask for passwords. | Social lead |
+| 1 | Client fills `templates/onboarding-brief.md` in the portal. Wigglewerk gets admin or editor access to each account through the platform's business tools (Meta Business Suite, LinkedIn Page admin, TikTok Business Center). Never ask for passwords. | Social lead |
 | 1–3 | Listener runs a 90-day audit: own accounts, 3 named competitors, mentions, top posts | Agent |
 | 3–5 | Planner proposes pillars, platform roles, cadence and a voice sample of 10 posts | Agent |
 | 6 | Workshop with the client: approve pillars, voice samples, reply rules, escalation contacts | Social lead |

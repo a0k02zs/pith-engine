@@ -49,7 +49,7 @@ export interface WhatsAppTemplate {
 
 /** Typical worst-case values, so the segment count of a template is close to a real send. */
 export const SAMPLE_VALUES: Record<string, string> = {
-  brand: "Pith Coffee",
+  brand: "Wigglewerk Coffee",
   first_name: "Alexandra",
   product: "Linen Shirt",
   offer: "15% off",
@@ -63,14 +63,14 @@ export const SAMPLE_VALUES: Record<string, string> = {
   rep_name: "Sam Lee",
   plan: "Pro plan",
   headline: "Weekend sale",
-  support_contact: "help@pithcoffee.com",
+  support_contact: "help@wigglewerkcoffee.com",
   item_count: "3",
   price: "£24",
   sku: "LS-001",
   feature: "reports",
   n: "12",
 };
-const SAMPLE_LINK = "go.pithcoffee.com/a1B2c3";
+const SAMPLE_LINK = "go.wigglewerkcoffee.com/a1B2c3";
 
 export const PUBLIC_SHORTENERS = ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly", "is.gd", "buff.ly", "rebrand.ly", "cutt.ly", "shorturl.at"];
 

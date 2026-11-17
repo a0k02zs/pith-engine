@@ -358,7 +358,7 @@ export function renderDashboard(def: Dashboard, data: Record<string, Row[]>, opt
   const model = opts.model ?? "position_based";
   return `<!doctype html><html lang="${esc(opts.locale ?? "en-GB")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">` +
     `<title>${esc(opts.client)} dashboard</title><style>${CSS}</style></head><body><div class="viz-root"><header>` +
-    `<p class="eyebrow">Pith Marketing · client dashboard</p><h1>${esc(opts.client)}</h1>` +
+    `<p class="eyebrow">Wigglewerk Marketing · client dashboard</p><h1>${esc(opts.client)}</h1>` +
     `<p class="meta">${esc(opts.period)} · market ${esc(opts.market)} · ${esc(opts.currency)} · attribution model ${esc(model.replace(/_/g, " "))}</p>` +
     `<p class="meta">Each figure has a label: observed, modelled, estimated or platform-reported. Hover a mark for its value.</p>` +
     `<nav>${nav}</nav></header><main>${pages.join("")}</main></div></body></html>`;

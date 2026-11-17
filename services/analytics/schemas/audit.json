@@ -84,7 +84,7 @@
           },
           "owner": {
             "enum": [
-              "pith",
+              "wigglewerk",
               "client"
             ]
           },

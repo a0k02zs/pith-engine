@@ -1,5 +1,5 @@
 {
-  "_about": "Pith M WhatsApp template library. Draft 1, 21 Oct 2026. Format follows the WhatsApp Cloud API message_templates endpoint (POST /{WABA_ID}/message_templates). Fields that start with '_' are Pith notes: strip them before you submit. Variables use positional {{1}} with an example, as Meta requires. Replace BRAND and links per client.",
+  "_about": "Wigglewerk WhatsApp template library. Draft 1, 21 Oct 2026. Format follows the WhatsApp Cloud API message_templates endpoint (POST /{WABA_ID}/message_templates). Fields that start with '_' are Wigglewerk notes: strip them before you submit. Variables use positional {{1}} with an example, as Meta requires. Replace BRAND and links per client.",
   "_rules": [
     "UTILITY templates must not contain any offer, discount or promotion. Meta re-categorises them as MARKETING and they cost more.",
     "Every MARKETING template has a 'Stop promotions' quick-reply button. The opt-out workflow treats a tap on it as an opt-out.",

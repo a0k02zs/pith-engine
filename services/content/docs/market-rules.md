@@ -1,6 +1,6 @@
 # Content marketing — rules for each market
 
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), sections "7 · Content marketing" and "The 5 target markets".
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), sections "7 · Content marketing" and "The 5 target markets".
 Machine-readable copy: `market-rules.json`. Agents read the JSON. People read this file.
 This is a planning summary. It is not legal advice. A local lawyer confirms each market before launch.
 
@@ -77,7 +77,7 @@ Start with the UAE and Saudi Arabia. Then add Qatar, Kuwait, Bahrain and Oman.
 
 ## 5 · European Union (launch 5th)
 
-Start with 1 or 2 lead countries. The Pith pipeline uses the Netherlands as the EU example.
+Start with 1 or 2 lead countries. The Wigglewerk pipeline uses the Netherlands as the EU example.
 
 | Topic | Rule |
 |---|---|

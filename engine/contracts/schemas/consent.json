@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pith.marketing/contracts/v0/consent.json",
+  "$id": "https://wigglewerk.marketing/contracts/v0/consent.json",
   "title": "Consent for one contact, channel and purpose",
   "type": "object",
   "properties": {

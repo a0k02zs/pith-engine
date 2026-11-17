@@ -2,7 +2,7 @@
   "id": "analytics.daily_data_qa",
   "version": 1,
   "service": "analytics",
-  "description": "Every day at 06:00. Run the data checks in code, then look for anomalies. Alerts go to Pith staff only. No client output.",
+  "description": "Every day at 06:00. Run the data checks in code, then look for anomalies. Alerts go to Wigglewerk staff only. No client output.",
   "trigger": {
     "cron": "0 6 * * *"
   },

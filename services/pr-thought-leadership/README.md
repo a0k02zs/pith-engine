@@ -1,7 +1,7 @@
 # Service 14: PR and thought leadership
 
-Pith M build files. Version 0.1, 21 Oct 2026. Owner: the "PR and thought leadership" thread.
-Plan: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 14.
+Wigglewerk build files. Version 0.1, 21 Oct 2026. Owner: the "PR and thought leadership" thread.
+Plan: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 14.
 Engine: contracts v0.1.0 in `/mnt/project-files/engine/`. Service code `pr`.
 
 | File | What it holds |

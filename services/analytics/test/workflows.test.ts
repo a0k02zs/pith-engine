@@ -142,7 +142,7 @@ describe("analytics workflows", () => {
       expect(byId(wf, "setup").needs).toEqual(["g5_spend"]);
     });
 
-    it("alerts go to Pith staff as service events, not to the client", () => {
+    it("alerts go to Wigglewerk staff as service events, not to the client", () => {
       const wf = wfById("analytics.daily_data_qa");
       expect(byId(wf, "alerts").emit?.event).toBe("svc.analytics/alert.raised");
       expect(wf.steps.some((s) => s.tool?.action === "reports.publish")).toBe(false);

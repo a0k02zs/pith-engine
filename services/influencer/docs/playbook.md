@@ -2,7 +2,7 @@
 
 ## 1. What the client buys
 
-Pith M finds creators whose audience matches the client, runs fair deals at scale, makes sure every post is legal in its market, measures the sales, and reuses the best content in ads.
+Wigglewerk finds creators whose audience matches the client, runs fair deals at scale, makes sure every post is legal in its market, measures the sales, and reuses the best content in ads.
 
 3 packages:
 
@@ -12,7 +12,7 @@ Pith M finds creators whose audience matches the client, runs fair deals at scal
 | Scale | B2C brands with proof | 20 to 60 creators across tiers, always-on, paid amplification, up to 3 markets | 6 to 12 months |
 | Expert | B2B clients | 3 to 10 industry experts and LinkedIn creators, webinars, reports, podcast spots | 6 months |
 
-Pith M fee model: monthly management fee plus a pass-through creator budget. Pith M does not mark up creator fees. This keeps the deal fair for creators and transparent for clients.
+Wigglewerk fee model: monthly management fee plus a pass-through creator budget. Wigglewerk does not mark up creator fees. This keeps the deal fair for creators and transparent for clients.
 
 ## 2. Creator tiers
 
@@ -67,7 +67,7 @@ Hard stops (score does not matter):
 
 ## 5. Fee method
 
-Pith M sets a fair fee from data, not from the creator's first ask.
+Wigglewerk sets a fair fee from data, not from the creator's first ask.
 
 1. Expected views = median views of the creator's last 10 non-sponsored posts on that platform.
 2. Base fee = expected views ÷ 1,000 × the market CPM band for that platform and tier.
@@ -76,7 +76,7 @@ Pith M sets a fair fee from data, not from the creator's first ask.
 5. Add for extra deliverables (raw files, extra cuts, link in bio).
 6. Offer the result as a range. The negotiation agent drafts; a person agrees the final number.
 
-CPM bands per market start as estimates. After the first 10 closed deals in each market, replace them with Pith M's own median paid CPM. Keep the bands in the client brain so every client gains from the data.
+CPM bands per market start as estimates. After the first 10 closed deals in each market, replace them with Wigglewerk's own median paid CPM. Keep the bands in the client brain so every client gains from the data.
 
 ## 6. Usage rights and exclusivity defaults
 

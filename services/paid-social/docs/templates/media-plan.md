@@ -10,7 +10,7 @@ Approved at gate G1. The optimizer agent reads the approved version as its limit
 
 - Total monthly budget (client currency):
 - Approved by (client budget owner, date):
-- Checked by (Pith performance marketer, date):
+- Checked by (Wigglewerk performance marketer, date):
 - Dates with known cost rises (sales, Ramadan, Q4):
 - Lift test this quarter (platform, method, dates):
 

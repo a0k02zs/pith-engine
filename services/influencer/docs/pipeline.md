@@ -41,14 +41,14 @@ The plan has 9 stages. This build splits 2 of them, so the pipeline has 11 stage
 
 ### 4. GATE: approve shortlist
 - **Payload:** ranked list, score, reason, risks, estimated fee range, total against budget.
-- **Approvers:** Pith M influencer lead first, then the client.
+- **Approvers:** Wigglewerk influencer lead first, then the client.
 - **Options:** approve all, approve some, ask for more.
 - **Timeout:** remind after 1 business day, escalate to the account lead after 2.
 
 ### 5. Outreach
 - **Trigger:** `shortlist` gate approved.
 - **Steps:** the outreach agent writes a personal first message per creator (`templates.md` §2) in the creator's language, using a real detail from a recent post. It sends through the creator tool, email, or the platform message inbox with the account the client allows. It sends up to 2 follow-ups, 3 and 7 days later.
-- **Rules:** contact a creator only through their public business email or the platform message inbox, or through their listed agent. Respect a "no" at once and mark `declined`. For EU and UK creators, the outreach message states who Pith M is and how the contact data was found (Article 14 notice link).
+- **Rules:** contact a creator only through their public business email or the platform message inbox, or through their listed agent. Respect a "no" at once and mark `declined`. For EU and UK creators, the outreach message states who Wigglewerk is and how the contact data was found (Article 14 notice link).
 - **Output:** `deal` records with status `interested` or `declined`.
 
 ### 6. GATE: negotiate and contract

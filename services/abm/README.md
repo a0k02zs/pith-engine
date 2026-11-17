@@ -1,6 +1,6 @@
 # Account-based marketing service (service 8)
 
-Pith M account-based marketing (ABM): B2B campaigns for named target accounts, with 1 account list for sales and marketing. It is built on the shared engine contracts v0.1.0 in `engine/`.
+Wigglewerk account-based marketing (ABM): B2B campaigns for named target accounts, with 1 account list for sales and marketing. It is built on the shared engine contracts v0.1.0 in `engine/`.
 
 ## What is here
 

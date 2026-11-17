@@ -1,6 +1,6 @@
 # Video production service (service 3)
 
-Code for the Pith M video production service. It builds on the shared engine contracts in `../../engine/`
+Code for the Wigglewerk video production service. It builds on the shared engine contracts in `../../engine/`
 and reads them from the repo, so a contract change runs these tests too.
 
 | Folder | What it holds |

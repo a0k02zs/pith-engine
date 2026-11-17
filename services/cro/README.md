@@ -1,6 +1,6 @@
 # CRO and landing pages (service 17)
 
-This package is the code for the Pith M CRO service. It runs on the shared engine contracts in `engine/contracts` (v0.1.0).
+This package is the code for the Wigglewerk CRO service. It runs on the shared engine contracts in `engine/contracts` (v0.1.0).
 
 ## What is in it
 

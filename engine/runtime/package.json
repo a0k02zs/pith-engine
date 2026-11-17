@@ -1,8 +1,8 @@
 {
-  "name": "@pith/engine-runtime",
+  "name": "@wigglewerk/engine-runtime",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M engine runtime: runs the service workflows with the guardrails in code.",
+  "description": "Wigglewerk engine runtime: runs the service workflows with the guardrails in code.",
   "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",

@@ -25,9 +25,9 @@
 
 Verdict key: **Scale** (all methods agree it works and it is not saturated) · **Hold** · **Fix** (works, but cost is rising) · **Test** (methods disagree) · **Cut** (methods agree it does not pay).
 
-## 3. Pith services this month
+## 3. Wigglewerk services this month
 
-| Pith service | Fees | Media spend | Main KPI | Result vs target | ROI |
+| Wigglewerk service | Fees | Media spend | Main KPI | Result vs target | ROI |
 |--------------|------|-------------|----------|------------------|-----|
 
 {{honest_note_on_services_that_missed}}

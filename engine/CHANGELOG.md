@@ -1,5 +1,17 @@
 # Engine contract changelog
 
+## Rename to Wigglewerk — 2026-11-17 (contract version stays 0.1.2)
+
+The company was renamed from Pith to Wigglewerk on 2026-11-15. Every name changed in the same way: `Pith` to `Wigglewerk`, `pith` to `wigglewerk` and `PITH` to `WIGGLEWERK`. Nothing else changed.
+
+- **Schema ids:** `https://pith.marketing/...` is now `https://wigglewerk.marketing/...`. The server is `https://engine.wigglewerk.marketing/v0`.
+- **Headers:** `Pith-Contract-Version` is now `Wigglewerk-Contract-Version`, `x-pith-user` is now `x-wigglewerk-user`, `x-pith-actor` is now `x-wigglewerk-actor`.
+- **Data names:** CRM fields `pithm_*` are now `wigglewerk_*`. SQL names such as `pith_fee`, `pith_fees` and `pith_service_roi` are now `wigglewerk_*`.
+- **Settings:** environment variables `PITH_*` are now `WIGGLEWERK_*`. The Command Centre still reads a `PITH_*` setting when its `WIGGLEWERK_*` name is not set, so a live deployment keeps working.
+- **Packages:** npm packages `@pith/*` are now `@wigglewerk/*`.
+
+Nothing was deployed with the old names except the Command Centre, so no data needs a migration.
+
 ## 0.1.2 — 2026-11-13 (additive; the engine runtime exists)
 
 `engine/runtime` now runs the workflow definitions. The contract changes below make the definitions exact enough to run. No API path, schema field or event changed.

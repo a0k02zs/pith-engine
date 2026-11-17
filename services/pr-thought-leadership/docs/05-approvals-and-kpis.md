@@ -34,7 +34,7 @@ For 1 client on the Authority package (2 executives, 1 market). These are planni
 
 | Person | Items per month | Time per month |
 |---|---|---|
-| PR lead (Pith) | About 2 plans, 4 pitch batches, 15 request replies, 1 report | About 6 hours |
+| PR lead (Wigglewerk) | About 2 plans, 4 pitch batches, 15 request replies, 1 report | About 6 hours |
 | Each executive | About 14 posts, 4 to 6 quotes | About 2 hours |
 | Client approver | 1 plan, 1 or 2 releases | About 1 hour |
 

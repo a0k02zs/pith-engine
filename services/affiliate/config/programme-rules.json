@@ -1,5 +1,5 @@
 {
-  "$comment": "Programme rules for Pith M service 15 (affiliate). Version 0.1, 2026-10-22. Source: docs/01-playbook.md. Commission ranges are planning ranges from common practice, not measured data; the Programme Designer uses the client's own margin data.",
+  "$comment": "Programme rules for Wigglewerk service 15 (affiliate). Version 0.1, 2026-10-22. Source: docs/01-playbook.md. Commission ranges are planning ranges from common practice, not measured data; the Programme Designer uses the client's own margin data.",
   "service": "affiliate",
   "contract_version": "0.1.0",
   "reporting_currency": "GBP",

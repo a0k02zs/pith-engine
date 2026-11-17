@@ -5,7 +5,7 @@
 "We show you which marketing spend makes money, and what to change next week."
 
 The client gets 3 things:
-1. **One true number set.** One dashboard with the same KPI names across all channels and all Pith services.
+1. **One true number set.** One dashboard with the same KPI names across all channels and all Wigglewerk services.
 2. **An answer on credit.** Which channel, campaign and creative earned each sale or each B2B opportunity.
 3. **A decision.** Each report ends with what to change, how much money moves, and what we expect.
 
@@ -16,7 +16,7 @@ The client gets 3 things:
 | B2C e-commerce, CMO or founder | "Which ads really make sales after iOS privacy changes?" | Server-side tracking, MMM, geo tests |
 | B2C app or subscription | "What is my real cost per paying user?" | Cohort ROI, payback period, lifetime value by channel |
 | B2B SaaS or services, VP marketing | "Which marketing creates pipeline that closes?" | CRM attribution to opportunity and revenue, ABM account view |
-| Any Pith client on 2 or more services | "Is Pith worth the money?" | Pith ROI report across all services (included in every retainer) |
+| Any Wigglewerk client on 2 or more services | "Is Wigglewerk worth the money?" | Wigglewerk ROI report across all services (included in every retainer) |
 
 ## 3. The 3 tiers
 
@@ -92,7 +92,7 @@ Lookback windows: 30 days for B2C, 90 days for B2B (to opportunity created), 180
 
 ## 8. What an agent can do alone, and what it cannot
 
-Agents can: audit tags, draft tracking plans, run data checks, run models, draft reports, open fix tickets, send anomaly alerts to Pith staff.
+Agents can: audit tags, draft tracking plans, run data checks, run models, draft reports, open fix tickets, send anomaly alerts to Wigglewerk staff.
 
 Agents cannot (engine rule plus service rule):
 - Publish a tag or pixel to a live site (gate G3).
@@ -103,4 +103,4 @@ Agents cannot (engine rule plus service rule):
 
 ## 9. Pricing logic (for the head of growth)
 
-The service is sold in tiers, and it is also bundled at Measure level into every Pith retainer, because every service needs proof of ROI. Upsell triggers: client spend crosses 4 paid channels; client reaches 12 months of clean weekly data (MMM is possible); the sum of platform claims is over 1.5 times warehouse revenue (the client needs an independent view).
+The service is sold in tiers, and it is also bundled at Measure level into every Wigglewerk retainer, because every service needs proof of ROI. Upsell triggers: client spend crosses 4 paid channels; client reaches 12 months of clean weekly data (MMM is possible); the sum of platform claims is over 1.5 times warehouse revenue (the client needs an independent view).

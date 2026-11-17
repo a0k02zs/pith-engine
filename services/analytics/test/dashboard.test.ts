@@ -101,7 +101,7 @@ describe("rendered page", () => {
   it("shows unattributed conversions in a neutral color", () => expect(html).toContain('class="bar other"'));
 
   it("escapes text from the data", () => {
-    const out = renderDashboard(def, { ...sample, pith_service_roi: [{ service: "<script>x</script>", roi: 1, label: "estimated" }] }, opts);
+    const out = renderDashboard(def, { ...sample, wigglewerk_service_roi: [{ service: "<script>x</script>", roi: 1, label: "estimated" }] }, opts);
     expect(out).not.toContain("<script>x</script>");
     expect(out).toContain("&lt;script&gt;");
   });

@@ -1,6 +1,6 @@
 {
   "rules_version": "2026-10-21.8",
-  "$comment": "Planning summary taken from the Pith M Automation Plan market sections. Not legal advice. A local lawyer confirms each market before launch. Rule ids are stable; services may cite them.",
+  "$comment": "Planning summary taken from the Wigglewerk Automation Plan market sections. Not legal advice. A local lawyer confirms each market before launch. Rule ids are stable; services may cite them.",
   "global": [
     {
       "id": "G-CONSENT-RECORD",
@@ -149,7 +149,7 @@
       ],
       "when": "paid.targeting.uses_sensitive_categories",
       "severity": "block",
-      "message": "No targeting on sensitive categories (legal ban in the EU under the DSA; Pith policy elsewhere)."
+      "message": "No targeting on sensitive categories (legal ban in the EU under the DSA; Wigglewerk policy elsewhere)."
     },
     {
       "id": "G-MINOR-TARGETING",
@@ -169,7 +169,7 @@
       ],
       "when": "paid.political",
       "severity": "block",
-      "message": "Political ads are out of scope for Pith M."
+      "message": "Political ads are out of scope for Wigglewerk."
     },
     {
       "id": "G-RESTRICTED-PRODUCT",
@@ -193,7 +193,7 @@
       "when": "recipient is a party",
       "severity": "block",
       "check": "party.do_not_contact == false",
-      "message": "This person opted out of contact from Pith (all clients)."
+      "message": "This person opted out of contact from Wigglewerk (all clients)."
     },
     {
       "id": "G-DARK-PATTERN",

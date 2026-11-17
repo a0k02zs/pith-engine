@@ -7,7 +7,7 @@ KPI codes use the engine dictionary (`engine/contracts/enums.json`, `engine/spec
 | KPI | Code | Definition | Source |
 |-----|------|------------|--------|
 | Revenue (deduplicated) | `revenue` | Sum of order or closed-won value in the period, from the order system or CRM | Warehouse |
-| Marketing spend | `spend` | Sum of media cost plus Pith fees, by channel | Ad APIs, invoices |
+| Marketing spend | `spend` | Sum of media cost plus Wigglewerk fees, by channel | Ad APIs, invoices |
 | Blended ROAS | `roas` | Revenue ÷ spend, all channels | Warehouse |
 | Marketing efficiency ratio | `mer` | Same as blended ROAS; shown for e-commerce clients who use this name | Warehouse |
 | Blended CPA | `cpa` | Spend ÷ new customers (B2C) or ÷ opportunities (B2B) | Warehouse |

@@ -8,7 +8,7 @@ const pitch: OverlayItem = {
   channel: "press_pitch", market: "GB", language: "en-GB",
   body: "Hi Jane ... Reply \"no more\" and we will not contact you again.",
   client: { is_listed: false, legal_approved: false }, price_sensitive: false,
-  sender: { name: "Sam Lee", company: "Pith Marketing" }, recipient_basis: "legitimate_interest",
+  sender: { name: "Sam Lee", company: "Wigglewerk Marketing" }, recipient_basis: "legitimate_interest",
   claim_ids: ["c-1"], approved_claim_ids: ["c-1"], sensitive_topics: [], last_pitched_days_ago: null,
 };
 

@@ -10,7 +10,7 @@
     {
       "id": "connect_accounts",
       "type": "tool",
-      "name": "Verify Pith has admin or editor role on each account (no passwords)",
+      "name": "Verify Wigglewerk has admin or editor role on each account (no passwords)",
       "tool": {
         "name": "social",
         "action": "accounts.verify",

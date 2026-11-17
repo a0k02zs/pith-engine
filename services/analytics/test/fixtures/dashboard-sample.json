@@ -1235,11 +1235,11 @@
    "label": "estimated"
   }
  ],
- "pith_service_roi": [
+ "wigglewerk_service_roi": [
   {
    "service": "search",
    "media_spend": 21000,
-   "pith_fee": 6000,
+   "wigglewerk_fee": 6000,
    "total_cost": 27000,
    "credited_conversions": 0,
    "credited_revenue": 96400,
@@ -1250,7 +1250,7 @@
   {
    "service": "paid_social",
    "media_spend": 24800,
-   "pith_fee": 5500,
+   "wigglewerk_fee": 5500,
    "total_cost": 30300,
    "credited_conversions": 0,
    "credited_revenue": 61200,
@@ -1261,7 +1261,7 @@
   {
    "service": "email",
    "media_spend": 3100,
-   "pith_fee": 4000,
+   "wigglewerk_fee": 4000,
    "total_cost": 7100,
    "credited_conversions": 0,
    "credited_revenue": 48700,
@@ -1272,7 +1272,7 @@
   {
    "service": "affiliate",
    "media_spend": 4300,
-   "pith_fee": 2500,
+   "wigglewerk_fee": 2500,
    "total_cost": 6800,
    "credited_conversions": 0,
    "credited_revenue": 12800,
@@ -1283,7 +1283,7 @@
   {
    "service": "brand",
    "media_spend": 0,
-   "pith_fee": 7000,
+   "wigglewerk_fee": 7000,
    "total_cost": 7000,
    "credited_conversions": 0,
    "credited_revenue": 0,

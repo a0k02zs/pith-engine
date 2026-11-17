@@ -6,13 +6,13 @@ Version 0.1, 21 Oct 2026. All gates use the engine approval inbox (`/approvals`,
 
 | Gate | Engine approval kind | What is approved | Approver | When | Inbox SLA | Can it skip? |
 |---|---|---|---|---|---|---|
-| G1 Budget and plan | `budget` | Monthly budget per platform and market, targets (CPA or ROAS), test budget | Client budget owner, then Pith performance marketer | Onboarding, then monthly | 2 working days | Never |
-| G2 Creative and claims | `creative` (and `claim` for a new claim) | Each new batch of ad variants: copy, visuals, claims, offers, AI labels, creator rights | Pith creative lead; client for new claims, new offers and first batch | Every test cycle (2 weeks) | 1 working day | The `creative` gate: yes, for a resize or a translation of an approved ad with no new claim. The `claim` gate never skips; the workflow goes to it only when a variant has a new claim. The compliance gate still runs. |
-| G3 Launch check | `go_live` | Tracking, consent, naming, audiences, special categories, daily caps | Pith performance marketer | Before the first launch in each account and each new market | 1 working day | Never. The engine lets only copy, creative, content and template gates skip (`engine/specs/approval-inbox.md` §4), so a person signs every launch. |
-| G4 Budget change | `budget_change` | Any move over 20% on 1 campaign in 1 day; any rise in total spend; any new paid spend; a new platform or market | Pith performance marketer; client if total spend rises | When the optimizer proposes it | 4 working hours | Never |
-| G5 Pause override | `budget_change` | Restart of an ad set that the guardrail paused | Pith performance marketer | When needed | 4 working hours | Never |
-| G6 Weekly report | `report` | The weekly report before the client sees it | Pith performance marketer | Every Monday | Same day | Never |
-| G7 Escalation | `escalation` | Ad account warning or ban, policy rejection on appeal, negative comments with press or legal risk | Pith head of growth | At once | 1 hour in business hours | Never |
+| G1 Budget and plan | `budget` | Monthly budget per platform and market, targets (CPA or ROAS), test budget | Client budget owner, then Wigglewerk performance marketer | Onboarding, then monthly | 2 working days | Never |
+| G2 Creative and claims | `creative` (and `claim` for a new claim) | Each new batch of ad variants: copy, visuals, claims, offers, AI labels, creator rights | Wigglewerk creative lead; client for new claims, new offers and first batch | Every test cycle (2 weeks) | 1 working day | The `creative` gate: yes, for a resize or a translation of an approved ad with no new claim. The `claim` gate never skips; the workflow goes to it only when a variant has a new claim. The compliance gate still runs. |
+| G3 Launch check | `go_live` | Tracking, consent, naming, audiences, special categories, daily caps | Wigglewerk performance marketer | Before the first launch in each account and each new market | 1 working day | Never. The engine lets only copy, creative, content and template gates skip (`engine/specs/approval-inbox.md` §4), so a person signs every launch. |
+| G4 Budget change | `budget_change` | Any move over 20% on 1 campaign in 1 day; any rise in total spend; any new paid spend; a new platform or market | Wigglewerk performance marketer; client if total spend rises | When the optimizer proposes it | 4 working hours | Never |
+| G5 Pause override | `budget_change` | Restart of an ad set that the guardrail paused | Wigglewerk performance marketer | When needed | 4 working hours | Never |
+| G6 Weekly report | `report` | The weekly report before the client sees it | Wigglewerk performance marketer | Every Monday | Same day | Never |
+| G7 Escalation | `escalation` | Ad account warning or ban, policy rejection on appeal, negative comments with press or legal risk | Wigglewerk head of growth | At once | 1 hour in business hours | Never |
 
 The agent writes each inbox item with: the draft or the proposed change, the reason, the expected effect with numbers, the brand score, and the compliance result.
 

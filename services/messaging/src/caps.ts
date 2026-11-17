@@ -16,7 +16,7 @@ export interface CapRule {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Pith marketing caps per contact and channel (playbook section 5). Utility messages do not count. */
+/** Wigglewerk marketing caps per contact and channel (playbook section 5). Utility messages do not count. */
 export const MARKETING_CAPS: Record<Channel, CapRule[]> = {
   sms: [{ max: 1, days: 1 }, { max: 4, days: 30 }],
   whatsapp: [{ max: 1, days: 1 }, { max: 4, days: 30 }],

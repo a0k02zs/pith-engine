@@ -17,7 +17,7 @@ export function ServicesPage() {
   const health = Object.fromEntries(ov.data.services.map((s) => [s.code, s]));
   return (
     <>
-      <PageHead title="Services" sub="The 18 Pith services. Open one to run its pipelines." />
+      <PageHead title="Services" sub="The 18 Wigglewerk services. Open one to run its pipelines." />
       <div className="tiles tiles-l">
         {services.data.map((s) => {
           const h = health[s.code];

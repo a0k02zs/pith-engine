@@ -1,8 +1,8 @@
 {
-  "name": "@pith/email",
+  "name": "@wigglewerk/email",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M email marketing service (service 1): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk email marketing service (service 1): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

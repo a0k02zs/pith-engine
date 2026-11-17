@@ -66,7 +66,7 @@ function resolve(key: string, seen: string[] = []): MarketOverlay {
 export function marketOverlay(market: string): MarketOverlay {
   const country = market.slice(0, 2);
   const group = marketGroup(country);
-  if (!group) throw new Error(`Market ${market} is outside the 5 Pith markets`);
+  if (!group) throw new Error(`Market ${market} is outside the 5 Wigglewerk markets`);
   const key = overlay.markets[country] ? country : group === "EU" ? "EU_DEFAULT" : country;
   const rules = resolve(key);
   const sub = market.length > 2 ? rules.subdivisions?.[market] : undefined;

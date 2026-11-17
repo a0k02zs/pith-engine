@@ -1,6 +1,6 @@
 # Influencer marketing service (service 6)
 
-Pith M influencer marketing: plan, discover and vet creators, outreach, contract, brief, content review, live checks, payout, weekly report and paid amplification. Built on the shared engine contracts v0.1.0 in `engine/`.
+Wigglewerk influencer marketing: plan, discover and vet creators, outreach, contract, brief, content review, live checks, payout, weekly report and paid amplification. Built on the shared engine contracts v0.1.0 in `engine/`.
 
 ## What is here
 

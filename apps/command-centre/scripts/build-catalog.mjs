@@ -7,7 +7,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repo = process.env.PITH_REPO_ROOT ?? join(here, "..", "..", "..");
+const repo = process.env.WIGGLEWERK_REPO_ROOT ?? join(here, "..", "..", "..");
 const enums = JSON.parse(readFileSync(join(repo, "engine/contracts/enums.json"), "utf8"));
 
 const servicesDir = join(repo, "services");

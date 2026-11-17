@@ -20,7 +20,7 @@ Legend: 🤖 agent step · 🔧 tool step · ✅ automatic check · 🚦 GATE (p
 | 6 | Positioning routes | 🤖 | `positioning-strategist` agent | 3 different positioning routes, each with statement, pillars and risks | B C |
 | 7 | 🚦 **Positioning workshop** | GATE `plan` | Strategist runs a 3-hour workshop. Client chooses 1 route | Chosen route with client edits | B C |
 | 8 | Verbal identity | 🤖 | `messaging-architect`, `voice-writer`; `naming-agent` if in scope | Messaging house, voice chart, vocabulary, taglines, name shortlist | A B C |
-| 9 | 🚦 **Name and tagline legal screen** | GATE `claim` | `client_legal` (or Pith lawyer) after the `name-screener` agent | Name and tagline cleared for search, or rejected | C (B if new tagline) |
+| 9 | 🚦 **Name and tagline legal screen** | GATE `claim` | `client_legal` (or Wigglewerk lawyer) after the `name-screener` agent | Name and tagline cleared for search, or rejected | C (B if new tagline) |
 | 10 | Visual territories | 🤖 | `moodboard-director` agent makes 3 mood boards | 3 visual territories with colour, type and image direction | B C |
 | 11 | 🚦 **Territory choice** | GATE `creative` | Creative lead, then client | 1 territory to design | B C |
 | 12 | Identity design | 👤✅ | Designer makes the identity in Figma. `design-qa` agent checks contrast, sizes, files | Logo set, colour, type, imagery, icons, grid; QA report | B C |

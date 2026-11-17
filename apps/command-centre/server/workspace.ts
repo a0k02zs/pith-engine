@@ -40,7 +40,7 @@ export class Workspace {
   constructor(private store: Store, opts: WorkspaceOptions = {}) {
     this.env = opts.env ?? serverEnv();
     const f: Fetch = opts.fetch ?? ((u, i) => globalThis.fetch(u, i));
-    this.vault = new TokenVault(this.env.PITH_TOKEN_KEY || null);
+    this.vault = new TokenVault(this.env.WIGGLEWERK_TOKEN_KEY || null);
     this.meta = new MetaOAuth(metaConfig(this.env), f, () => store.now());
     this.engines = new Engines(this.env, f);
     this.improver = opts.improver ?? null;

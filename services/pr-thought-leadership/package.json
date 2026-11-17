@@ -1,8 +1,8 @@
 {
-  "name": "@pith/pr-thought-leadership",
+  "name": "@wigglewerk/pr-thought-leadership",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M PR and thought leadership service (service 14, code pr): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk PR and thought leadership service (service 14, code pr): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

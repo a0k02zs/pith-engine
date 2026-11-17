@@ -1,6 +1,6 @@
 # Per-market campaign rules
 
-Source: the country sections of the Pith M Automation Plan (draft 4, 21 Oct 2026). This is a planning summary, not legal advice. A local lawyer confirms each market before the first launch there. The compliance gate holds the machine-readable version of these rules.
+Source: the country sections of the Wigglewerk Automation Plan (draft 4, 21 Oct 2026). This is a planning summary, not legal advice. A local lawyer confirms each market before the first launch there. The compliance gate holds the machine-readable version of these rules.
 
 ## 1. United Kingdom (launch 1st)
 - **Language and format:** British English, GBP, DD/MM/YYYY. Direct, low-hype tone.

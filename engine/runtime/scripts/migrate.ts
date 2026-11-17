@@ -10,7 +10,7 @@ if (!url) {
 }
 const pool = PgStore.pool(url);
 try {
-  await applySchema(pool, { withoutVector: process.env.PITH_DB_NO_VECTOR === "1" });
+  await applySchema(pool, { withoutVector: process.env.WIGGLEWERK_DB_NO_VECTOR === "1" });
   console.log("[migrate] the schema 'engine' is current");
 } catch (e) {
   console.error(`[migrate] ${e instanceof Error ? e.message : e}`);

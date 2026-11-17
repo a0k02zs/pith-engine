@@ -68,7 +68,7 @@ export function ClientConnections({ client }: { client: Client }) {
     <div className="stack">
       <div className="notice row gap-m">
         <Icon name="shield" />
-        <div>Pith never asks for a client's password. The client grants access in Meta or Google. The access token is encrypted on the server and never shown in the app or sent to the browser. Account IDs are not secret.</div>
+        <div>Wigglewerk never asks for a client's password. The client grants access in Meta or Google. The access token is encrypted on the server and never shown in the app or sent to the browser. Account IDs are not secret.</div>
       </div>
       <div className="grid-2 wide-left">
         <Card title={<span className="row gap-s"><span className="platform-mark meta">f</span> Meta (Facebook and Instagram)</span>}
@@ -82,7 +82,7 @@ export function ClientConnections({ client }: { client: Client }) {
               <dt>Token</dt><dd><Icon name="lock" size={14} /> Encrypted on the server{m.token_expires_at ? `, expires ${m.token_expires_at.slice(0, 10)}` : ""}</dd>
               {m.verified && <><dt>Ad account</dt><dd>{m.verified.name} · {m.verified.currency} · status {m.verified.account_status === 1 ? "active" : m.verified.account_status}</dd></>}
             </dl>
-          ) : <p className="muted small">Sign in with Meta to let Pith read results and manage ads in this client's accounts. The client, or a person with admin access to the client's Business Manager, signs in.</p>}
+          ) : <p className="muted small">Sign in with Meta to let Wigglewerk read results and manage ads in this client's accounts. The client, or a person with admin access to the client's Business Manager, signs in.</p>}
           {m.last_error && <div className="notice notice-bad">{m.last_error}</div>}
           {metaErr && <div className="notice notice-warn">{metaErr}</div>}
           {!integ.data.meta_oauth && !metaErr && <p className="small muted">Meta sign-in is not set up on this server yet, so the button explains what is missing. Saved IDs already make the deep links below work.</p>}

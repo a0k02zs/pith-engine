@@ -1,9 +1,9 @@
 {
-  "model_id": "pithm.crm.lead_score.b2b",
+  "model_id": "wigglewerk.crm.lead_score.b2b",
   "version": "1.0.0",
   "updated": "2026-10-21",
   "status": "default_template",
-  "note": "Pith M default values. Each client copy is approved at gate G1. Live changes need gate G3. handraise_window_days is a code default (not in the v1 design): a hand-raise counts for grade A for 90 days.",
+  "note": "Wigglewerk default values. Each client copy is approved at gate G1. Live changes need gate G3. handraise_window_days is a code default (not in the v1 design): a hand-raise counts for grade A for 90 days.",
   "fit": {
     "max": 50,
     "min": 0,
@@ -123,7 +123,7 @@
       {
         "field": "country_code",
         "op": "not_in",
-        "value_ref": "pithm.markets.all_countries"
+        "value_ref": "wigglewerk.markets.all_countries"
       }
     ]
   },

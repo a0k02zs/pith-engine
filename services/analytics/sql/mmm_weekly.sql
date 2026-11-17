@@ -16,7 +16,7 @@ SELECT
   market,
   SUM(IF(kpi = 'revenue' AND channel = '*', value, 0))                       AS revenue,
   SUM(IF(kpi = 'conversions' AND channel = '*', value, 0))                   AS conversions,
-  -- media spend columns: paid spend is channel 'paid_ad' (enums.channels), split by the Pith service code that ran it
+  -- media spend columns: paid spend is channel 'paid_ad' (enums.channels), split by the Wigglewerk service code that ran it
   SUM(IF(kpi = 'spend' AND channel = 'paid_ad' AND service = 'search', value, 0))      AS spend_paid_search,
   SUM(IF(kpi = 'spend' AND channel = 'paid_ad' AND service = 'paid_social', value, 0)) AS spend_paid_social,
   SUM(IF(kpi = 'spend' AND service = 'video', value, 0))                     AS spend_video,

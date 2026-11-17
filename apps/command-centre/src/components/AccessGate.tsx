@@ -13,8 +13,8 @@ export function AccessGate({ children }: { children: (session: Session, signOut:
   useEffect(() => {
     api<Session>("/session").then(setSession).catch(() => setSession({ protected: false, signed_in: true }));
     const out = () => setSession((s) => (s?.protected ? { protected: true, signed_in: false } : s));
-    window.addEventListener("pith:signed-out", out);
-    return () => window.removeEventListener("pith:signed-out", out);
+    window.addEventListener("wigglewerk:signed-out", out);
+    return () => window.removeEventListener("wigglewerk:signed-out", out);
   }, []);
 
   if (!session) return <div className="gate"><p className="muted">Loading…</p></div>;
@@ -40,12 +40,12 @@ export function AccessGate({ children }: { children: (session: Session, signOut:
   return (
     <div className="gate">
       <form className="card gate-card" onSubmit={submit}>
-        <div className="gate-brand"><span className="logo" aria-hidden>P</span><b>Pith Command Centre</b></div>
+        <div className="gate-brand"><span className="logo" aria-hidden>P</span><b>Wigglewerk Command Centre</b></div>
         <label htmlFor="access-code">Access code</label>
         <input id="access-code" type="password" autoComplete="current-password" autoFocus required value={code} onChange={(e) => setCode(e.target.value)} aria-describedby={error ? "access-error" : undefined} />
         {error && <p id="access-error" className="bad-text" role="alert">{error}</p>}
         <button className="btn btn-primary" type="submit" disabled={busy || !code}>{busy ? "Checking…" : "Sign in"}</button>
-        <p className="small muted">Ask the Pith operations lead for the code.</p>
+        <p className="small muted">Ask the Wigglewerk operations lead for the code.</p>
       </form>
     </div>
   );

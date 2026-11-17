@@ -28,13 +28,13 @@ Subject: {{brand}} x {{creator_first_name}}: paid collaboration
 
 Hi {{creator_first_name}},
 
-I loved your {{specific_post_detail}} ({{post_link}}). I work at Pith Marketing with {{brand}}, which makes {{one_line_product}}.
+I loved your {{specific_post_detail}} ({{post_link}}). I work at Wigglewerk Marketing with {{brand}}, which makes {{one_line_product}}.
 
 We are planning a paid collaboration in {{month}}: {{deliverables_short}}. We think your audience would like {{reason_tied_to_their_content}}.
 
 Can I send you the brief and the next steps?
 
-{{sender_name}}, Pith Marketing for {{brand}}
+{{sender_name}}, Wigglewerk Marketing for {{brand}}
 {{market_notice}}
 
 ### 2b. First message, gifting
@@ -46,7 +46,7 @@ Your {{specific_post_detail}} caught our eye. {{brand}} would like to send you {
 
 Can I have a delivery address?
 
-{{sender_name}}, Pith Marketing for {{brand}}
+{{sender_name}}, Wigglewerk Marketing for {{brand}}
 {{market_notice}}
 
 ### 2c. B2B expert (LinkedIn or email)
@@ -58,7 +58,7 @@ Your post on {{topic}} ({{post_link}}) matches a question our client {{brand}} h
 
 Is a 15-minute call next week possible?
 
-{{sender_name}}, Pith Marketing
+{{sender_name}}, Wigglewerk Marketing
 {{market_notice}}
 
 ### 2d. Follow-ups
@@ -66,7 +66,7 @@ Is a 15-minute call next week possible?
 - Day 7: "Last note from me. If the timing is wrong, no problem. We will keep you in mind for {{future_window}}."
 
 ### 2e. Market notice lines
-- UK and EU: "Pith Marketing found your public business contact details on {{source}}. Our privacy notice: {{privacy_url}}. Reply STOP and we will not contact you again."
+- UK and EU: "Wigglewerk Marketing found your public business contact details on {{source}}. Our privacy notice: {{privacy_url}}. Reply STOP and we will not contact you again."
 - Quebec: send in French first.
 - GCC: "Please share your {{licence_name}} number if you are based in {{country}}." (UAE Media Council advertiser permit; Saudi Mawthooq licence.)
 - Other markets: "Reply STOP and we will not contact you again."
@@ -90,7 +90,7 @@ Is a 15-minute call next week possible?
 
 | Term | Default | Allowed range without legal review |
 |---|---|---|
-| Parties | Client (or Pith M as agent of client) and creator (or creator's company) | |
+| Parties | Client (or Wigglewerk as agent of client) and creator (or creator's company) | |
 | Deliverables | As brief §3 | |
 | Fee and currency | {{fee}} {{currency}} | Inside approved range |
 | Payment terms | 15 business days after proof of posting | 7 to 30 |
@@ -98,7 +98,7 @@ Is a 15-minute call next week possible?
 | Organic repost by brand | 12 months | 6 to 24 |
 | Paid use | {{0 to 3}} months, extension at {{price}} per month | 0 to 12 |
 | Exclusivity | {{category}}, 30 days after last post | 0 to 90 days |
-| Disclosure | Creator uses the label and tools in brief §6; Pith M may ask for a fix | Never removable |
+| Disclosure | Creator uses the label and tools in brief §6; Wigglewerk may ask for a fix | Never removable |
 | Approval | Draft review, max 2 rounds | |
 | Takedown | Creator removes or fixes within 24 hours on request for legal or safety reasons | |
 | Morals clause | Either side may end the deal for conduct that harms the other | |

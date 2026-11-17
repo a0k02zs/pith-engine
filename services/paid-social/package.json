@@ -1,8 +1,8 @@
 {
-  "name": "@pith/paid-social",
+  "name": "@wigglewerk/paid-social",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M performance and paid social service (service 11): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk performance and paid social service (service 11): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

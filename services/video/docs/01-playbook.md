@@ -78,7 +78,7 @@ The pipeline is the same for every job. Only stage 6 (Produce) changes by track.
 - **Testimonial body:** Who I am → What was wrong before → Why we chose them → Result with a number → Advice.
 - Captions burned in on every social and ad video. Most feed video plays with the sound off.
 
-## 6. Packages (structure; Pith sets the prices)
+## 6. Packages (structure; Wigglewerk sets the prices)
 
 | Package | Monthly output | Tracks | For |
 |---|---|---|---|

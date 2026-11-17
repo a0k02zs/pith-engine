@@ -9,10 +9,10 @@ import { Workspace } from "./workspace.js";
 // that answers /api/*. The UI is served as static files from the same deployment.
 // State is in memory, so each function instance starts from the test data.
 const store = new Store();
-// With no PITH_ACCESS_CODE the app is open, so runtimeEnv removes the live keys.
+// With no WIGGLEWERK_ACCESS_CODE the app is open, so runtimeEnv removes the live keys.
 const env = runtimeEnv(process.env);
 const access = Access.fromEnv(env);
 const key = env.ANTHROPIC_API_KEY;
-const ws = new Workspace(store, { env, improver: key ? claudeImprover(key, env.PITH_CLAUDE_MODEL || "claude-opus-5-5") : null });
+const ws = new Workspace(store, { env, improver: key ? claudeImprover(key, env.WIGGLEWERK_CLAUDE_MODEL || "claude-opus-5-5") : null });
 
 export default handle(createApp(store, ws, access));

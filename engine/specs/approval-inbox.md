@@ -1,6 +1,6 @@
 # Approval inbox — spec v0.1.0
 
-1 queue for client and Pith staff (plan, "Approval inbox"). Each item shows the draft, the brand score and the compliance result.
+1 queue for client and Wigglewerk staff (plan, "Approval inbox"). Each item shows the draft, the brand score and the compliance result.
 
 ## 1. Item
 
@@ -31,7 +31,7 @@ Schema: `contracts/schemas/approval-item.json`. An item has a `service` and a `k
 
 ## 3. Roles
 
-Roles are in `contracts/enums.json`. Pith roles have no prefix (`content_lead`). Client roles start with `client_`. Extra roles added in v0.1.0 at service requests: `native_editor`, `client_marketing_lead`, `external_contact` (a named outside person, such as a customer who signs a case study release; they get a one-time link and their decision carries a signed document in `edits.evidence_ref`).
+Roles are in `contracts/enums.json`. Wigglewerk roles have no prefix (`content_lead`). Client roles start with `client_`. Extra roles added in v0.1.0 at service requests: `native_editor`, `client_marketing_lead`, `external_contact` (a named outside person, such as a customer who signs a case study release; they get a one-time link and their decision carries a signed document in `edits.evidence_ref`).
 
 ## 4. Skip rules
 

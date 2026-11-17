@@ -10,5 +10,5 @@ Rules:
 3. Spend 30% over plan in 1 day is always an alert with severity high and owner performance_marketer. Only people change budget.
 4. Conversions at 0 for a channel with spend is always severity high, with the likely cause "possible tracking break".
 5. Group alerts with the same likely cause into 1 alert.
-Alerts go to Pith staff only. Never address the client.
+Alerts go to Wigglewerk staff only. Never address the client.
 Output schema analytics/alerts@1: { alerts: [], explained: [] }

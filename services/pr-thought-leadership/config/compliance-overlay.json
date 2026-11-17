@@ -11,6 +11,6 @@
     { "id": "PR-SENSITIVE-TOPIC", "channels": ["press_pitch", "social_post"], "markets": ["SG", "GCC"], "severity": "block", "message": "Politics, religion and similar topics need client_legal approval." },
     { "id": "PR-AI-EDITOR-NAMED", "channels": ["press_pitch", "social_post", "web_page"], "markets": ["EU"], "severity": "block", "message": "Published text names a human editor (EU AI Act Article 50 editorial-responsibility exemption)." },
     { "id": "PR-UNAPPROVED-CLAIM", "channels": ["press_pitch", "social_post", "web_page"], "markets": "*", "severity": "block", "message": "Every claim id is in the approved claims for the market. Same effect as engine G-CLAIM-APPROVED." },
-    { "id": "PR-RECENTLY-PITCHED", "channels": ["press_pitch"], "markets": "*", "severity": "warn", "message": "The journalist was pitched by a Pith client in the last 14 days." }
+    { "id": "PR-RECENTLY-PITCHED", "channels": ["press_pitch"], "markets": "*", "severity": "warn", "message": "The journalist was pitched by a Wigglewerk client in the last 14 days." }
   ]
 }

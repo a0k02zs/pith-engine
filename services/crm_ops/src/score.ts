@@ -59,7 +59,7 @@ export interface ScoreModel {
   };
 }
 
-/** The Pith default model (config/lead-scoring.json). A client copy replaces the ICP values at gate G1. */
+/** The Wigglewerk default model (config/lead-scoring.json). A client copy replaces the ICP values at gate G1. */
 export const defaultModel = JSON.parse(readFileSync(dir("config", "lead-scoring.json"), "utf8")) as ScoreModel;
 
 /** ICP values the fit rules read through `value_ref`. They come from the approved design doc. */
@@ -95,7 +95,7 @@ export interface EngagementEvent {
 }
 
 function refValue(ref: string, icp: ClientIcp): unknown[] {
-  if (ref === "pithm.markets.all_countries") return allCountries;
+  if (ref === "wigglewerk.markets.all_countries") return allCountries;
   const key = ref.replace(/^client\.(icp\.)?/, "") as keyof ClientIcp;
   const value = icp[key];
   if (!Array.isArray(value)) throw new Error(`Unknown value_ref ${ref}`);

@@ -1,6 +1,6 @@
 # Multi-channel Campaigns: Strategy Playbook
 
-Service 2 of the Pith M Automation Plan. Owner: Head of Growth. Status: v1, 21 Oct 2026.
+Service 2 of the Wigglewerk Automation Plan. Owner: Head of Growth. Status: v1, 21 Oct 2026.
 
 ## 1. What this service is
 

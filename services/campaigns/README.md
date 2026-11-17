@@ -1,6 +1,6 @@
 # Multi-channel campaigns service (service 2)
 
-Pith M campaigns: plans one campaign across channels and markets, hands each channel service its brief, turns on spend after the go-live gate, moves budget each day inside fixed limits, and writes the final report and lessons. Built on the shared engine contracts v0.1.0.
+Wigglewerk campaigns: plans one campaign across channels and markets, hands each channel service its brief, turns on spend after the go-live gate, moves budget each day inside fixed limits, and writes the final report and lessons. Built on the shared engine contracts v0.1.0.
 
 This service orchestrates the channel services. It never sends or publishes itself. Each channel service builds and publishes its own assets through `<service>.campaign_assets`, and publishes only after `svc.campaigns/market.launched` for that market.
 

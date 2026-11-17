@@ -1,8 +1,8 @@
 {
-  "name": "@pith/brand",
+  "name": "@wigglewerk/brand",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M brand strategy and design service (service 13): workflows, agent prompts, output schemas, brain compiler and brand-score rubric.",
+  "description": "Wigglewerk brand strategy and design service (service 13): workflows, agent prompts, output schemas, brain compiler and brand-score rubric.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

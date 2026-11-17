@@ -1,7 +1,7 @@
-# Pith M shared engine — contracts v0.1.2
+# Wigglewerk shared engine — contracts v0.1.2
 
 Status: **draft for build**. Date: 2026-10-21. Owner: the "Shared marketing engine" thread.
-Source plan: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "The shared engine" and "Governance and risk".
+Source plan: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "The shared engine" and "Governance and risk".
 Reading page: https://claude.ai/artifact/CYy7PkV4SQ9uWTJN5xHeV2 (generated from these files). Change log: CHANGELOG.md.
 
 All 18 service threads build against these contracts. Do not fork them. If a service needs a change, ask the engine thread. The engine keeps changes backward compatible inside a major version.
@@ -15,7 +15,7 @@ The engine has 6 parts. Every service uses all 6.
 | 1 | Client brain (brand store) | Brand voice, products, offers, personas, approved claims, banned words, past results. Every agent reads it before it writes. | `contracts/schemas/brand-profile.json`, `GET /clients/{id}/brain` |
 | 2 | Data layer (consented customer data) | Contacts, companies, events, consent per channel and country. Consent travels with each contact to every channel. | `contracts/schemas/contact.json`, `consent.json`, `db/001_core.sql` |
 | 3 | Agent workflow layer | Runs each service pipeline step by step. Retries, logs every action, stops at gates. | `specs/workflow.md`, `contracts/schemas/workflow-definition.json` |
-| 4 | Approval inbox | 1 queue for client and Pith staff. Each item shows the draft, the brand score and the compliance result. | `contracts/schemas/approval-item.json`, `/approvals` API |
+| 4 | Approval inbox | 1 queue for client and Wigglewerk staff. Each item shows the draft, the brand score and the compliance result. | `contracts/schemas/approval-item.json`, `/approvals` API |
 | 5 | Compliance gate | Automatic check before anything goes live, per contact country. | `specs/compliance.md`, `specs/compliance-rules.json`, `POST /compliance/check` |
 | 6 | Measurement | Same KPI names across services, attribution, weekly AI report. | `specs/analytics.md`, `contracts/schemas/metric-event.json` |
 
@@ -61,7 +61,7 @@ engine/
 
 ## 5. Versioning
 
-- Contract version: `0.1.0`. Every API response has the header `Pith-Contract-Version`.
+- Contract version: `0.1.0`. Every API response has the header `Wigglewerk-Contract-Version`.
 - Minor version: new optional fields, new enum values, new endpoints.
 - Major version: anything that breaks a service. Announced in the project before it ships.
 

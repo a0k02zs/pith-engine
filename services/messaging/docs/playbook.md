@@ -4,7 +4,7 @@ Draft 1, 21 Oct 2026. Not legal advice.
 
 ## 1. What the client buys
 
-Pith M runs short, timely messages on the customer's phone. The service has 3 parts:
+Wigglewerk runs short, timely messages on the customer's phone. The service has 3 parts:
 
 1. **Flows.** Automatic messages that an event starts, for example an abandoned cart or a booking reminder.
 2. **Broadcasts.** Planned offers and news to a segment, for example a Ramadan sale.
@@ -84,7 +84,7 @@ Each flow has an ID. The planner agent picks flows by ID. Workflow `03-triggered
 
 ## 5. Frequency and timing rules
 
-These are Pith defaults. A stricter rule in `market-rules.yaml` always wins.
+These are Wigglewerk defaults. A stricter rule in `market-rules.yaml` always wins.
 
 - **Marketing SMS:** max 4 per contact per 30 days. Max 1 per day.
 - **Marketing WhatsApp:** max 4 per contact per 30 days. Max 1 per day. Meta can also limit marketing messages per user.
@@ -97,7 +97,7 @@ These are Pith defaults. A stricter rule in `market-rules.yaml` always wins.
 
 ## 6. Message rules
 
-1. Name the brand at the start of every SMS. Example: "Pith Coffee: ...".
+1. Name the brand at the start of every SMS. Example: "Wigglewerk Coffee: ...".
 2. Every marketing SMS has an opt-out line, for example "Reply STOP to opt out". Use the local words from `market-rules.yaml`.
 3. Use 1 clear call to action and 1 link. Use a branded short link domain (for example `go.clientbrand.com`). Public shorteners such as bit.ly increase carrier filtering.
 4. Keep marketing SMS to 1 segment (160 GSM-7 characters) when possible. An emoji or an Arabic letter changes the encoding to Unicode, and the limit falls to 70 characters per segment.
@@ -110,13 +110,13 @@ These are Pith defaults. A stricter rule in `market-rules.yaml` always wins.
 
 | Step | Owner | Time |
 |---|---|---|
-| Pick the provider stack (see section 8) | Pith messaging lead | Day 1 |
-| Collect consent sources and check the consent records | Pith + client | Days 1 to 5 |
-| Register senders: US 10DLC brand and campaign, toll-free verification, Singapore SSIR sender ID, GCC sender IDs, UK and EU alphanumeric sender IDs | Pith ops | 1 to 4 weeks, by market |
-| WhatsApp Business Account, display name approval, business verification | Pith ops + client | 1 to 2 weeks |
-| Load the client brain: voice, approved offers, FAQ answer list | Pith + client | Week 1 |
-| Build the first 4 flows (F01, F02 or F10, F04, F13) | Agents + Pith | Week 2 |
-| Test sends to seed phones in each market | Pith QA | Week 2 |
+| Pick the provider stack (see section 8) | Wigglewerk messaging lead | Day 1 |
+| Collect consent sources and check the consent records | Wigglewerk + client | Days 1 to 5 |
+| Register senders: US 10DLC brand and campaign, toll-free verification, Singapore SSIR sender ID, GCC sender IDs, UK and EU alphanumeric sender IDs | Wigglewerk ops | 1 to 4 weeks, by market |
+| WhatsApp Business Account, display name approval, business verification | Wigglewerk ops + client | 1 to 2 weeks |
+| Load the client brain: voice, approved offers, FAQ answer list | Wigglewerk + client | Week 1 |
+| Build the first 4 flows (F01, F02 or F10, F04, F13) | Agents + Wigglewerk | Week 2 |
+| Test sends to seed phones in each market | Wigglewerk QA | Week 2 |
 | Go live (gate G4) | Messaging lead | Week 2 to 4 |
 
 Sender registration is the slowest step. Start it on day 1.

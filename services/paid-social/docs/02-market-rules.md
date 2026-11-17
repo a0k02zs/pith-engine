@@ -13,7 +13,7 @@ The compliance gate in the engine (`POST /compliance/check`) holds the rules as 
 3. Under-18s: Meta lets advertisers target teens only by age and location. Do not target minors with personalised ads in the EU (DSA). Do not run age-restricted products (alcohol, gambling, vapes, some finance) to under-18s anywhere.
 4. Creator content in ads (Spark Ads, partnership ads, whitelisting) needs paid usage rights in the creator contract from service 6. Keep the paid-partnership label on.
 5. Claims: use only claims from the approved claims list in the client brain. A new claim needs gate G2.
-6. Political, election and social issue ads are out of scope for Pith M at launch. The agent blocks them.
+6. Political, election and social issue ads are out of scope for Wigglewerk at launch. The agent blocks them.
 7. Customer list uploads: only contacts that `POST /audiences/resolve` returns as eligible for `channel: "paid_ad"`, `purpose: "marketing"` in their country. Hash before upload.
 
 ## 2. Special products
@@ -99,7 +99,7 @@ These product types need extra review in every market. The creative agent tags t
 | Data | Lawful basis for each customer list upload. Article 14 notice when data comes from third parties. |
 | Ad rules | DSA: no ads based on profiling of minors, no ads based on sensitive data, ad transparency (each ad shows who paid and why the user sees it). Unfair Commercial Practices Directive. National creator laws (for example France, 2023). |
 | AI content | AI Act Article 50 labels from 2 August 2026. |
-| Political ads | Meta and Google stopped political, election and social issue ads in the EU in October 2025, under the EU political advertising regulation (TTPA). Out of scope for Pith M. |
+| Political ads | Meta and Google stopped political, election and social issue ads in the EU in October 2025, under the EU political advertising regulation (TTPA). Out of scope for Wigglewerk. |
 | Key dates | Black Friday, Christmas, summer sales; King's Day (27 April) in the Netherlands. B2B: avoid August. |
 
 ## 4. Rules as data (for the compliance gate)

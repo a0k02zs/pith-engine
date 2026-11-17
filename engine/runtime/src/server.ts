@@ -2,8 +2,8 @@
 // plus the paths that only the engine's own callers use (/internal/*). No web framework: node:http only.
 //
 // Who calls (Authorization: Bearer <token>):
-//   - a service token (PITH_ENGINE_SERVICE_TOKEN): the services and the Command Centre server. Never decides an approval.
-//   - a user token (PITH_ENGINE_USER_TOKENS, a JSON map): a person, with roles and the clients the person can see.
+//   - a service token (WIGGLEWERK_ENGINE_SERVICE_TOKEN): the services and the Command Centre server. Never decides an approval.
+//   - a user token (WIGGLEWERK_ENGINE_USER_TOKENS, a JSON map): a person, with roles and the clients the person can see.
 // The user token map is the temporary source of people. Build 2 (personal sign-in) replaces it.
 import { timingSafeEqual } from "node:crypto";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
@@ -238,28 +238,28 @@ export function unconnectedHandlers(): Handlers {
 
 export function authFromEnv(env: NodeJS.ProcessEnv = process.env): AuthConfig {
   let users: AuthConfig["users"];
-  if (env.PITH_ENGINE_USER_TOKENS) {
+  if (env.WIGGLEWERK_ENGINE_USER_TOKENS) {
     try {
-      users = JSON.parse(env.PITH_ENGINE_USER_TOKENS);
+      users = JSON.parse(env.WIGGLEWERK_ENGINE_USER_TOKENS);
     } catch {
-      throw new Error("PITH_ENGINE_USER_TOKENS is not valid JSON");
+      throw new Error("WIGGLEWERK_ENGINE_USER_TOKENS is not valid JSON");
     }
   }
-  const auth: AuthConfig = { service_token: env.PITH_ENGINE_SERVICE_TOKEN || undefined, users };
+  const auth: AuthConfig = { service_token: env.WIGGLEWERK_ENGINE_SERVICE_TOKEN || undefined, users };
   const tokens = [auth.service_token, ...Object.keys(users ?? {})].filter((t): t is string => Boolean(t));
   if (tokens.some((t) => t.length < 24)) throw new Error("each engine token must have 24 characters or more");
-  if (!tokens.length && env.PITH_ENGINE_DEV !== "1") throw new Error("set PITH_ENGINE_SERVICE_TOKEN or PITH_ENGINE_USER_TOKENS; the engine does not start with no token");
+  if (!tokens.length && env.WIGGLEWERK_ENGINE_DEV !== "1") throw new Error("set WIGGLEWERK_ENGINE_SERVICE_TOKEN or WIGGLEWERK_ENGINE_USER_TOKENS; the engine does not start with no token");
   return auth;
 }
 
 async function main() {
   const env = process.env;
-  const dev = env.PITH_ENGINE_DEV === "1";
+  const dev = env.WIGGLEWERK_ENGINE_DEV === "1";
   const auth = authFromEnv(env);
-  if (!env.DATABASE_URL && !dev) throw new Error("set DATABASE_URL; the memory store is only for PITH_ENGINE_DEV=1");
+  if (!env.DATABASE_URL && !dev) throw new Error("set DATABASE_URL; the memory store is only for WIGGLEWERK_ENGINE_DEV=1");
   const store = env.DATABASE_URL ? await PgStore.connect(env.DATABASE_URL) : new MemoryStore();
   // Mock handlers do no real work. They are allowed only in development.
-  const handlers = dev && env.PITH_ENGINE_HANDLERS === "mock" ? mockHandlers() : unconnectedHandlers();
+  const handlers = dev && env.WIGGLEWERK_ENGINE_HANDLERS === "mock" ? mockHandlers() : unconnectedHandlers();
   const engine = new Engine({ store, handlers });
   const { workflows, errors } = loadWorkflows();
   let ok = 0;
@@ -274,7 +274,7 @@ async function main() {
   }
   const port = Number(env.PORT ?? 8787);
   listen(createApi(engine, auth), port);
-  const every = Math.max(5, Number(env.PITH_ENGINE_TICK_SECONDS ?? 30));
+  const every = Math.max(5, Number(env.WIGGLEWERK_ENGINE_TICK_SECONDS ?? 30));
   setInterval(() => void engine.tick().catch((e) => console.error("[engine] tick failed:", e)), every * 1000).unref?.();
   console.log(`[engine] ${ok} of ${workflows.length} workflows registered; listening on port ${port}; store: ${env.DATABASE_URL ? "postgres" : "memory"}`);
 }

@@ -16,7 +16,7 @@ Codes that start with `brand.` are service-only KPIs, as `engine/specs/service-i
 
 Survey KPIs are only for clients who pay for the brand tracker. Small clients use branded search and share of voice.
 
-## 2. Delivery KPIs (Pith M sees these)
+## 2. Delivery KPIs (Wigglewerk sees these)
 
 | KPI | Code | Formula | Target |
 |---|---|---|---|

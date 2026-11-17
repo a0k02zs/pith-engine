@@ -46,7 +46,7 @@ Status: aligned with `/mnt/project-files/engine/` contract **v0.1.0** on 21 Oct 
 
 ## UTM tags
 
-Engine standard (`engine/specs/analytics.md` §4): `utm_source` = platform, `utm_medium` = channel code, `utm_campaign` = `campaign_id` (`<yyyy>-<slug>`), `utm_content` = `<artifact id 8>-<variant>`, `utm_term` = keyword or audience, `pith_mkt` = market ISO code.
+Engine standard (`engine/specs/analytics.md` §4): `utm_source` = platform, `utm_medium` = channel code, `utm_campaign` = `campaign_id` (`<yyyy>-<slug>`), `utm_content` = `<artifact id 8>-<variant>`, `utm_term` = keyword or audience, `wigglewerk_mkt` = market ISO code.
 
 ## KPI codes
 

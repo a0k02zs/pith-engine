@@ -2,7 +2,7 @@
   "id": "analytics.monthly_roi",
   "version": 1,
   "service": "analytics",
-  "description": "On the 3rd working day of the month. ROI report across channels and Pith services, then a review call and a decision log. Gate G4.",
+  "description": "On the 3rd working day of the month. ROI report across channels and Wigglewerk services, then a review call and a decision log. Gate G4.",
   "trigger": {
     "cron": "0 7 1-5 * 1-5"
   },
@@ -104,7 +104,7 @@
       ],
       "tool": {
         "name": "analytics",
-        "action": "warehouse.query:pith_service_roi",
+        "action": "warehouse.query:wigglewerk_service_roi",
         "risk": "read"
       }
     },

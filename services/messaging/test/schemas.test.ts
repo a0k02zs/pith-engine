@@ -17,7 +17,7 @@ describe("output schemas", () => {
   });
 
   it("accepts drafts and refuses an SMS of 3 segments", () => {
-    const d = { template_id: "S-CART-1H", flow_id: "F02", channel: "sms", market: "GB", language: "en-GB", category: "MARKETING", variant: "A", content: "Pith Coffee: ...", encoding: "GSM-7", segments: 1, claims_used: [], offer_id: null, needs_native_review: false, notes: "" };
+    const d = { template_id: "S-CART-1H", flow_id: "F02", channel: "sms", market: "GB", language: "en-GB", category: "MARKETING", variant: "A", content: "Wigglewerk Coffee: ...", encoding: "GSM-7", segments: 1, claims_used: [], offer_id: null, needs_native_review: false, notes: "" };
     expect(validateOutput("messaging/write@1", { drafts: [d], blockers: [] }).valid).toBe(true);
     expect(validateOutput("messaging/write@1", { drafts: [{ ...d, segments: 3 }], blockers: [] }).valid).toBe(false);
   });
@@ -41,7 +41,7 @@ describe("output schemas", () => {
     const report = { headline: "Revenue per message up 12%", scorecard: [{ kpi: "revenue_per_message", this_week: "£0.42", change: "+12%", target: "£0.35" }], worked: [], did_not: [], decisions: [], next_week: [], markdown: "# Week 45" };
     expect(validateOutput("messaging/report@1", report).valid).toBe(true);
     expect(validateOutput("messaging/report@1", { ...report, worked: ["a", "b", "c", "d"] }).valid).toBe(false);
-    expect(validateOutput("messaging/sender@1", { market: "SG", channel: "sms", sender_type: "alphanumeric", sender_id: "PITHCOFFEE", registration_ref: "SSIR-123", status: "approved" }).valid).toBe(true);
+    expect(validateOutput("messaging/sender@1", { market: "SG", channel: "sms", sender_type: "alphanumeric", sender_id: "WWCOFFEE", registration_ref: "SSIR-123", status: "approved" }).valid).toBe(true);
   });
 
   it("throws on an unknown schema ref", () => {
@@ -51,10 +51,10 @@ describe("output schemas", () => {
 
 describe("system prompts", () => {
   it("fills the brand, the brain, the market rules and the channel", () => {
-    const brain = { client_id: "c1", organization: { name: "Pith Coffee" }, banned_terms: ["cheap"] };
+    const brain = { client_id: "c1", organization: { name: "Wigglewerk Coffee" }, banned_terms: ["cheap"] };
     const { model, system } = buildSystemPrompt("messaging/chat@1", brain, resolveMarket("AE"), { channel: "WhatsApp" });
     expect(model).toMatch(/^claude-/);
-    expect(system).toContain("You are the Pith Coffee assistant on WhatsApp.");
+    expect(system).toContain("You are the Wigglewerk Coffee assistant on WhatsApp.");
     expect(system).toContain('"banned_terms":["cheap"]');
     expect(system).toContain('"market":"AE"');
     expect(system).not.toMatch(/\{brain|\{market_rules\}|\{channel\}|\{\{brand\}\}/);

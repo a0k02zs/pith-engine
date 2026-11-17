@@ -6,7 +6,7 @@ export interface AudienceSplit {
   rest: string[];
 }
 
-/** Pith broadcast defaults: 10% holdout with a floor of 1000 contacts, and a 20% A/B test cell. */
+/** Wigglewerk broadcast defaults: 10% holdout with a floor of 1000 contacts, and a 20% A/B test cell. */
 export const HOLDOUT_SHARE = 0.1;
 export const HOLDOUT_MIN = 1000;
 export const TEST_SHARE = 0.2;

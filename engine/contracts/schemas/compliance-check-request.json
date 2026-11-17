@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pith.marketing/contracts/v0/compliance-check-request.json",
+  "$id": "https://wigglewerk.marketing/contracts/v0/compliance-check-request.json",
   "title": "Input to POST /compliance/check",
   "type": "object",
   "properties": {

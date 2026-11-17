@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pith.marketing/services/social/post.schema.json",
+  "$id": "https://wigglewerk.marketing/services/social/post.schema.json",
   "title": "Social post (service 4)",
   "type": "object",
   "required": ["post_id", "client_id", "slot_id", "platform", "market", "language", "pillar", "funnel_stage", "format", "status", "draft"],

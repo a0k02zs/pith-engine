@@ -5,7 +5,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
 export type Env = Record<string, string | undefined>;
 
-export const SESSION_COOKIE = "pith_session";
+export const SESSION_COOKIE = "wigglewerk_session";
 const SESSION_HOURS = 12;
 const MAX_FAILS = 8;
 const FAIL_WINDOW_MS = 10 * 60_000;
@@ -14,14 +14,29 @@ const FAIL_WINDOW_MS = 10 * 60_000;
 export const LIVE_KEYS = ["ANTHROPIC_API_KEY", "META_APP_SECRET", "RUNWAYML_API_SECRET", "HF_API_KEY_ID", "HF_API_KEY_SECRET"] as const;
 
 /**
- * The environment the server may use. With no PITH_ACCESS_CODE anyone with the URL can call the API,
+ * The environment the server may use. With no WIGGLEWERK_ACCESS_CODE anyone with the URL can call the API,
  * so the live keys are removed and every integration runs simulated.
  */
-export function runtimeEnv(env: Env): Env {
-  if (env.PITH_ACCESS_CODE) return env;
+export function runtimeEnv(input: Env): Env {
+  const env = withLegacyNames(input);
+  if (env.WIGGLEWERK_ACCESS_CODE) return env;
   const safe: Env = { ...env };
   for (const k of LIVE_KEYS) delete safe[k];
   return safe;
+}
+
+/**
+ * The company was renamed from Pith to Wigglewerk on 2026-11-15. Settings saved under the old
+ * PITH_* names still work: each one fills its WIGGLEWERK_* name when that name is not set.
+ */
+export function withLegacyNames(env: Env): Env {
+  const out: Env = { ...env };
+  for (const [k, v] of Object.entries(env)) {
+    if (!k.startsWith("PITH_") || v === undefined) continue;
+    const name = "WIGGLEWERK_" + k.slice("PITH_".length);
+    if (out[name] === undefined) out[name] = v;
+  }
+  return out;
 }
 
 const enc = new TextEncoder();
@@ -50,12 +65,12 @@ export class Access {
     this.code = opts.code ?? "";
     this.enabled = this.code.length > 0;
     // Without a separate secret the signing key comes from the code, so every server instance agrees.
-    this.secret = opts.secret || `pith-session:${this.code}`;
+    this.secret = opts.secret || `wigglewerk-session:${this.code}`;
     this.now = opts.now ?? (() => Date.now());
   }
 
   static fromEnv(env: Env, now?: () => number): Access {
-    return new Access({ code: env.PITH_ACCESS_CODE, secret: env.PITH_SESSION_SECRET, now });
+    return new Access({ code: env.WIGGLEWERK_ACCESS_CODE, secret: env.WIGGLEWERK_SESSION_SECRET, now });
   }
 
   async issue(): Promise<string> {

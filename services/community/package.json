@@ -1,8 +1,8 @@
 {
-  "name": "@pith/community",
+  "name": "@wigglewerk/community",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M community and UGC service (service 18): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk community and UGC service (service 18): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -1,5 +1,5 @@
 {
-  "$comment": "Default social packages and starting KPI targets. Adopted 2026-10-28 as the v1 defaults from docs/playbook.md section 4 and docs/approvals-and-kpis.md section 3. Pith sets the final names and prices.",
+  "$comment": "Default social packages and starting KPI targets. Adopted 2026-10-28 as the v1 defaults from docs/playbook.md section 4 and docs/approvals-and-kpis.md section 3. Wigglewerk sets the final names and prices.",
   "packages": {
     "starter": { "platforms": [2, 2], "feed_posts_per_week_per_platform": [3, 3], "stories_per_week_b2c": [3, 3], "community_hours": "business", "markets": [1, 1] },
     "growth": { "platforms": [3, 3], "feed_posts_per_week_per_platform": [4, 5], "stories_per_week_b2c": [5, 5], "community_hours": "business", "markets": [2, 2] },

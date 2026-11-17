@@ -1,6 +1,6 @@
 # Sales hand-off brief — {{account_name}}
 
-To: {{client_sales}} · From: Pith ABM · Date: {{date}} · Scores: fit {{fit}}, intent {{intent}}, engagement {{engagement}}
+To: {{client_sales}} · From: Wigglewerk ABM · Date: {{date}} · Scores: fit {{fit}}, intent {{intent}}, engagement {{engagement}}
 
 **Why now**
 1. {{signal_1}} ({{date_1}})

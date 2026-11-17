@@ -26,7 +26,7 @@ Version 1, 21 Oct 2026. Every KPI code below is in `engine/contracts/enums.json`
 | `revenue` | money | B2C: sales during the live session and the 48-hour offer window | Commerce platform |
 | `brand_score` | number | Mean brand score of event assets | Engine brand check |
 
-"Event cost" = platform add-ons + paid promotion + speaker fees + booth, venue and travel. Pith fees are not in it unless the client asks.
+"Event cost" = platform add-ons + paid promotion + speaker fees + booth, venue and travel. Wigglewerk fees are not in it unless the client asks.
 
 ## 2. Starting targets
 

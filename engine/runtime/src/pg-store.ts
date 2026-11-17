@@ -12,7 +12,7 @@ const ACTIVE = ["running", "waiting_approval", "waiting_event"];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const iso = (v: unknown): string | undefined => (v instanceof Date ? v.toISOString() : v == null ? undefined : String(v));
 const json = (v: unknown) => (v === undefined ? null : JSON.stringify(v));
-// Postgres bigint (hashtext of 'pith-engine-runner' is not stable between versions, so the key is a fixed number).
+// Postgres bigint (hashtext of 'wigglewerk-engine-runner' is not stable between versions, so the key is a fixed number).
 const RUNNER_LOCK = 7411250931;
 
 /**

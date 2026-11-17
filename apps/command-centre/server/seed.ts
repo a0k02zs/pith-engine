@@ -3,14 +3,14 @@
 import { catalog, marketGroupOf } from "./catalog.js";
 import type { Client, ServiceCode, User } from "./types.js";
 
-const PITH_ROLES = catalog.roles.filter((r) => !r.startsWith("client_") && r !== "external_contact" && r !== "subject_expert" && r !== "native_editor");
+const WIGGLEWERK_ROLES = catalog.roles.filter((r) => !r.startsWith("client_") && r !== "external_contact" && r !== "subject_expert" && r !== "native_editor");
 const CLIENT_ROLES = catalog.roles.filter((r) => r.startsWith("client_"));
 
 export function seedUsers(): User[] {
   return [
-    { id: "u-boss", name: "Boss", roles: PITH_ROLES, note: "Pith admin. Holds every Pith role." },
+    { id: "u-boss", name: "Boss", roles: WIGGLEWERK_ROLES, note: "Wigglewerk admin. Holds every Wigglewerk role." },
     { id: "u-client", name: "Sam Reed (test client)", roles: [...CLIENT_ROLES, "subject_expert", "native_editor"], note: "Test client user with every client role, plus subject expert and native editor." },
-    { id: "u-analyst", name: "Priya Shah (test analyst)", roles: ["analytics_lead"], note: "Test Pith analyst. Can only decide report gates." },
+    { id: "u-analyst", name: "Priya Shah (test analyst)", roles: ["analytics_lead"], note: "Test Wigglewerk analyst. Can only decide report gates." },
   ];
 }
 

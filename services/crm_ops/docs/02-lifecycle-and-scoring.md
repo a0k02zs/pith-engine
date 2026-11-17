@@ -2,7 +2,7 @@
 
 Version 1 · 21 Oct 2026. Machine format: `lead-scoring.json`.
 
-These are the Pith M default values. Each client starts from these values. The client changes them at gate G1. All point values and thresholds are starting estimates, not measured data. The Scoring Analyst agent tunes them after 60 days of real data (see section 6).
+These are the Wigglewerk default values. Each client starts from these values. The client changes them at gate G1. All point values and thresholds are starting estimates, not measured data. The Scoring Analyst agent tunes them after 60 days of real data (see section 6).
 
 ## 1. B2B lifecycle stages
 
@@ -57,7 +57,7 @@ The score has 2 parts. **Fit** shows if the company and person match the ideal c
 | | Manager | +6 |
 | | Individual contributor | +2 |
 | Job function | Buyer function (from the client ICP) | +8 |
-| Country | In one of the 5 Pith markets and a client sales region | +5 |
+| Country | In one of the 5 Wigglewerk markets and a client sales region | +5 |
 | Tech stack | Uses an ICP technology (from Clay, Apollo or BuiltWith data) | +2 |
 | **Negative** | Personal email domain (gmail.com, outlook.com and so on) for B2B | −10 |
 | | Student, job seeker or competitor domain | Set to `disqualified` |

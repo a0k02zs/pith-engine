@@ -1,6 +1,6 @@
-# @pith/affiliate · Service 15 · Affiliate and partner marketing
+# @wigglewerk/affiliate · Service 15 · Affiliate and partner marketing
 
-This package is the code for the Pith M affiliate and partner marketing service. It builds on the
+This package is the code for the Wigglewerk affiliate and partner marketing service. It builds on the
 shared engine contracts in `engine/contracts/` (v0.1.0) and does not copy them.
 
 ## What is in this folder

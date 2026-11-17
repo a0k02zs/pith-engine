@@ -115,10 +115,10 @@ describe("HTTP API", () => {
 
   it("does not start with no token, a short token or a token map that is not JSON", () => {
     expect(() => authFromEnv({})).toThrow(/does not start with no token/);
-    expect(() => authFromEnv({ PITH_ENGINE_SERVICE_TOKEN: "short" })).toThrow(/24 characters/);
-    expect(() => authFromEnv({ PITH_ENGINE_USER_TOKENS: "{" })).toThrow(/not valid JSON/);
-    expect(authFromEnv({ PITH_ENGINE_DEV: "1" })).toEqual({ service_token: undefined, users: undefined });
-    expect(authFromEnv({ PITH_ENGINE_SERVICE_TOKEN: SERVICE }).service_token).toBe(SERVICE);
+    expect(() => authFromEnv({ WIGGLEWERK_ENGINE_SERVICE_TOKEN: "short" })).toThrow(/24 characters/);
+    expect(() => authFromEnv({ WIGGLEWERK_ENGINE_USER_TOKENS: "{" })).toThrow(/not valid JSON/);
+    expect(authFromEnv({ WIGGLEWERK_ENGINE_DEV: "1" })).toEqual({ service_token: undefined, users: undefined });
+    expect(authFromEnv({ WIGGLEWERK_ENGINE_SERVICE_TOKEN: SERVICE }).service_token).toBe(SERVICE);
   });
 
   it("fails a step with a clear message when no adapter is connected", async () => {

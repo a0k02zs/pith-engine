@@ -23,7 +23,7 @@ describe("HTTP API", () => {
     const a = store.approvals.find((x) => x.status === "open")!;
     const r = await app.request(`/api/approvals/${a.id}/decisions`, {
       method: "POST",
-      headers: { "content-type": "application/json", authorization: "Service abc", "x-pith-user": "u-boss" },
+      headers: { "content-type": "application/json", authorization: "Service abc", "x-wigglewerk-user": "u-boss" },
       body: JSON.stringify({ decision: "approved" }),
     });
     expect(r.status).toBe(403);
@@ -33,7 +33,7 @@ describe("HTTP API", () => {
     const c = store.clients[0];
     const r = await app.request("/api/runs", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-pith-user": "u-boss" },
+      headers: { "content-type": "application/json", "x-wigglewerk-user": "u-boss" },
       body: JSON.stringify({ client_id: c.id, workflow_id: "email.monthly_calendar" }),
     });
     expect(r.status).toBe(202);
@@ -44,7 +44,7 @@ describe("HTTP API", () => {
   });
 
   it("filters the inbox to the caller's roles with assignee=me", async () => {
-    const r = await app.request("/api/approvals?status=open&assignee=me", { headers: { "x-pith-user": "u-analyst" } });
+    const r = await app.request("/api/approvals?status=open&assignee=me", { headers: { "x-wigglewerk-user": "u-analyst" } });
     const rows = await r.json();
     for (const a of rows) expect(a.required_roles).toContain("analytics_lead");
   });
@@ -85,7 +85,7 @@ describe("access gate", () => {
   const boot = async (now = () => NOW) => {
     const { Access, runtimeEnv } = await import("../server/access.js");
     const store = new Store({ now: NOW, seed: 3 });
-    const access = Access.fromEnv({ PITH_ACCESS_CODE: "correct horse battery" }, now);
+    const access = Access.fromEnv({ WIGGLEWERK_ACCESS_CODE: "correct horse battery" }, now);
     return { app: createApp(store, undefined, access), access, runtimeEnv };
   };
   const signIn = (app: ReturnType<typeof createApp>, code: string, ip = "1.1.1.1") =>
@@ -103,7 +103,7 @@ describe("access gate", () => {
     expect((await app.request("/api/health")).status).toBe(200);
     expect(await (await app.request("/api/session")).json()).toEqual({ protected: true, signed_in: false });
     for (const path of ["/api/clients", "/api/meta", "/api/integrations", "/api/audit", "/api/nothing"]) {
-      expect((await app.request(path, { headers: { "x-pith-user": "u-boss" } })).status, path).toBe(401);
+      expect((await app.request(path, { headers: { "x-wigglewerk-user": "u-boss" } })).status, path).toBe(401);
     }
     expect((await app.request("/api/runs", { method: "POST", body: "{}" })).status).toBe(401);
   });
@@ -115,7 +115,7 @@ describe("access gate", () => {
     const ok = await signIn(app, "correct horse battery");
     expect(ok.status).toBe(200);
     const cookie = ok.headers.get("set-cookie")!;
-    expect(cookie).toMatch(/^pith_session=\d+\.[0-9a-f]{64};/);
+    expect(cookie).toMatch(/^wigglewerk_session=\d+\.[0-9a-f]{64};/);
     expect(cookie).toMatch(/HttpOnly/);
     expect(cookie).toMatch(/SameSite=Lax/);
     expect(cookie).toMatch(/Secure/);
@@ -129,7 +129,7 @@ describe("access gate", () => {
     const { app, access } = await boot(() => t);
     const token = await access.issue();
     const [exp, sig] = token.split(".");
-    const get = (v: string) => app.request("/api/clients", { headers: { cookie: `pith_session=${v}` } });
+    const get = (v: string) => app.request("/api/clients", { headers: { cookie: `wigglewerk_session=${v}` } });
     expect((await get(token)).status).toBe(200);
     expect((await get(`${Number(exp) + 1}.${sig}`)).status).toBe(401);
     expect((await get(`${exp}.${"0".repeat(64)}`)).status).toBe(401);
@@ -151,13 +151,21 @@ describe("access gate", () => {
   it("clears the session on sign-out", async () => {
     const { app } = await boot();
     const r = await app.request("/api/session", { method: "DELETE" });
-    expect(r.headers.get("set-cookie")).toMatch(/pith_session=;/);
+    expect(r.headers.get("set-cookie")).toMatch(/wigglewerk_session=;/);
   });
 
   it("removes the live keys from the environment while the app is open", async () => {
     const { runtimeEnv } = await boot();
     const env = { ANTHROPIC_API_KEY: "k", META_APP_SECRET: "s", RUNWAYML_API_SECRET: "r", HF_API_KEY_ID: "i", HF_API_KEY_SECRET: "h", META_APP_ID: "1", PORT: "1" };
     expect(runtimeEnv(env)).toEqual({ META_APP_ID: "1", PORT: "1" });
-    expect(runtimeEnv({ ...env, PITH_ACCESS_CODE: "x" })).toEqual({ ...env, PITH_ACCESS_CODE: "x" });
+    expect(runtimeEnv({ ...env, WIGGLEWERK_ACCESS_CODE: "x" })).toEqual({ ...env, WIGGLEWERK_ACCESS_CODE: "x" });
+  });
+
+  it("still reads settings saved under the old PITH_* names", async () => {
+    const { runtimeEnv } = await boot();
+    const env = runtimeEnv({ PITH_ACCESS_CODE: "old", PITH_TOKEN_KEY: "t", WIGGLEWERK_TOKEN_KEY: "new", ANTHROPIC_API_KEY: "k" });
+    expect(env.WIGGLEWERK_ACCESS_CODE).toBe("old");
+    expect(env.WIGGLEWERK_TOKEN_KEY).toBe("new");
+    expect(env.ANTHROPIC_API_KEY).toBe("k");
   });
 });

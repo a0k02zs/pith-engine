@@ -65,7 +65,7 @@ this file every quarter.
 | Topic | Rule |
 |---|---|
 | Trademark office | EUIPO (1 EU trade mark for all 27 countries), or national offices. Check national earlier rights in the lead countries. |
-| Language | Start with 1 or 2 lead countries (the Pith pipeline example is the Netherlands). English works for Dutch and Nordic B2B. German, French and Spanish need a native editor. Check the name in each lead language. |
+| Language | Start with 1 or 2 lead countries (the Wigglewerk pipeline example is the Netherlands). English works for Dutch and Nordic B2B. German, French and Spanish need a native editor. Check the name in each lead language. |
 | France | French language law (Loi Toubon): advertising in France must be in French; a foreign tagline needs a French translation. |
 | Voice | Factual, precise; avoid US-style hype. |
 | AI | EU AI Act Article 50 transparency rules apply from 2 August 2026. Label AI-generated or manipulated images and video shown to the public. Mood boards are internal and need no label. |

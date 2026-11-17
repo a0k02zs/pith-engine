@@ -34,7 +34,7 @@ The brief agent writes this. Every channel service reads it. Channel briefs must
 - Mandatory elements (logo, legal lines, disclosure labels per market):
 - Flight dates per phase and per market:
 - Budget per channel and per market:
-- UTM convention (engine standard, lower case, words joined with `-`): `utm_source={platform}&utm_medium={channel code, e.g. paid_ad, email, sms, social_post, influencer_post}&utm_campaign={campaign_id, e.g. 2026-black-friday}&utm_content={artifact id 8}-{variant}&utm_term={keyword or audience id}&pith_mkt={market ISO code}`
+- UTM convention (engine standard, lower case, words joined with `-`): `utm_source={platform}&utm_medium={channel code, e.g. paid_ad, email, sms, social_post, influencer_post}&utm_campaign={campaign_id, e.g. 2026-black-friday}&utm_content={artifact id 8}-{variant}&utm_term={keyword or audience id}&wigglewerk_mkt={market ISO code}`
 - Tracking events and holdout design (from Service 12):
 - Deadlines: assets ready by [date], launch check on [date].
 

@@ -1,7 +1,7 @@
 # Community and UGC: Strategy Playbook
 
-Service 18 of the Pith M Automation Plan. Owner: head of growth (until a community lead joins). Status: v1, 21 Oct 2026.
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Community and UGC".
+Service 18 of the Wigglewerk Automation Plan. Owner: head of growth (until a community lead joins). Status: v1, 21 Oct 2026.
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Community and UGC".
 Engine: contracts v0.1.0 in `/engine/`. This service calls the engine. It does not copy it.
 
 ## 1. What this service is
@@ -14,7 +14,7 @@ The client gets 3 things from real customers:
 | B. UGC (user-generated content) | Photos, videos, quotes and case-study material from customers, with written usage rights | B2C first, B2B for case studies |
 | C. Community | A space where customers help each other, give product feedback and become advocates | B2B (product users), B2C (fans and hobby brands) |
 
-Real customer content is trusted more than ads. It is also the lowest-cost content Pith M makes. Other services reuse it: social (4), paid social (11), email (1), CRO product pages (17), content case studies (7), SEO and GEO review signals (5).
+Real customer content is trusted more than ads. It is also the lowest-cost content Wigglewerk makes. Other services reuse it: social (4), paid social (11), email (1), CRO product pages (17), content case studies (7), SEO and GEO review signals (5).
 
 ## 2. The 5 rules we never break
 

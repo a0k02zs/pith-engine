@@ -12,12 +12,12 @@ jobs:
       postgres:
         image: pgvector/pgvector:pg16
         env:
-          POSTGRES_USER: pith
-          POSTGRES_PASSWORD: pith
-          POSTGRES_DB: pith_test
+          POSTGRES_USER: wigglewerk
+          POSTGRES_PASSWORD: wigglewerk
+          POSTGRES_DB: wigglewerk_test
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U pith -d pith_test"
+          --health-cmd "pg_isready -U wigglewerk -d wigglewerk_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -26,7 +26,7 @@ jobs:
         working-directory: engine/runtime
     env:
       # A database for this job only. The Postgres tests replace the schema 'engine'.
-      DATABASE_URL: postgres://pith:pith@localhost:5432/pith_test
+      DATABASE_URL: postgres://wigglewerk:wigglewerk@localhost:5432/wigglewerk_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -40,7 +40,7 @@ The client fills sections A to F. The intake agent checks every field marked * a
 - Existing assets to reuse (links):
 - Ad account access confirmed for: Google / Meta / LinkedIn / TikTok / Snapchat / Microsoft:
 - CRM and email platform access:
-- Landing page owner (client or Pith CRO service):
+- Landing page owner (client or Wigglewerk CRO service):
 
 ## Filled by the intake agent
 - Missing fields:

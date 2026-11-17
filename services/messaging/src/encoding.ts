@@ -20,7 +20,7 @@ export const LIMITS = {
   "UCS-2": { single: 70, multi: 67 },
 } as const;
 
-/** Pith rule: a marketing SMS must not be longer than 2 segments. */
+/** Wigglewerk rule: a marketing SMS must not be longer than 2 segments. */
 export const MAX_SEGMENTS = 2;
 
 export function segmentInfo(text: string): SegmentInfo {

@@ -6,7 +6,7 @@ Common rules in all 5 markets:
 - A paid, gifted or affiliate post is an ad. The creator must say so clearly, at the start, in words the audience understands.
 - "Clear" means visible without a click on "more", and spoken or on screen in video.
 - Platform paid-partnership tools help, but do not replace a clear label in most markets.
-- The brand is also responsible. Pith M and the client can be fined for a creator's hidden ad.
+- The brand is also responsible. Wigglewerk and the client can be fined for a creator's hidden ad.
 - No claim that the client cannot prove.
 
 ## 1. United Kingdom (launch 1st)
@@ -82,7 +82,7 @@ Creator marketing is very strong in the GCC. Licences are the main difference fr
 
 - **EU rules:** Unfair Commercial Practices Directive (hidden ads are banned); Audiovisual Media Services Directive (applies to some video creators); Digital Services Act (platforms show commercial content labels); GDPR; EU AI Act Article 50 (label AI-generated or manipulated content, applies from 2 August 2026).
 - **Country rules (examples, check each lead country):**
-  - **Netherlands** (Pith pipeline EU example): Media Act rules for large creators (registration with the Commissariaat voor de Media above follower and income thresholds); Dutch Advertising Code social media rules. Label "#adv", "#ad", "#spon", or "#reclame".
+  - **Netherlands** (Wigglewerk pipeline EU example): Media Act rules for large creators (registration with the Commissariaat voor de Media above follower and income thresholds); Dutch Advertising Code social media rules. Label "#adv", "#ad", "#spon", or "#reclame".
   - **France:** influencer law of 9 June 2023 (Law 2023-451): label "Publicité" or "Collaboration commerciale"; labels "Image retouchée" or "Image virtuelle" for edited or AI images; bans on promotion of cosmetic surgery, some financial and crypto products, and other listed products; a written contract is mandatory.
   - **Germany:** label "Werbung" or "Anzeige" at the start. Courts are strict. Gifts the creator keeps also need a label.
   - **Spain:** Royal Decree 444/2024 for high-reach creators ("users of special relevance"), with a register.

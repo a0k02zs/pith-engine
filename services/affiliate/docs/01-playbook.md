@@ -1,11 +1,11 @@
 # Service 15 · Affiliate and partner marketing · Strategy playbook
 
-Version 1 · 21 Oct 2026 · Owner: influencer and partnerships lead (Pith M)
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 15.
+Version 1 · 21 Oct 2026 · Owner: influencer and partnerships lead (Wigglewerk)
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 15.
 
 ## 1. What the client buys
 
-The client gets sales from partners, and pays the partners only for results. Pith M designs the
+The client gets sales from partners, and pays the partners only for results. Wigglewerk designs the
 programme, recruits and activates the partners, watches for fraud, and runs the monthly payout.
 Agents do the volume work. People approve money, contracts and partner relationships.
 

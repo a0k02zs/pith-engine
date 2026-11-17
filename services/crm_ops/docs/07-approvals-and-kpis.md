@@ -6,7 +6,7 @@ Version 1 · 21 Oct 2026. Gates use the engine approval inbox (`specs/approval-i
 
 | Gate | When | Engine kind | Roles (count) | SLA | Can skip? | Evidence in the inbox item |
 |---|---|---|---|---|---|---|
-| **G1 · Approve design** | After design, before any build | `plan` | `client_sales` + `client_marketing_lead` (2) | 72 h | No | Design doc T2, changes from the Pith default, open questions |
+| **G1 · Approve design** | After design, before any build | `plan` | `client_sales` + `client_marketing_lead` (2) | 72 h | No | Design doc T2, changes from the Wigglewerk default, open questions |
 | **G1b · Confirm platform** | After G1 | `plan` | `ops_lead` | 24 h | No | Platform rule result, licence tier, data residency note |
 | **G2 · Go live** | After tests pass | `go_live` | `ops_lead` | 24 h | No | Test report T5 (0 blockers, 0 consent failures), go-live checklist T6 signed by the client ops owner |
 | **G3 · Score or routing change** | Monthly tuning, or any change to thresholds, stages or routing | `plan` | `client_sales` + `client_marketing_lead` (2) | 5 days | No | Scoring Analyst proposal with data |
@@ -29,7 +29,7 @@ Nurture copy goes through the Email marketing service's `copy` gate, not a crm_o
 
 ## 2. KPIs
 
-Shared codes come from `enums.json` → `kpis`. Service-only codes use `crm_ops.<name>` (engine naming rule). The service sends daily values with `engine/metric.recorded`. Targets are Pith planning targets, not measured benchmarks.
+Shared codes come from `enums.json` → `kpis`. Service-only codes use `crm_ops.<name>` (engine naming rule). The service sends daily values with `engine/metric.recorded`. Targets are Wigglewerk planning targets, not measured benchmarks.
 
 | KPI | Code | Formula | Target | Cadence |
 |---|---|---|---|---|
@@ -44,7 +44,7 @@ Shared codes come from `enums.json` → `kpis`. Service-only codes use `crm_ops.
 | Incomplete record rate | `crm_ops.incomplete_rate` | Contacts missing a required field ÷ contacts | < 5% | Weekly |
 | Consent coverage | `consent_coverage` | Marketable contacts with a valid consent record for their country ÷ marketable contacts | 100% | Daily |
 | Flow error rate | `flow_error_rate` | Failed workflow steps ÷ all workflow steps (24 h) | < 0.5% | Daily |
-| Source coverage | `crm_ops.source_coverage` | Closed-won revenue with original source and Pith service source ÷ all closed-won revenue | ≥ 95% | Monthly |
+| Source coverage | `crm_ops.source_coverage` | Closed-won revenue with original source and Wigglewerk service source ÷ all closed-won revenue | ≥ 95% | Monthly |
 | Sync lag | `crm_ops.sync_lag_minutes` | Median minutes from engine `consent.changed` to CRM mirror | ≤ 5 | Daily |
 | Data quality score | `crm_ops.data_quality_score` | See section 3 | ≥ 85 | Weekly |
 | Gate SLA met | `gate_sla_met` | crm_ops gates decided inside SLA ÷ all crm_ops gates | ≥ 90% | Weekly |

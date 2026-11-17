@@ -132,7 +132,7 @@ export function buildStrategy(client: Client, brain: ClientBrain, metrics: Metri
   const recent = metrics.filter((m) => m.client_id === client.id && m.date >= since);
   const total = (kpi: string, svc?: ServiceCode) => recent.filter((m) => m.kpi === kpi && (!svc || m.service === svc)).reduce((a, m) => a + m.value, 0);
 
-  // Markets in the Pith launch order (UK, SG, NA, GCC, EU). Phase 1 is the first group.
+  // Markets in the Wigglewerk launch order (UK, SG, NA, GCC, EU). Phase 1 is the first group.
   const order = catalog.market_launch_order;
   const markets = [...client.markets]
     .sort((a, b) => order.indexOf(marketGroupOf(a) ?? "") - order.indexOf(marketGroupOf(b) ?? "") || client.markets.indexOf(a) - client.markets.indexOf(b))

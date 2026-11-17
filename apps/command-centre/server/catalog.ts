@@ -23,7 +23,7 @@ export interface MarketRules {
 
 export const catalog = catalogJson as unknown as Catalog;
 
-// Display names from the Pith M plan (18 services). Lead roles from enums.json roles.
+// Display names from the Wigglewerk plan (18 services). Lead roles from enums.json roles.
 // Headline KPIs are canonical codes from enums.json kpis (count or money only, so they can be summed).
 const META: Record<ServiceCode, { name: string; lead_role: string; kpis: string[] }> = {
   email: { name: "Email marketing", lead_role: "account_lead", kpis: ["sends", "clicks", "revenue"] },

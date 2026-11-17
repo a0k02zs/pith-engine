@@ -54,7 +54,7 @@
           },
           "owner": {
             "enum": [
-              "pith",
+              "wigglewerk",
               "client_developer",
               "subject_expert"
             ]

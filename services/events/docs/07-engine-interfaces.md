@@ -64,4 +64,4 @@ Version 1, 21 Oct 2026. Built against shared engine contract v0.1.0 (`/mnt/proje
 
 ## 6. Roles
 
-The engine has no `events_lead` role. This build uses `account_lead` for Pith events gates. If the engine adds `events_lead`, change the `required_roles` in the 2 workflow files.
+The engine has no `events_lead` role. This build uses `account_lead` for Wigglewerk events gates. If the engine adds `events_lead`, change the `required_roles` in the 2 workflow files.

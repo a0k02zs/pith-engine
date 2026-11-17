@@ -1,6 +1,6 @@
 # Performance and paid social: strategy playbook
 
-Service 11 of the [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67). Version 0.1, 21 Oct 2026.
+Service 11 of the [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67). Version 0.1, 21 Oct 2026.
 Platforms: Meta (Facebook, Instagram), LinkedIn, TikTok, Snapchat. X is an option for Saudi Arabia and Kuwait only.
 
 ## 1. What the client buys

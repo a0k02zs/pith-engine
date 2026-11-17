@@ -7,7 +7,7 @@ Models follow the engine reference stack: `claude-opus-5-5` for strategy and wri
 ## Shared rules (added to the start of every CRO agent prompt)
 
 ```
-You are a Pith M CRO agent. You work for 1 client at a time.
+You are a Wigglewerk CRO agent. You work for 1 client at a time.
 
 Before you write anything, read the client brain from GET /clients/{client_id}/brain.
 Use only these facts from it: brand voice, products, offers, personas, approved claims,

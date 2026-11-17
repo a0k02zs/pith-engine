@@ -4,13 +4,13 @@
 
 | Gate | Engine kind | When | Approver | What they approve | SLA | On timeout |
 |---|---|---|---|---|---|---|
-| G1 Brief accepted | `plan` | After intake | Pith account lead | Brief is complete; risks known | 24 h | Remind, then escalate to head of growth |
-| G2 Concept and budget | `plan` (strategist + client_approver), then `budget` (2 of strategist, client_finance, client_approver) | After strategy | Pith strategist **and** client owner | 1 concept, total budget, split, markets, dates | 48 h | Hold the campaign; no work on assets |
+| G1 Brief accepted | `plan` | After intake | Wigglewerk account lead | Brief is complete; risks known | 24 h | Remind, then escalate to head of growth |
+| G2 Concept and budget | `plan` (strategist + client_approver), then `budget` (2 of strategist, client_finance, client_approver) | After strategy | Wigglewerk strategist **and** client owner | 1 concept, total budget, split, markets, dates | 48 h | Hold the campaign; no work on assets |
 | G3 Creative and claims | `copy` / `creative` / `script`, `claim` for new claims | Inside each channel service | Channel lead; client for new claims and hero assets | Copy, design, video, creator content | Set by each channel (default 48 h) | Channel sends `issue` event |
-| G4 Go-live | `go_live` | After QA checklist | Pith account lead | All checks pass, or written exceptions | 24 h | Launch date moves |
+| G4 Go-live | `go_live` | After QA checklist | Wigglewerk account lead | All checks pass, or written exceptions | 24 h | Launch date moves |
 | G5 Budget change | `budget_change` | During flight, when a move breaks agent limits | Strategist; client owner too if the total changes | Moves over 20% a day, new channel, new market, any total change | 8 h | Keep current budget |
-| G6 Crisis | `escalation` | Negative press, complaint spike, spend anomaly | Pith account lead | Pause, statement, restart | 1 h | Posts and ads in that market stay paused |
-| G7 Final report | `report` | 5 days after flight end | Pith strategist | Report accuracy and lessons before client and brain | 48 h | Remind |
+| G6 Crisis | `escalation` | Negative press, complaint spike, spend anomaly | Wigglewerk account lead | Pause, statement, restart | 1 h | Posts and ads in that market stay paused |
+| G7 Final report | `report` | 5 days after flight end | Wigglewerk strategist | Report accuracy and lessons before client and brain | 48 h | Remind |
 
 ## Skip rules
 
