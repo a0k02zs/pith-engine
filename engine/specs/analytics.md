@@ -30,7 +30,7 @@ Common mappings from service specs: open rate is not a KPI (plan: weak signal af
 
 ## 4. UTM standard
 
-All links that leave a Pith channel carry UTMs. Lower case, words joined with `-`.
+All links that leave a Wigglewerk channel carry UTMs. Lower case, words joined with `-`.
 
 | Param | Value |
 |-------|-------|
@@ -39,7 +39,7 @@ All links that leave a Pith channel carry UTMs. Lower case, words joined with `-
 | `utm_campaign` | `campaign_id` (`<yyyy>-<slug>`, for example `2026-black-friday`) |
 | `utm_content` | `<artifact_id short 8>-<variant_id>` |
 | `utm_term` | keyword (search) or audience id (paid social) |
-| `pith_mkt` | market ISO code |
+| `wigglewerk_mkt` | market ISO code |
 
 ## 5. Currency and time
 

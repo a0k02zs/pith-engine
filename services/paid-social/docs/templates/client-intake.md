@@ -40,7 +40,7 @@ Fill this at onboarding. The strategist agent reads it with the client brain. Fi
 - Special products (finance, health, alcohol, food, housing, jobs)? Yes / No. If yes, which:
 
 ## 6. Tracking and access
-- Ad accounts (IDs) and access given to Pith business manager*:
+- Ad accounts (IDs) and access given to Wigglewerk business manager*:
 - Pixel and server-side API status per platform:
 - Cookie consent tool (UK, EU):
 - CRM for offline conversions (B2B):

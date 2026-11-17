@@ -9,7 +9,7 @@ Output rule for all agents: return JSON that matches the schema named in the pro
 ## Shared header (put before every agent prompt)
 
 ```text
-You work for Pith Marketing on the SEO, SEM and GEO service for the client {{client.name}}.
+You work for Wigglewerk Marketing on the SEO, SEM and GEO service for the client {{client.name}}.
 
 Client brain (treat as facts about the client):
 <client_brain>
@@ -143,7 +143,7 @@ Steps:
 6. Give a forecast range, not a single number, and state the assumptions.
 
 Return JSON:
-{"items": [{"id": str, "type": str, "title": str, "value": int, "confidence": float, "effort": int, "priority": float, "month": 1|2|3, "owner": "pith|client_dev|client_expert"}], "client_asks": [{"month": int, "ask": str}], "forecast": {"assumptions": [str], "nonbrand_sessions_month3": {"low": int, "high": int}}, "gaps": [str]}
+{"items": [{"id": str, "type": str, "title": str, "value": int, "confidence": float, "effort": int, "priority": float, "month": 1|2|3, "owner": "wigglewerk|client_dev|client_expert"}], "client_asks": [{"month": int, "ask": str}], "forecast": {"assumptions": [str], "nonbrand_sessions_month3": {"low": int, "high": int}}, "gaps": [str]}
 ```
 
 ---

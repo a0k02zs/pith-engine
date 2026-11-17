@@ -73,6 +73,6 @@ AI answers change between runs. We report GEO metrics as a 4-week rolling averag
 | **`gate_wait_hours`** (engine computes from the inbox) | Average days items wait at each gate | Under the SLA |
 | **`time_to_launch_days`** | Days from brief to live page | Under 15 working days |
 | **`critical_alert_minutes`** | Hours from a critical technical issue to alert | Under 1 hour |
-| **`cost_per_asset`** | Pith cost (agent + expert + editor) per live page | Track; set target after month 3 |
+| **`cost_per_asset`** | Wigglewerk cost (agent + expert + editor) per live page | Track; set target after month 3 |
 
 All targets are planning estimates, not measured data. We set real targets per client at gate G1, from the baseline.

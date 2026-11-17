@@ -2,7 +2,7 @@
 
 Dialect: BigQuery (standard SQL), run by dbt in the client's regional dataset (`docs/markets.md`). Engine tables (`touchpoints`, `conversions`, `contacts`, `metrics_daily`) are replicated from Postgres into the dataset under the `engine` schema.
 
-Client views that each client dataset needs: `source_orders` (order system or CRM), `kpi_targets` (from the client brain), `pith_fees` (from billing) and, optionally, `geo_units` (UK ITV regions, US DMAs).
+Client views that each client dataset needs: `source_orders` (order system or CRM), `kpi_targets` (from the client brain), `wigglewerk_fees` (from billing) and, optionally, `geo_units` (UK ITV regions, US DMAs).
 
 | File | What it does | Used by |
 |------|--------------|---------|
@@ -14,7 +14,7 @@ Client views that each client dataset needs: `source_orders` (order system or CR
 | `match_rate_28d.sql` | 28 days of orders from the order system, GA4 and the engine, with match rates | onboarding audit |
 | `kpi_table.sql` | KPI table: this period, prior period, last year and target, each with a label. Ratio KPIs come from their parts | weekly_report, monthly_roi |
 | `daily_kpi_forecast.sql` | Expected value and 90% band per market, channel and KPI (BigQuery ML `ARIMA_PLUS`) | daily_data_qa |
-| `pith_service_roi.sql` | Media spend, Pith fee, credited revenue and ROI per Pith service | monthly_roi |
+| `wigglewerk_service_roi.sql` | Media spend, Wigglewerk fee, credited revenue and ROI per Wigglewerk service | monthly_roi |
 | `cohort_payback.sql` | CAC, payback month and LTV:CAC by acquisition month (cohorts under 20 customers hidden) | monthly_roi |
 | `geo_daily_52w.sql` | 52 weeks of daily conversions and spend by region, with one region mapping for both | incrementality_test |
 

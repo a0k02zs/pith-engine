@@ -13,9 +13,9 @@ import { registerWorkspaceRoutes, Workspace } from "./workspace.js";
 export function createApp(store: Store, ws: Workspace = new Workspace(store), access: Access = new Access()) {
   const app = new Hono();
 
-  const actor = (c: Context) => store.user(c.req.header("x-pith-user"));
+  const actor = (c: Context) => store.user(c.req.header("x-wigglewerk-user"));
   const isServiceToken = (c: Context) =>
-    c.req.header("x-pith-actor") === "service" || /^service\s/i.test(c.req.header("authorization") ?? "");
+    c.req.header("x-wigglewerk-actor") === "service" || /^service\s/i.test(c.req.header("authorization") ?? "");
 
   app.onError((err, c) => {
     if (err instanceof ApiError) return c.json({ error: err.message }, err.status as 400);

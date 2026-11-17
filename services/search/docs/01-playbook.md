@@ -1,6 +1,6 @@
 # Service 5: SEO, SEM and GEO — Strategy playbook
 
-Owner: SEO lead. Version 1, 21 Oct 2026. Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "SEO / SEM / GEO".
+Owner: SEO lead. Version 1, 21 Oct 2026. Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "SEO / SEM / GEO".
 
 ## 1. What the client buys
 
@@ -20,7 +20,7 @@ The 3 lines share 1 keyword and question map. SEM data tells SEO which terms con
 | Search Growth | Mid-size | Foundation + 2 clusters per month, SEM management up to the agreed spend, GEO on 150 prompts, digital PR link requests via Service 14 | Up to 2 |
 | Search Enterprise | Multi-country | Growth + hreflang and international setup, 4+ clusters per month, SEM in all markets, GEO on 400+ prompts in each language, weekly report | 3 to 5 |
 
-SEM fee: a management fee plus a percentage of spend above a floor. The client pays media cost direct to Google and Microsoft. Pith never holds client media money.
+SEM fee: a management fee plus a percentage of spend above a floor. The client pays media cost direct to Google and Microsoft. Wigglewerk never holds client media money.
 
 ## 3. B2B and B2C focus
 
@@ -59,7 +59,7 @@ We work on 5 levers:
 | Measure | Monthly | Report and next-month plan. **Gate G5 strategist review.** |
 | Refresh | Every 6 months per page | Decay check; pages that lose traffic or citations get a refresh brief. |
 
-## 6. Hand-offs with other Pith services
+## 6. Hand-offs with other Wigglewerk services
 
 | Service | We give | We get |
 |---|---|---|

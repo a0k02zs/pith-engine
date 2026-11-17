@@ -24,7 +24,7 @@ engine approval inbox (`approval-item.json`). Approval kinds and roles come from
 |---|---|---|---|---|
 | B1 | Discover | agent + tool | Partner Scout agent searches networks, ranking review pages (Service 5 data), creators (Service 6), tech-stack data (Service 8). | Long list (up to 200 a week) |
 | B2 | Score and vet | agent | Partner Scout scores fit, reach, quality and brand-safety risk (template T3). Removes coupon-only and risky sites unless the terms allow them. | Scored list |
-| B3 | **GATE · Approve shortlist** | gate | `kind: shortlist`, approver `influencer_lead` (Pith partnerships lead). 1 batch of up to 50 a week. The engine never lets this gate skip. | Approved shortlist |
+| B3 | **GATE · Approve shortlist** | gate | `kind: shortlist`, approver `influencer_lead` (Wigglewerk partnerships lead). 1 batch of up to 50 a week. The engine never lets this gate skip. | Approved shortlist |
 | B4 | Consent filter | tool | `POST /clients/{id}/audiences/resolve` with `channel: email`, `purpose: marketing`, country of each partner (engine rule G5). Parties with no lawful basis drop out. | Contactable list |
 | B5 | Outreach | agent + check | Recruiter agent writes a personal first message (template T4) in the partner's language. Compliance check. Up to 2 follow-ups. | Sent messages, replies |
 | B6 | Reply handling | agent | Recruiter agent sorts replies: yes, question, no, complaint. Questions about terms or money go to a person. | Applications |
@@ -42,7 +42,7 @@ engine approval inbox (`approval-item.json`). Approval kinds and roles come from
 | C3 | **GATE · Review held items** | gate | `kind: escalation`, approver `account_lead`. A reversal over £500 (or local equivalent) or a partner removal also needs `client_approver`. | Decided holds |
 | C4 | Lock period | wait | Wait until each conversion passes its lock period (returns window). | Payable conversions |
 | C5 | Payout file | agent | Payout Clerk agent builds the payout file: partner, amount, currency, tax status, invoice, reversal lines (template T8). | Draft payout |
-| C6 | **GATE · Approve payout** | gate | `kind: payout`, approver `client_finance`. Pith `account_lead` checks first. An agent never releases money. | Approved payout |
+| C6 | **GATE · Approve payout** | gate | `kind: payout`, approver `client_finance`. Wigglewerk `account_lead` checks first. An agent never releases money. | Approved payout |
 | C7 | Pay | tool | The platform or Wise / Stripe / PayPal pays after approval. | Payment records |
 | C8 | Statements | agent | Partner statement email to each paid partner. | Statements sent |
 

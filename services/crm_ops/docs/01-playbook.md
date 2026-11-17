@@ -1,7 +1,7 @@
 # Service 9 · Marketing automation and CRM operations — Strategy playbook
 
-Pith Marketing (Pith M) · Version 1 · 21 Oct 2026
-Owner: Pith M ops lead. Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section 9.
+Wigglewerk Marketing (Wigglewerk) · Version 1 · 21 Oct 2026
+Owner: Wigglewerk ops lead. Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section 9.
 
 ## 1. Purpose
 
@@ -41,17 +41,17 @@ The stages follow the master plan. The gates (G1 to G3) are human approvals. Det
 
 1. **Audit.** The CRM Auditor agent reads the CRM. It checks duplicates, empty fields, broken flows and missing consent data. Output: the audit report (template T1).
 2. **Design.** The Ops Architect agent proposes the lifecycle stages, the lead scoring model and the routing rules. Output: the design document (template T2).
-3. **G1 · Approve design.** The client heads of sales and marketing approve the stages, the score thresholds and the routing. The Pith ops lead confirms the platform.
+3. **G1 · Approve design.** The client heads of sales and marketing approve the stages, the score thresholds and the routing. The Wigglewerk ops lead confirms the platform.
 4. **Build.** The automation engineer builds fields, forms, flows, scoring and integrations. The build happens in a sandbox (a test copy of the CRM) first.
 5. **Test.** The QA Tester agent sends test leads through every path. It reports each failure. Output: the test report (template T5).
-6. **G2 · Go live.** The Pith ops lead approves the switch to the live CRM. The client ops owner signs the go-live checklist (template T6).
+6. **G2 · Go live.** The Wigglewerk ops lead approves the switch to the live CRM. The client ops owner signs the go-live checklist (template T6).
 7. **Monitor.** The Data Hygiene Monitor agent checks data quality and flow errors every day. It fixes simple issues inside its allowed list. It sends other issues to a person. Monthly, the Scoring Analyst agent proposes score changes. **G3** approves any change to thresholds or routing.
 
 ## 5. Roles (RACI)
 
 R = does the work. A = owns the decision. C = gives input. I = gets informed.
 
-| Step | Agent | Automation engineer | Pith ops lead | Client sales head | Client marketing head |
+| Step | Agent | Automation engineer | Wigglewerk ops lead | Client sales head | Client marketing head |
 |---|---|---|---|---|---|
 | Audit | R | C | A | I | I |
 | Design | R | C | A | C | C |

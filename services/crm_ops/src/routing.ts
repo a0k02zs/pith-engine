@@ -145,7 +145,7 @@ export function routeLead(lead: RoutingLead, reps: Rep[], at: Date, enterpriseBa
   if (lead.account_owner_id) return { owner_id: lead.account_owner_id, rule: "account_owner" };
   if (lead.abm_tier === 1 && lead.abm_owner_id) return { owner_id: lead.abm_owner_id, rule: "abm_tier1" };
   const group = marketGroup(lead.market);
-  if (!group) throw new Error(`Market ${lead.market} is outside the 5 Pith markets`);
+  if (!group) throw new Error(`Market ${lead.market} is outside the 5 Wigglewerk markets`);
   const queue = (q: string) => reps.filter((r) => r.queues.includes(q));
   const pick = (list: Rep[], rule: RouteResult["rule"], q: string): RouteResult | undefined => {
     const r = roundRobin(list, at, lead.market);

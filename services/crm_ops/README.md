@@ -1,6 +1,6 @@
 # crm_ops: marketing automation and CRM operations (service 9)
 
-Code for the Pith M CRM operations service, built on engine contracts v0.1.0 (`engine/`). Design docs: `docs/` (copied from the service design pack).
+Code for the Wigglewerk CRM operations service, built on engine contracts v0.1.0 (`engine/`). Design docs: `docs/` (copied from the service design pack).
 
 ## What is here
 

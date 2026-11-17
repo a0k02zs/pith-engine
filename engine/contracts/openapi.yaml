@@ -1,13 +1,13 @@
 openapi: 3.1.0
 info:
-  title: Pith M shared engine API
+  title: Wigglewerk shared engine API
   version: 0.1.2
   description: |
     The HTTP API that the 18 service threads and the client portal use.
-    Every response has the header Pith-Contract-Version. Object schemas live in ./schemas.
+    Every response has the header Wigglewerk-Contract-Version. Object schemas live in ./schemas.
     Auth: a bearer token per service (machine) or per user (portal). The token carries the client ids it may touch.
 servers:
-  - url: https://engine.pith.marketing/v0
+  - url: https://engine.wigglewerk.marketing/v0
 security:
   - bearer: []
 tags:

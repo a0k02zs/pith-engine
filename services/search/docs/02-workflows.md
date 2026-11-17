@@ -42,7 +42,7 @@ Trigger: cron, Monday 06:00 client local time. Also on `seo.crawl.completed`.
 | 4 | A | Write dev tickets with exact fix steps and acceptance tests. | **A5 Technical ticket writer** | Tickets in the client dev queue |
 | 5 | A | Write or update schema markup (JSON-LD), `robots.txt` advice and `llms.txt`. | **A6 Schema and llms.txt writer** | Code files (T5, T6) |
 | 6 | A | Validate schema. | Schema.org validator, Google Rich Results Test | Pass or fail |
-| 7 | **G4** | **Approve site changes (weekly batch, never skipped).** The client developer approves any change to robots.txt, canonicals, redirects or templates. Pith never pushes to the client's live site without this. | approval inbox | Approved change |
+| 7 | **G4** | **Approve site changes (weekly batch, never skipped).** The client developer approves any change to robots.txt, canonicals, redirects or templates. Wigglewerk never pushes to the client's live site without this. | approval inbox | Approved change |
 | 8 | A | After deploy: request indexing (IndexNow for Bing; sitemap ping), re-test. | IndexNow API, GSC URL Inspection API | Verified fix |
 
 ---

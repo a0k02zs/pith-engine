@@ -1,4 +1,4 @@
-# Pith M engine runtime
+# Wigglewerk engine runtime
 
 This package runs the service workflows (`services/*/workflows/*.json`). It applies the guardrails in code.
 It needs Node 22.18 or later. Node runs the TypeScript files directly. There is no build step.
@@ -34,26 +34,26 @@ Run these commands in `engine/runtime`.
 
 **Warning:** the Postgres tests delete the schema `engine` and make it again. Give them a test database only.
 
-A local Postgres that has no `pgvector` extension can run the tests with `PITH_DB_NO_VECTOR=1`.
+A local Postgres that has no `pgvector` extension can run the tests with `WIGGLEWERK_DB_NO_VECTOR=1`.
 
 ## Start the engine
 
 1. Make a Postgres 16 database that has the `pgvector` extension.
 2. Set `DATABASE_URL` and run `npm run migrate`.
-3. Set `PITH_ENGINE_SERVICE_TOKEN`.
+3. Set `WIGGLEWERK_ENGINE_SERVICE_TOKEN`.
 4. Run `npm start`.
 
 The engine registers each workflow in `services/*/workflows` when it starts. It prints the definitions it refuses.
 
 | Variable | Function |
 |---|---|
-| `DATABASE_URL` | The Postgres database. Necessary unless `PITH_ENGINE_DEV=1`. |
-| `PITH_ENGINE_SERVICE_TOKEN` | The bearer token of the services. 24 characters or more. |
-| `PITH_ENGINE_USER_TOKENS` | JSON: token to `{ "id", "roles", "client_ids" }`. A temporary source of people until personal sign-in exists. |
+| `DATABASE_URL` | The Postgres database. Necessary unless `WIGGLEWERK_ENGINE_DEV=1`. |
+| `WIGGLEWERK_ENGINE_SERVICE_TOKEN` | The bearer token of the services. 24 characters or more. |
+| `WIGGLEWERK_ENGINE_USER_TOKENS` | JSON: token to `{ "id", "roles", "client_ids" }`. A temporary source of people until personal sign-in exists. |
 | `PORT` | Default `8787`. |
-| `PITH_ENGINE_TICK_SECONDS` | How frequently the engine looks for waits, retries and timeouts that are due. Default `30`. |
-| `PITH_ENGINE_DEV` | `1` lets the engine start with no token and with the memory store. Do not set it in production. |
-| `PITH_ENGINE_HANDLERS` | `mock` uses the handlers that do no work. This works only with `PITH_ENGINE_DEV=1`. |
+| `WIGGLEWERK_ENGINE_TICK_SECONDS` | How frequently the engine looks for waits, retries and timeouts that are due. Default `30`. |
+| `WIGGLEWERK_ENGINE_DEV` | `1` lets the engine start with no token and with the memory store. Do not set it in production. |
+| `WIGGLEWERK_ENGINE_HANDLERS` | `mock` uses the handlers that do no work. This works only with `WIGGLEWERK_ENGINE_DEV=1`. |
 
 Do not put a token in the repository.
 
@@ -63,7 +63,7 @@ Do not put a token in the repository.
 - **No adapters are connected.** An agent step, a tool step or a compliance check fails with "no adapter is connected". The integration adapters are a different build.
 - **No cron triggers.** A caller must start a run through `POST /runs` or an event.
 - **No loader for the functions of a service.** A `check` step that calls a service function (for example `flows.match`) needs a handler.
-- **People come from `PITH_ENGINE_USER_TOKENS`.** Personal sign-in and roles are a different build.
+- **People come from `WIGGLEWERK_ENGINE_USER_TOKENS`.** Personal sign-in and roles are a different build.
 
 ## The simulator
 

@@ -180,7 +180,7 @@
     {
       "id": "countersign_needed",
       "type": "branch",
-      "name": "Does Pith countersign (R3)?",
+      "name": "Does Wigglewerk countersign (R3)?",
       "branch": {
         "cases": [
           {

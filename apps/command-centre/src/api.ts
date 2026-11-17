@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-const USER_KEY = "pith.cc.user";
+const USER_KEY = "wigglewerk.cc.user";
 
 export function currentUserId(): string {
   try {
@@ -16,7 +16,7 @@ export function setCurrentUserId(id: string) {
   } catch {
     /* private mode: keep the default user */
   }
-  window.dispatchEvent(new Event("pith:refresh"));
+  window.dispatchEvent(new Event("wigglewerk:refresh"));
 }
 
 export class HttpError extends Error {
@@ -37,11 +37,11 @@ function localApp() {
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const req: RequestInit = {
     ...init,
-    headers: { "content-type": "application/json", "x-pith-user": currentUserId(), ...(init.headers ?? {}) },
+    headers: { "content-type": "application/json", "x-wigglewerk-user": currentUserId(), ...(init.headers ?? {}) },
   };
   const res = PREVIEW ? await (await localApp()).request(`/api${path}`, req) : await fetch(`/api${path}`, req);
   const body = await res.json().catch(() => ({}));
-  if (res.status === 401 && path !== "/session") window.dispatchEvent(new Event("pith:signed-out"));
+  if (res.status === 401 && path !== "/session") window.dispatchEvent(new Event("wigglewerk:signed-out"));
   if (!res.ok) throw new HttpError(res.status, (body as { error?: string }).error ?? res.statusText);
   return body as T;
 }
@@ -53,7 +53,7 @@ export async function post<T>(path: string, body: unknown = {}): Promise<T> {
 /** Sends a change (POST, PUT or DELETE) and tells every open view to reload. */
 export async function send<T>(method: "POST" | "PUT" | "DELETE", path: string, body: unknown = {}): Promise<T> {
   const out = await api<T>(path, { method, body: method === "DELETE" ? undefined : JSON.stringify(body) });
-  window.dispatchEvent(new Event("pith:refresh"));
+  window.dispatchEvent(new Event("wigglewerk:refresh"));
   return out;
 }
 
@@ -65,8 +65,8 @@ export function useApi<T>(path: string | null) {
   const reload = useCallback(() => setTick((t) => t + 1), []);
   useEffect(() => {
     const on = () => reload();
-    window.addEventListener("pith:refresh", on);
-    return () => window.removeEventListener("pith:refresh", on);
+    window.addEventListener("wigglewerk:refresh", on);
+    return () => window.removeEventListener("wigglewerk:refresh", on);
   }, [reload]);
   useEffect(() => {
     if (!path) return;

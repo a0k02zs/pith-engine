@@ -1,12 +1,12 @@
 # Service 13 · Brand strategy and design · Playbook
 
-Version 1 · 21 Oct 2026 · Owner: content and brand lead (Pith M)
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 13.
+Version 1 · 21 Oct 2026 · Owner: content and brand lead (Wigglewerk)
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), Service 13.
 
 ## 1. What this service is for
 
 This service gives each client a clear position and a brand system that people and agents can use.
-Its main output is the **client brain**: the brand profile that every other Pith M agent reads
+Its main output is the **client brain**: the brand profile that every other Wigglewerk agent reads
 before it writes. If the brand is weak or unclear, all 17 other services produce weak work.
 
 The plan sets automation at about 30%. This is the lowest level of the 18 services, for a reason:
@@ -22,13 +22,13 @@ People make the choices.
 
 | Package | Who it is for | What the client gets | Typical length |
 |---|---|---|---|
-| **A · Brand-to-brain** | Clients with a brand that works, who buy other Pith M services | Audit of current brand assets, voice chart, approved claims, banned words, personas, loaded client brain, brand score calibrated | 2 weeks |
+| **A · Brand-to-brain** | Clients with a brand that works, who buy other Wigglewerk services | Audit of current brand assets, voice chart, approved claims, banned words, personas, loaded client brain, brand score calibrated | 2 weeks |
 | **B · Brand refresh** | Clients whose brand is out of date or not consistent | Package A, plus new positioning, messaging house, voice refresh, visual refresh (colour, type, imagery; logo tidy-up), guidelines, templates | 5 to 7 weeks |
 | **C · Full brand build** | New companies, rebrands, mergers, entry into a new market | Package B, plus naming (optional), new logo and identity, market versions (Arabic, Quebec French), trademark screen, full template library, launch kit | 9 to 12 weeks |
 
 Rules:
 
-1. Every client of any Pith M service gets at least Package A. Without a client brain, no other service starts.
+1. Every client of any Wigglewerk service gets at least Package A. Without a client brain, no other service starts.
 2. Package A is part of onboarding. The head of growth sets the price of each package.
 3. Package C names are optional. A name project adds about 3 weeks and needs a lawyer.
 

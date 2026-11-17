@@ -1,4 +1,4 @@
--- Pith M shared engine, contract v0.1.0. Postgres 16.
+-- Wigglewerk shared engine, contract v0.1.0. Postgres 16.
 -- One database for all clients. Every row has client_id; row-level security keeps clients apart.
 -- Codes (service, market, channel, basis, role, kpi) are listed in contracts/enums.json.
 
@@ -28,14 +28,14 @@ create table users (
   id          uuid primary key default gen_random_uuid(),
   email       text not null unique,
   name        text not null,
-  org         text not null check (org in ('pith','client')),
+  org         text not null check (org in ('wigglewerk','client')),
   created_at  timestamptz not null default now()
 );
 
 create table role_grants (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references users(id),
-  client_id  uuid references clients(id),             -- null = all clients (Pith staff)
+  client_id  uuid references clients(id),             -- null = all clients (Wigglewerk staff)
   role       text not null
 );
 create unique index role_grants_unique on role_grants(user_id, coalesce(client_id, '00000000-0000-0000-0000-000000000000'::uuid), role);
@@ -194,7 +194,7 @@ create table consent_events (                        -- append-only audit trail
 -- People who are not customer contacts: creators, talent, journalists, partners, experts.
 create table parties (
   id            uuid primary key default gen_random_uuid(),
-  client_id     uuid references clients(id),         -- null = shared Pith directory
+  client_id     uuid references clients(id),         -- null = shared Wigglewerk directory
   kind          text not null check (kind in ('creator','talent','journalist','partner','affiliate','expert','vendor')),
   name          text not null,
   email         text,

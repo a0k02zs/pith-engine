@@ -11,7 +11,7 @@ export interface JournalistState {
   last_pitched_at?: Date | null;
 }
 
-/** Playbook rule 3 and engine G-DO-NOT-CONTACT: skip opted-out journalists and anyone pitched by any Pith client in the last 14 days. */
+/** Playbook rule 3 and engine G-DO-NOT-CONTACT: skip opted-out journalists and anyone pitched by any Wigglewerk client in the last 14 days. */
 export function canPitch(j: JournalistState, now: Date): boolean {
   if (j.do_not_contact) return false;
   return !j.last_pitched_at || now.getTime() - j.last_pitched_at.getTime() >= 14 * DAY_MS;

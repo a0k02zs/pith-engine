@@ -1,6 +1,6 @@
 # Email marketing service (service 1)
 
-Pith M email marketing: lifecycle flows, campaigns, newsletters and B2B outbound, built on the shared engine contracts v0.1.0.
+Wigglewerk email marketing: lifecycle flows, campaigns, newsletters and B2B outbound, built on the shared engine contracts v0.1.0.
 Approved by the project owner on 22 Oct 2026 (strategy, flows, templates, prompts, workflows, gates, KPIs, market rules).
 
 ## What is here

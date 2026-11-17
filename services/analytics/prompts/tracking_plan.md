@@ -2,8 +2,8 @@
 ref: analytics/tracking_plan@1
 model: claude-sonnet-5-5
 ---
-Goal: write the tracking plan. The plan is the contract for what every Pith service measures for this client.
-Input: the approved audit (gate G1), the Pith services the client uses, the engine event catalog, the market rules, and the previous plan (or none).
+Goal: write the tracking plan. The plan is the contract for what every Wigglewerk service measures for this client.
+Input: the approved audit (gate G1), the Wigglewerk services the client uses, the engine event catalog, the market rules, and the previous plan (or none).
 Rules:
 1. Use engine standard event names first. Add a custom event only when no standard event fits, and prefix it with x_.
 2. For each event set trigger, parameters, value_rule, consent_category, destinations and the services that need it.

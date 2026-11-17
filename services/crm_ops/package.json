@@ -1,8 +1,8 @@
 {
-  "name": "@pith/crm_ops",
+  "name": "@wigglewerk/crm_ops",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M marketing automation and CRM operations service (service 9): lead score, routing, SLA timers, recycle rules, workflows, agent prompts and output schemas.",
+  "description": "Wigglewerk marketing automation and CRM operations service (service 9): lead score, routing, SLA timers, recycle rules, workflows, agent prompts and output schemas.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -1,6 +1,6 @@
 # Measurement audit · {{client_name}} · {{date}}
 
-Prepared by Pith Marketing. Status: **draft for gate G1**.
+Prepared by Wigglewerk Marketing. Status: **draft for gate G1**.
 
 ## Summary
 - Overall score: **{{score}} / 40**
@@ -27,7 +27,7 @@ Score key: 0 missing, 1 broken, 2 partly works, 3 works with gaps, 4 good, 5 bes
 
 | # | Area | Problem | Evidence | Fix | Effort | Value | Owner |
 |---|------|---------|----------|-----|--------|-------|-------|
-| 1 | | | | | S/M/L | high/medium/low | Pith/client |
+| 1 | | | | | S/M/L | high/medium/low | Wigglewerk/client |
 
 ## Consent test results
 

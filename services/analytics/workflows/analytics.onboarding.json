@@ -15,7 +15,7 @@
       "id": "intake",
       "type": "task",
       "task": {
-        "title": "Fill in the analytics intake form and give Pith read access to GA4, GTM, ad accounts and CRM",
+        "title": "Fill in the analytics intake form and give Wigglewerk read access to GA4, GTM, ad accounts and CRM",
         "assignee_roles": [
           "client_marketing_lead"
         ],
@@ -225,7 +225,7 @@
       ],
       "tool": {
         "name": "analytics",
-        "action": "dashboard.clone:pith_analytics_v1",
+        "action": "dashboard.clone:wigglewerk_analytics_v1",
         "risk": "write_internal"
       }
     },

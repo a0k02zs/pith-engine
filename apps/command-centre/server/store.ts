@@ -434,8 +434,8 @@ export class Store {
     const c = this.client(clientId);
     if (!c.paused) throw new ApiError(409, "Client is not paused");
     // enums.json engine_actions: client.resume_scheduled needs an escalation decision first.
-    if (!actor.roles.some((r) => r === "account_lead" || r === "pith_admin")) {
-      throw new ApiError(403, "Only an account lead or a Pith admin can resume a paused client");
+    if (!actor.roles.some((r) => r === "account_lead" || r === "wigglewerk_admin")) {
+      throw new ApiError(403, "Only an account lead or a Wigglewerk admin can resume a paused client");
     }
     if (!reason.trim()) throw new ApiError(400, "Record the escalation decision that allows the resume");
     c.paused = false;

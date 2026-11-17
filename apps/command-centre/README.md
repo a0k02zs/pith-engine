@@ -1,6 +1,6 @@
-# Pith Command Centre
+# Wigglewerk Command Centre
 
-One web app to monitor and operate all 18 Pith Marketing services. It works like an ERP for the agency: every client, every pipeline run, every approval and every KPI in one place.
+One web app to monitor and operate all 18 Wigglewerk Marketing services. It works like an ERP for the agency: every client, every pipeline run, every approval and every KPI in one place.
 
 The app reads the real engine contracts and pipelines from this repo. It uses **test data** for clients, runs and metrics until the engine runs with real clients.
 
@@ -26,7 +26,7 @@ The in-memory store (`server/store.ts`) applies the same rules as the engine spe
 - Changes requested needs a comment and sends the run back to `gate.on_changes`. A new approval opens when the run reaches the gate again.
 - Reject fails the run. Cancel closes the run's open approvals.
 - Only `copy`, `creative`, `content` and `template` gates can skip. Budget, contract, payout, claim and escalation gates never skip.
-- A paused client holds every step with risk `send`, `write_external`, `spend`, `sign` or `pay`. Removals still run (G10). Only an account lead or a Pith admin can resume, and the resume records the escalation decision.
+- A paused client holds every step with risk `send`, `write_external`, `spend`, `sign` or `pay`. Removals still run (G10). Only an account lead or a Wigglewerk admin can resume, and the resume records the escalation decision.
 - A run can only start for a service the client buys and for the client's markets.
 
 The tests in `test/` check these rules, and they check that every gate in every workflow file uses an approval kind and roles from `enums.json`.
@@ -40,7 +40,7 @@ Press **Ctrl K** (or Cmd K) to search pages, services and clients. The client me
 `server/strategy.ts` builds the plan from 3 inputs:
 
 1. The client brain: positioning, audience, goals, monthly budget, tone, offers, competitors and notes. Edit it on the Strategy tab.
-2. The client's markets, in the Pith launch order, with the laws, ad labels and blocking rules from `engine/specs/compliance-rules.json`.
+2. The client's markets, in the Wigglewerk launch order, with the laws, ad labels and blocking rules from `engine/specs/compliance-rules.json`.
 3. The pipelines of each service the client buys, from `services/*/workflows/`.
 
 The plan has objectives with targets, one play per service with its budget, a 90-day roadmap and the risks. **Send for approval** opens a `plan` approval (2 people from account lead, strategist, client approver). **Improve with Claude** adds notes with the Claude API (`server/claude.ts`, model `claude-opus-5-5`, structured output, server-side fallbacks). It runs only on the server, and only when `ANTHROPIC_API_KEY` is set.
@@ -50,7 +50,7 @@ The plan has objectives with targets, one play per service with its budget, a 90
 - Account IDs (Business Manager, ad account, Page, Instagram, pixel, Google Ads customer, GA4 property, LinkedIn, TikTok, HubSpot) are checked for format and saved. They make deep links into the client's own accounts.
 - **Sign in with Meta** uses Facebook Login: `POST /api/oauth/meta/start` returns the login URL, Meta returns to `GET /api/oauth/meta/callback`, the server swaps the code for a long-lived token and checks the ad account (`GET /act_<id>?fields=name,currency,account_status` with `appsecret_proof`).
 - The token is encrypted with AES-GCM (`server/connections.ts`, Web Crypto) and stays on the server. No API response contains it; `test/workspace.test.ts` checks this.
-- The store is in memory today. In production, keep tokens in Secret Manager or the engine's vault, and set `PITH_TOKEN_KEY`.
+- The store is in memory today. In production, keep tokens in Secret Manager or the engine's vault, and set `WIGGLEWERK_TOKEN_KEY`.
 
 ## Video studio (beta)
 
@@ -65,11 +65,11 @@ The plan has objectives with targets, one play per service with its budget, a 90
 
 | Variable | What it does |
 |----------|--------------|
-| `PITH_ACCESS_CODE` | Turns on the access gate (see "Access"). Use a long random text. Without it the app is open and the server ignores the live keys below. |
-| `PITH_SESSION_SECRET` | Optional. Signs the session cookie. Without it the server derives the secret from the access code. |
+| `WIGGLEWERK_ACCESS_CODE` | Turns on the access gate (see "Access"). Use a long random text. Without it the app is open and the server ignores the live keys below. |
+| `WIGGLEWERK_SESSION_SECRET` | Optional. Signs the session cookie. Without it the server derives the secret from the access code. |
 | `META_APP_ID`, `META_APP_SECRET`, `META_REDIRECT_URI` (or `PUBLIC_BASE_URL`) | Turn on Sign in with Meta. `META_GRAPH_VERSION` defaults to `v23.0`. |
-| `PITH_TOKEN_KEY` | 32 bytes, base64. Encrypts client tokens. Without it the key lives only in memory. |
-| `ANTHROPIC_API_KEY` | Turns on Improve with Claude. `PITH_CLAUDE_MODEL` defaults to `claude-opus-5-5`. |
+| `WIGGLEWERK_TOKEN_KEY` | 32 bytes, base64. Encrypts client tokens. Without it the key lives only in memory. |
+| `ANTHROPIC_API_KEY` | Turns on Improve with Claude. `WIGGLEWERK_CLAUDE_MODEL` defaults to `claude-opus-5-5`. |
 | `RUNWAYML_API_SECRET`, `RUNWAY_MODEL` | Live Runway jobs. |
 | `HF_API_KEY_ID`, `HF_API_KEY_SECRET`, `HIGGSFIELD_I2V_PATH` | Live Higgsfield jobs. |
 
@@ -79,8 +79,8 @@ Put these in the host's secret store (Vercel environment variables or Secret Man
 
 The app has 1 shared access code. It does not have personal accounts yet.
 
-- **Protected mode** (`PITH_ACCESS_CODE` is set): every `/api` route except `/api/health` and `/api/session` needs a session. The sign-in screen sends the code to `POST /api/session`. The server sets a signed `HttpOnly` cookie (`pith_session`) that stays valid for 12 hours. After 8 wrong codes a caller must wait 10 minutes.
-- **Open mode** (no `PITH_ACCESS_CODE`): anyone with the URL can use the app. To keep this safe, the server removes `ANTHROPIC_API_KEY`, `META_APP_SECRET`, `RUNWAYML_API_SECRET`, `HF_API_KEY_ID` and `HF_API_KEY_SECRET` from its environment. Every integration then runs simulated. For local work with live keys, set `PITH_ACCESS_CODE` to any text.
+- **Protected mode** (`WIGGLEWERK_ACCESS_CODE` is set): every `/api` route except `/api/health` and `/api/session` needs a session. The sign-in screen sends the code to `POST /api/session`. The server sets a signed `HttpOnly` cookie (`wigglewerk_session`) that stays valid for 12 hours. After 8 wrong codes a caller must wait 10 minutes.
+- **Open mode** (no `WIGGLEWERK_ACCESS_CODE`): anyone with the URL can use the app. To keep this safe, the server removes `ANTHROPIC_API_KEY`, `META_APP_SECRET`, `RUNWAYML_API_SECRET`, `HF_API_KEY_ID` and `HF_API_KEY_SECRET` from its environment. Every integration then runs simulated. For local work with live keys, set `WIGGLEWERK_ACCESS_CODE` to any text.
 
 `/api/health` shows the mode in `protected`. The access code proves that a person may open the app. It does not prove who the person is: the user menu still selects a test user. Personal sign-in comes with the engine.
 
@@ -88,7 +88,7 @@ The app has 1 shared access code. It does not have personal accounts yet.
 
 The user menu at the bottom left sets who you act as:
 
-- **Boss**: every Pith role.
+- **Boss**: every Wigglewerk role.
 - **Sam Reed (test client)**: every client role, plus subject expert and native editor. Use it for client approvals and for the second person on 2-person gates.
 - **Priya Shah (test analyst)**: only `analytics_lead`. Use it to see a 403.
 
@@ -116,23 +116,23 @@ The Vercel project uses `apps/command-centre` as its root directory. Keep "Inclu
 - The UI is static files. The whole API (`server/vercel.ts`) is 1 Node.js function that answers `/api/*`. Every other path returns `index.html`, so client routes work after a reload.
 - Each push to `main` deploys to production. Each pull request gets a preview URL.
 
-To set it up on another Vercel account, import the repo at https://vercel.com/new/clone?repository-url=https://github.com/a0k02zs/pith-engine&root-directory=apps/command-centre&project-name=pith-command-centre and add the variables from "Server settings" under Project settings > Environment Variables. For Meta sign-in, set `PUBLIC_BASE_URL` to the production URL and add `PUBLIC_BASE_URL/api/oauth/meta/callback` as a valid OAuth redirect URI in the Meta app.
+To set it up on another Vercel account, import the repo at https://vercel.com/new/clone?repository-url=https://github.com/a0k02zs/pith-engine&root-directory=apps/command-centre&project-name=wigglewerk-command-centre and add the variables from "Server settings" under Project settings > Environment Variables. For Meta sign-in, set `PUBLIC_BASE_URL` to the production URL and add `PUBLIC_BASE_URL/api/oauth/meta/callback` as a valid OAuth redirect URI in the Meta app.
 
 Limits today:
 
 - State is in memory. A new function instance starts again from the test data, so changes do not last. A database comes before real client work.
-- The app has 1 shared access code and no personal accounts. Set `PITH_ACCESS_CODE` before you add real keys: without it the server ignores them. The wrong-code limit is kept in memory for each function instance, so use a long random code.
+- The app has 1 shared access code and no personal accounts. Set `WIGGLEWERK_ACCESS_CODE` before you add real keys: without it the server ignores them. The wrong-code limit is kept in memory for each function instance, so use a long random code.
 
 ## Deploy to Cloud Run
 
 Build from the repo root, because the catalog reads `engine/` and `services/`:
 
 ```bash
-gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT/pith/command-centre -f apps/command-centre/Dockerfile .
-gcloud run deploy pith-command-centre --image REGION-docker.pkg.dev/PROJECT/pith/command-centre --region europe-west2 --no-allow-unauthenticated
+gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT/wigglewerk/command-centre -f apps/command-centre/Dockerfile .
+gcloud run deploy wigglewerk-command-centre --image REGION-docker.pkg.dev/PROJECT/wigglewerk/command-centre --region europe-west2 --no-allow-unauthenticated
 ```
 
-Put the service behind Identity-Aware Proxy (IAP) so only Pith staff and invited client users can open it. The app has only a shared access code (see "Access"). Today the `x-pith-user` header selects a test user. In production, map the IAP user to an engine user and read the roles from the engine.
+Put the service behind Identity-Aware Proxy (IAP) so only Wigglewerk staff and invited client users can open it. The app has only a shared access code (see "Access"). Today the `x-wigglewerk-user` header selects a test user. In production, map the IAP user to an engine user and read the roles from the engine.
 
 ## Connect it to the real engine
 

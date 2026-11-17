@@ -124,9 +124,9 @@ describe("markets and rollout", () => {
 });
 
 describe("UTM links", () => {
-  it("builds the shared Pith UTM standard", () => {
+  it("builds the shared Wigglewerk UTM standard", () => {
     const url = new URL(utmUrl("https://ex.com/spring?ref=1", { platform: "Meta", channel: "paid_ad", year: 2027, slug: "spring-launch", artifact_id: "a1b2c3d4-e5f6", variant: "b", market: "GB" }));
-    expect(Object.fromEntries(url.searchParams)).toEqual({ ref: "1", utm_source: "meta", utm_medium: "paid_ad", utm_campaign: "2027-spring-launch", utm_content: "a1b2c3d4-b", pith_mkt: "GB" });
+    expect(Object.fromEntries(url.searchParams)).toEqual({ ref: "1", utm_source: "meta", utm_medium: "paid_ad", utm_campaign: "2027-spring-launch", utm_content: "a1b2c3d4-b", wigglewerk_mkt: "GB" });
   });
 
   it("rejects a slug with spaces or capitals", () => {

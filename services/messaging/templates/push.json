@@ -1,5 +1,5 @@
 {
-  "_about": "Pith M push template library, ported from the service design (draft 1, 21 Oct 2026). Title max 40 and body max 120 characters.",
+  "_about": "Wigglewerk push template library, ported from the service design (draft 1, 21 Oct 2026). Title max 40 and body max 120 characters.",
   "templates": [
     {
       "id": "P-ORDER-SHIP",

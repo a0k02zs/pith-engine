@@ -1,7 +1,7 @@
 import { marketRule, type Weekday } from "./markets.js";
 import type { Tier } from "./scoring.js";
 
-/** docs/pipeline.md §3 rule 7: touches per contact per week, counted across every Pith service. */
+/** docs/pipeline.md §3 rule 7: touches per contact per week, counted across every Wigglewerk service. */
 export const WEEKLY_TOUCH_CAP: Record<Tier, number> = { 1: 2, 2: 1, 3: 1 };
 
 const WEEKDAYS: Weekday[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];

@@ -3,7 +3,7 @@
 Version 0.1, 21 Oct 2026. The machine-readable version is `config/market-rules.json`.
 The engine compliance gate (`POST /compliance/check`) is the final check. This file adds the email-specific rules that the copywriter, the send workflow and the QA agent use.
 
-**Warning:** this is a planning summary from the Pith M plan. It is not legal advice. A local lawyer confirms each market before the first send in that market.
+**Warning:** this is a planning summary from the Wigglewerk plan. It is not legal advice. A local lawyer confirms each market before the first send in that market.
 
 Launch order (from the plan): United Kingdom, Singapore, North America, GCC, European Union.
 
@@ -75,7 +75,7 @@ The QA agent adds the `<ADV>` label when the recipient did not ask for the email
 - `casl_business_exemption`: only for B2B to an address that the person published, with no "no spam" note, and a message that is relevant to the person's role. The send workflow needs a source URL on the consent record.
 
 **Must be in every commercial email:**
-- The sender's name, and the client's name if Pith sends for the client.
+- The sender's name, and the client's name if Wigglewerk sends for the client.
 - A mailing address and 1 of: phone number, email address or web address.
 - An unsubscribe that works for at least 60 days after the send.
 

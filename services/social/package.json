@@ -1,8 +1,8 @@
 {
-  "name": "@pith/social",
+  "name": "@wigglewerk/social",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M organic social media service (service 4): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk organic social media service (service 4): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

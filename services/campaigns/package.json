@@ -1,8 +1,8 @@
 {
-  "name": "@pith/campaigns",
+  "name": "@wigglewerk/campaigns",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M multi-channel campaigns service (service 2): workflows, agent prompts, output schemas, budget and optimizer rules.",
+  "description": "Wigglewerk multi-channel campaigns service (service 2): workflows, agent prompts, output schemas, budget and optimizer rules.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

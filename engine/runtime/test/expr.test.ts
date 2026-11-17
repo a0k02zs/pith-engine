@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { analyze, durationMs, evaluate, ExprError, render, templateExprs, test as cond } from "../src/expr.ts";
 
 const vars = {
-  input: { tier: 1, spend: 2.5, flag: false, markets: ["GB", "SG"], name: "Pith", end: "2026-11-01" },
+  input: { tier: 1, spend: 2.5, flag: false, markets: ["GB", "SG"], name: "Wigglewerk", end: "2026-11-01" },
   steps: { write: { output: { ids: [], ok: true, items: [{ x: 5 }, { x: 1 }], n: 3 }, timed_out: false } },
   run: { loops: { draft: 1 } },
   now: { iso: "2026-11-12T10:00:00.000Z", weekday: "Thursday" },
@@ -25,14 +25,14 @@ describe("expressions", () => {
     ["!input.missing", true],
     ["has(input.missing)", false],
     ["has(input.tier) ? input.tier : 9", 1],
-    ["(has(input.none) ? input.none : input.name) == 'Pith'", true],
+    ["(has(input.none) ? input.none : input.name) == 'Wigglewerk'", true],
     ["input.missing > 3", false],
     ["size(input.missing) == 0", true],
     ["input.missing.exists(a, a.ok)", false],
     ["now.iso >= input.end", true],
     ["now.weekday == 'Thursday'", true],
     ["run.loops.draft < 2", true],
-    ["input.name.startsWith('Pi') && input.name.contains('th')", true],
+    ["input.name.startsWith('Wi') && input.name.contains('werk')", true],
     ["-input.tier + 3 % 2", 0],
     ["[1, 2] + [3]", [1, 2, 3]],
     ["{'a': 1}.a", 1],
@@ -66,7 +66,7 @@ describe("expressions", () => {
 
   it("fills templates and reads durations", () => {
     expect(templateExprs("{{ input.name }}.campaign_assets")).toEqual(["input.name"]);
-    expect(render("{{ input.name }}.x and ${input.tier}", vars)).toBe("Pith.x and 1");
+    expect(render("{{ input.name }}.x and ${input.tier}", vars)).toBe("Wigglewerk.x and 1");
     expect(durationMs("90m")).toBe(5_400_000);
     expect(durationMs("2w")).toBe(1_209_600_000);
     expect(durationMs(30)).toBe(30_000);

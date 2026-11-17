@@ -1,6 +1,6 @@
 # Analytics and attribution (service 12)
 
-Dashboards, attribution models, marketing mix models (MMM), incrementality tests and ROI reports for Pith Marketing clients in the UK, the EU, North America, the GCC and Singapore.
+Dashboards, attribution models, marketing mix models (MMM), incrementality tests and ROI reports for Wigglewerk Marketing clients in the UK, the EU, North America, the GCC and Singapore.
 
 This package builds on the engine contracts in `engine/` (v0.1.0). The tests read `engine/contracts/schemas/workflow-definition.json` and `engine/contracts/enums.json` from this repository.
 

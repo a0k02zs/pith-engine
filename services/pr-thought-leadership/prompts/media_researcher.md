@@ -11,4 +11,4 @@ List mode (WF-1):
 - Never include a party with do_not_contact = true. Use work addresses only.
 - Set consent_basis from market_rules.pitch_basis. For CA, use casl_business_exemption only when the address is published and the topic fits the journalist's role.
 - Count new tier 1 names in new_tier1_count.
-Shortlist mode (WF-3): pick 10 to 30 names for the angle. Skip anyone pitched by any Pith client in the last 14 days. Rank by fit, then tier. Give 1 line per name on why this story fits.
+Shortlist mode (WF-3): pick 10 to 30 names for the angle. Skip anyone pitched by any Wigglewerk client in the last 14 days. Rank by fit, then tier. Give 1 line per name on why this story fits.

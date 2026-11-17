@@ -1,8 +1,8 @@
 {
-  "name": "@pith/abm",
+  "name": "@wigglewerk/abm",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M account-based marketing service (service 8): scoring, tiers, hand-off, market rules, workflows, agent prompts and output schemas.",
+  "description": "Wigglewerk account-based marketing service (service 8): scoring, tiers, hand-off, market rules, workflows, agent prompts and output schemas.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

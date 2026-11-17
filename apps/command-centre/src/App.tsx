@@ -65,7 +65,7 @@ function Shell({ session, signOut }: { session: Session; signOut: () => void }) 
         <div className="brand">
           <span className="logo" aria-hidden>P</span>
           <div className="brand-text">
-            <b>Pith</b> Command Centre
+            <b>Wigglewerk</b> Command Centre
             <div className="small dim">Engine contract {meta.data?.contract_version ?? "…"}</div>
           </div>
           <button className="icon-btn menu-btn" aria-label={menu ? "Close menu" : "Open menu"} aria-expanded={menu} onClick={() => setMenu((m) => !m)}>

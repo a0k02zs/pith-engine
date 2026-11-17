@@ -62,7 +62,7 @@ Stage 8 approves the follow-up templates before the event. On the event day ther
 
 ## 3. Who approves what
 
-| Gate | Pith role | Client role | Can it be skipped? |
+| Gate | Wigglewerk role | Client role | Can it be skipped? |
 |---|---|---|---|
 | Plan | `account_lead` | `client_approver` | No |
 | Budget | `account_lead` | `client_finance` | Only when there is no spend |

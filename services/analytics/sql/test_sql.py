@@ -19,7 +19,7 @@ con.execute("create table engine.contacts(id varchar, country varchar, subdivisi
 con.execute("create table source_orders(created_at timestamp, market varchar, net_value double)")
 con.execute("create table ga4_events(event_date varchar, event_name varchar, purchase_revenue double)")
 con.execute("create table kpi_targets(kpi varchar, market varchar, period_start date, period_end date, target double)")
-con.execute("create table pith_fees(service varchar, month date, fee double)")
+con.execute("create table wigglewerk_fees(service varchar, month date, fee double)")
 con.execute("create table geo_units(subdivision varchar, unit varchar)")
 C = "'c1'"
 d0 = dt.date(2026, 9, 1)
@@ -45,7 +45,7 @@ con.executemany("insert into engine.contacts values (?,?,?)", [(f"p{i}", "GB", "
 con.executemany("insert into source_orders values (?,?,?)", [(c[7], "GB", c[5]) for c in conv])
 con.executemany("insert into ga4_events values (?,?,?)", [(c[7].strftime("%Y%m%d"), "purchase", c[5]) for c in conv[:55]])
 con.execute("insert into kpi_targets values ('revenue','GB','2026-10-01','2026-10-31', 25000), ('roas','GB','2026-10-01','2026-10-31', 3.5)")
-con.execute("insert into pith_fees values ('search','2026-10-01',2000),('paid_social','2026-10-01',1500),('analytics','2026-10-01',3000)")
+con.execute("insert into wigglewerk_fees values ('search','2026-10-01',2000),('paid_social','2026-10-01',1500),('analytics','2026-10-01',3000)")
 con.execute("insert into geo_units values ('GB-ENG','england')")
 
 def q(sql): return con.execute(sql).fetchall()
@@ -71,15 +71,15 @@ exp_roas = exp_rev / sum(150 + 2 * i for i in range(30, 60))
 check("kpi_table roas from parts", abs(roas[2] - exp_roas) < 1e-9 and roas[5] == 3.5, f"roas {roas[2]:.4f} vs {exp_roas:.4f}")
 check("kpi_table label", rev[7] == "observed", rev[7])
 
-# pith_service_roi: fct_attribution and int_touchpoints stubbed with 1 credit per Oct conversion to service 'search'
+# wigglewerk_service_roi: fct_attribution and int_touchpoints stubbed with 1 credit per Oct conversion to service 'search'
 con.execute("create table int_touchpoints as select id as conversion_id, 1 as touchpoint_id, 'search' as service from engine.conversions")
 con.execute("create table fct_attribution as select id as conversion_id, 1 as touchpoint_id, 'position_based' as model, 1.0 as credit from engine.conversions")
-s = load("pith_service_roi", {"client_id": C, "month": "DATE '2026-10-01'", "model": "'position_based'"})
+s = load("wigglewerk_service_roi", {"client_id": C, "month": "DATE '2026-10-01'", "model": "'position_based'"})
 r = {x[0]: x for x in q(s)}
 oct_search_spend = sum(100 + i for i in range(30, 60)) + 80 * 30   # Oct 1 to 30 in data (day 60 = Oct 30)
-check("pith_service_roi search", abs(r["search"][1] - oct_search_spend) < 1e-6 and r["search"][2] == 2000 and r["search"][5] == 1200,
+check("wigglewerk_service_roi search", abs(r["search"][1] - oct_search_spend) < 1e-6 and r["search"][2] == 2000 and r["search"][5] == 1200,
       f"media {r['search'][1]} fee {r['search'][2]} revenue {r['search'][5]} roi {r['search'][6]:.3f}")
-check("pith_service_roi fee-only service", r["analytics"][1] == 0 and r["analytics"][2] == 3000, str(r["analytics"][:7]))
+check("wigglewerk_service_roi fee-only service", r["analytics"][1] == 0 and r["analytics"][2] == 3000, str(r["analytics"][:7]))
 
 # cohort_payback
 s = load("cohort_payback", {"client_id": C, "start_month": "DATE '2026-09-01'", "end_month": "DATE '2026-10-01'", "kind": "'purchase'"})

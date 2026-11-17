@@ -1,8 +1,8 @@
 # Organic social media service (service 4)
 
-Pith M organic social: listening, a monthly content calendar, posts, the community inbox, escalation and weekly learning. It is built on the shared engine contracts v0.1.0. Paid social and boosting are service 11 and are not here.
+Wigglewerk organic social: listening, a monthly content calendar, posts, the community inbox, escalation and weekly learning. It is built on the shared engine contracts v0.1.0. Paid social and boosting are service 11 and are not here.
 
-Status: draft. The design pack is at `docs/`. The Starter, Growth and Scale packages and the starting KPI targets were adopted on 28 Oct 2026 as the v1 defaults (`config/packages.json`). Pith sets the final names and prices.
+Status: draft. The design pack is at `docs/`. The Starter, Growth and Scale packages and the starting KPI targets were adopted on 28 Oct 2026 as the v1 defaults (`config/packages.json`). Wigglewerk sets the final names and prices.
 
 ## What is here
 

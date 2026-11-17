@@ -2,7 +2,7 @@
 
 Draft 1, 21 Oct 2026. Shared codes come from `engine/contracts/enums.json` (`kpis`). Service-only codes use the `messaging.` prefix, as the engine naming rule says.
 
-Targets are Pith starting targets, not industry facts. The optimizer and reporter use them until each client has 8 weeks of its own data. Then the client baseline replaces them.
+Targets are Wigglewerk starting targets, not industry facts. The optimizer and reporter use them until each client has 8 weeks of its own data. Then the client baseline replaces them.
 
 ## Primary KPIs (in the weekly scorecard)
 

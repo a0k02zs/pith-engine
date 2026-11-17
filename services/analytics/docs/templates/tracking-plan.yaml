@@ -1,5 +1,5 @@
 # Tracking plan · {{client_name}}
-# Owner: Pith analytics lead. Approved at gate G2. Every Pith service reads this file.
+# Owner: Wigglewerk analytics lead. Approved at gate G2. Every Wigglewerk service reads this file.
 plan_version: 1.0.0
 client_id: "{{client_id}}"
 business_model: b2c_ecommerce        # b2c_ecommerce | b2c_app | b2b | mixed

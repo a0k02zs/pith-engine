@@ -109,7 +109,7 @@ export function ClientDetailPage() {
         <Modal title={dialog === "pause" ? `Pause ${c.name}` : `Resume ${c.name}`} onClose={() => setDialog(null)}>
           <p>{dialog === "pause"
             ? "This runs the engine action client.pause_scheduled. Every scheduled send, post, pitch and ad set for this client stops in all services. Use it for a crisis."
-            : "Resuming needs an escalation decision. Write down who decided and why. Only an account lead or a Pith admin can resume."}</p>
+            : "Resuming needs an escalation decision. Write down who decided and why. Only an account lead or a Wigglewerk admin can resume."}</p>
           <label className="field">
             <span>{dialog === "pause" ? "Reason" : "Escalation decision"}</span>
             <textarea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />

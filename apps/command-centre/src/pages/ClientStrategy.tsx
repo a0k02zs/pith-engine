@@ -46,7 +46,7 @@ export function ClientStrategy({ client }: { client: Client }) {
           <div className="row gap-s wrap">
             <Pill tone={STATUS[st.status].tone}>{STATUS[st.status].text}</Pill>
             <Pill>Version {st.version}</Pill>
-            <Pill tone="info">{st.source === "playbooks" ? "From Pith playbooks" : "Playbooks + Claude"}</Pill>
+            <Pill tone="info">{st.source === "playbooks" ? "From Wigglewerk playbooks" : "Playbooks + Claude"}</Pill>
           </div>
           <div className="row wrap">
             <button className="btn btn-sm" onClick={() => setEdit(true)} disabled={locked}>Edit client brain</button>

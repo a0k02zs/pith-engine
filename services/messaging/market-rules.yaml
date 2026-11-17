@@ -11,12 +11,12 @@
 #   window                 : allowed local send hours for MARKETING (24 h clock, inclusive start, exclusive end)
 #   quiet_days             : days with no marketing sends
 #   optout_keywords        : inbound words that MUST opt the contact out of that channel
-#   optout_sla             : the legal maximum to process an opt-out. Pith policy is always "immediate"
+#   optout_sla             : the legal maximum to process an opt-out. Wigglewerk policy is always "immediate"
 #   required_in_message    : parts that every marketing message must contain
 #   pre_send_checks        : checks the gate runs before each send
 #   languages              : template languages to write
 #
-# Pith global policy (applies on top of every market):
+# Wigglewerk global policy (applies on top of every market):
 #   - Opt-out is processed at once, on every channel the word arrives on.
 #   - Brand name in every SMS.
 #   - No marketing message to a contact with no consent record for that channel and country.
@@ -43,14 +43,14 @@ markets:
     consent:
       sms: consent_or_soft_optin        # soft opt-in: existing customer, similar products, opt-out offered at collection and in every message
       whatsapp: consent_or_soft_optin   # plus Meta opt-in
-      push: app_opt_in_plus_marketing_consent   # Pith policy: treat marketing push like electronic mail
+      push: app_opt_in_plus_marketing_consent   # Wigglewerk policy: treat marketing push like electronic mail
     consent_proof: [timestamp, source, wording_shown]
     sender:
       alphanumeric_allowed: true
       registration: "UK SMS SenderID Protection Registry (MEF) for brand sender IDs (recommended)"
       verify: true
-    window: { start: "08:00", end: "20:00", tz: "Europe/London" }   # Pith policy; no statutory hours
-    quiet_days: []                       # Pith policy: avoid Sunday before 10:00
+    window: { start: "08:00", end: "20:00", tz: "Europe/London" }   # Wigglewerk policy; no statutory hours
+    quiet_days: []                       # Wigglewerk policy: avoid Sunday before 10:00
     optout_keywords: [STOP]
     optout_sla: "without undue delay"
     required_in_message: [brand_name, optout_instruction]
@@ -73,12 +73,12 @@ markets:
       alphanumeric_allowed: true
       registration: "SMS Sender ID Registry (SSIR). Unregistered alphanumeric IDs show as 'Likely-SCAM' or are blocked"
       verify: false
-    window: { start: "09:00", end: "21:00", tz: "Asia/Singapore" }   # Pith policy
+    window: { start: "09:00", end: "21:00", tz: "Asia/Singapore" }   # Wigglewerk policy
     quiet_days: []
     optout_keywords: [STOP]
-    optout_sla_days: 10                  # business days under the DNC provisions; Pith = immediate
+    optout_sla_days: 10                  # business days under the DNC provisions; Wigglewerk = immediate
     required_in_message: [brand_name, sender_contact_info, optout_instruction]
-    unsolicited_bulk_label: "<ADV>"      # Spam Control Act, only if a message is unsolicited bulk; Pith never sends unsolicited bulk
+    unsolicited_bulk_label: "<ADV>"      # Spam Control Act, only if a message is unsolicited bulk; Wigglewerk never sends unsolicited bulk
     pre_send_checks: [consent_valid, dnc_check_fresh, ssir_registered, frequency_cap, window]
     languages: [en-SG, zh-Hans, ms, ta]
     holidays_to_watch: [Chinese New Year, Hari Raya Puasa, Hari Raya Haji, Deepavali, National Day]
@@ -104,7 +104,7 @@ markets:
       verify: true
     quiet_days: []                       # some states limit Sundays and holidays; verify per state
     optout_keywords: [STOP, STOPALL, UNSUBSCRIBE, CANCEL, END, QUIT, REVOKE, OPTOUT]
-    optout_sla_business_days: 10         # FCC revocation rule; Pith = immediate. 1 confirmation text allowed, with no marketing
+    optout_sla_business_days: 10         # FCC revocation rule; Wigglewerk = immediate. 1 confirmation text allowed, with no marketing
     help_reply_required: true
     required_in_message: [brand_name, optout_instruction]
     first_message_must_include: [brand_name, program_description, frequency, "Msg & data rates may apply", "Reply HELP for help, STOP to cancel"]
@@ -126,7 +126,7 @@ markets:
       types: [short_code, toll_free, long_code]
       registration: "Canadian short codes through the CWTA program; toll-free verification"
       verify: true
-    window: { start: "09:00", end: "21:30", tz: "recipient_local", weekend: { start: "10:00", end: "18:00" } }   # Pith policy, matches CRTC telemarketing hours
+    window: { start: "09:00", end: "21:30", tz: "recipient_local", weekend: { start: "10:00", end: "18:00" } }   # Wigglewerk policy, matches CRTC telemarketing hours
     quiet_days: []
     optout_keywords: [STOP, ARRET, ARRÊT, UNSUBSCRIBE, CANCEL]
     optout_sla_business_days: 10
@@ -175,11 +175,11 @@ markets:
       registration: "Sender ID registration with CST through a licensed aggregator. Needs the company CR and an authorisation letter. Promotional IDs carry an '-AD' marker"
       promotional_suffix: "-AD"
       verify: true
-    window: { start: "09:00", end: "21:00", tz: "Asia/Riyadh" }   # Pith conservative policy; verify with aggregator
+    window: { start: "09:00", end: "21:00", tz: "Asia/Riyadh" }   # Wigglewerk conservative policy; verify with aggregator
     window_verify: true
     weekend: [Friday, Saturday]
     quiet_days: []
-    prayer_time_pause: true              # Pith policy: no broadcasts during the 5 daily prayer times
+    prayer_time_pause: true              # Wigglewerk policy: no broadcasts during the 5 daily prayer times
     optout_keywords: [STOP, "إلغاء", "توقف"]
     required_in_message: [brand_name, optout_instruction]
     content_rules: [respect_religion_and_culture, conservative_imagery, no_alcohol_or_gambling, arabic_first_for_b2c]
@@ -192,7 +192,7 @@ markets:
     consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
     consent_proof: [timestamp, source, wording_shown]
     sender: { alphanumeric_allowed: true, registration: "Sender ID registration with Ooredoo and Vodafone Qatar through an aggregator", verify: true }
-    window: { start: "09:00", end: "21:00", tz: "Asia/Qatar" }   # Pith policy
+    window: { start: "09:00", end: "21:00", tz: "Asia/Qatar" }   # Wigglewerk policy
     weekend: [Friday, Saturday]
     optout_keywords: [STOP, "إلغاء", "توقف"]
     required_in_message: [brand_name, optout_instruction]
@@ -205,7 +205,7 @@ markets:
     consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
     consent_proof: [timestamp, source, wording_shown]
     sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator with CITRA approval", verify: true }
-    window: { start: "09:00", end: "21:00", tz: "Asia/Kuwait" }   # Pith policy
+    window: { start: "09:00", end: "21:00", tz: "Asia/Kuwait" }   # Wigglewerk policy
     weekend: [Friday, Saturday]
     optout_keywords: [STOP, "إلغاء", "توقف"]
     required_in_message: [brand_name, optout_instruction]
@@ -218,7 +218,7 @@ markets:
     consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
     consent_proof: [timestamp, source, wording_shown]
     sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator", verify: true }
-    window: { start: "09:00", end: "21:00", tz: "Asia/Bahrain" }   # Pith policy
+    window: { start: "09:00", end: "21:00", tz: "Asia/Bahrain" }   # Wigglewerk policy
     weekend: [Friday, Saturday]
     optout_keywords: [STOP, "إلغاء", "توقف"]
     required_in_message: [brand_name, optout_instruction]
@@ -231,7 +231,7 @@ markets:
     consent: { sms: opt_in, whatsapp: opt_in, push: app_opt_in }
     consent_proof: [timestamp, source, wording_shown]
     sender: { alphanumeric_allowed: true, registration: "Sender ID registration through an aggregator with TRA approval", verify: true }
-    window: { start: "09:00", end: "21:00", tz: "Asia/Muscat" }   # Pith policy
+    window: { start: "09:00", end: "21:00", tz: "Asia/Muscat" }   # Wigglewerk policy
     weekend: [Friday, Saturday]
     optout_keywords: [STOP, "إلغاء", "توقف"]
     required_in_message: [brand_name, optout_instruction]
@@ -242,13 +242,13 @@ markets:
     name: European Union (default for EU member states)
     law: [GDPR, ePrivacy Directive Art. 13 and national laws, EU AI Act Art. 50 (AI chat disclosure)]
     consent:
-      sms: opt_in                        # soft opt-in for existing customers exists in many states; Pith default = explicit opt-in
+      sms: opt_in                        # soft opt-in for existing customers exists in many states; Wigglewerk default = explicit opt-in
       whatsapp: opt_in
       push: app_opt_in_plus_marketing_consent
     consent_proof: [timestamp, source, wording_shown, double_optin_timestamp]
     sender: { alphanumeric_allowed: true, registration: "Varies by country; some operators need pre-registration", verify: true }
-    window: { start: "09:00", end: "20:00", tz: "recipient_local" }   # Pith policy
-    quiet_days: [Sunday, public_holiday]  # Pith default
+    window: { start: "09:00", end: "20:00", tz: "recipient_local" }   # Wigglewerk policy
+    quiet_days: [Sunday, public_holiday]  # Wigglewerk default
     optout_keywords: [STOP]
     required_in_message: [brand_name, optout_instruction]
     ai_chat_disclosure: "Tell the user they talk to an AI system (AI Act Art. 50, from 2 Aug 2026)"

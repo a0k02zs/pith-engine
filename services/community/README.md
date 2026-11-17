@@ -1,6 +1,6 @@
 # Community and UGC service (service 18)
 
-This folder holds the Pith M community and UGC service. It covers review requests, review replies, UGC rights, moderation, the community host agent and the weekly report. The markets are UK, EU, North America (US and Canada), GCC and Singapore.
+This folder holds the Wigglewerk community and UGC service. It covers review requests, review replies, UGC rights, moderation, the community host agent and the weekly report. The markets are UK, EU, North America (US and Canada), GCC and Singapore.
 
 The service builds on the shared engine contracts in `/engine/contracts` (v0.1.0). It does not copy them. The tests read the contracts from the repo, so a change to the engine runs this service's CI too.
 

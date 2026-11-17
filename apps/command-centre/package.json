@@ -1,8 +1,8 @@
 {
-  "name": "@pith/command-centre",
+  "name": "@wigglewerk/command-centre",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M Command Centre: one web app to monitor and operate all 18 Pith Marketing services on the shared engine.",
+  "description": "Wigglewerk Command Centre: one web app to monitor and operate all 18 Wigglewerk Marketing services on the shared engine.",
   "type": "module",
   "scripts": {
     "catalog": "node scripts/build-catalog.mjs",

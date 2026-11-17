@@ -1,4 +1,4 @@
-# Pith M packages
+# Wigglewerk packages
 
 Sellable packages for each target market and industry: 5 regions (UK, SG, NA, GCC, EU, in launch order) x 8 industries (3 B2B, 5 B2C) x 3 tiers (Launch, Growth, Scale) = 120 packages.
 

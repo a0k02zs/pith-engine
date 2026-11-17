@@ -1,6 +1,6 @@
 # Events and webinars service (service 16)
 
-Pith M events and webinars: webinars, virtual events and trade shows, built on the shared engine contracts v0.1.0.
+Wigglewerk events and webinars: webinars, virtual events and trade shows, built on the shared engine contracts v0.1.0.
 The design is in `docs/` (playbook, pipelines, agent prompts, templates, market rules, KPIs, engine interfaces).
 
 ## What is here

@@ -1,7 +1,7 @@
 # Service 16: Events and webinars — Strategy playbook
 
-Owner: events lead (Pith M). Version 1, 21 Oct 2026.
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Events and webinars".
+Owner: events lead (Wigglewerk). Version 1, 21 Oct 2026.
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Events and webinars".
 Automation target at launch: about 60% of steps (plan estimate, not measured data).
 
 ## 1. Goal
@@ -17,7 +17,7 @@ The service is mainly a B2B pipeline driver. B2C clients use it for product laun
 | Webinar | 1 live online session, 30 to 60 minutes, 1 to 3 speakers, live Q&A. | Registrations, attendees, sales-qualified leads (SQLs). |
 | Webinar series | 3 to 6 webinars on 1 theme, 1 per month, 1 shared registration page. | Repeat attendees, nurtured pipeline. |
 | Virtual event | A half-day or full-day online event with several tracks, sponsors and networking. | Leads at scale, sponsor revenue for the client. |
-| Trade show programme | Pre-show outreach, booth content, lead capture and post-show follow-up for a show where the client exhibits. Pith does not build booths. | Booked meetings, booth leads, pipeline. |
+| Trade show programme | Pre-show outreach, booth content, lead capture and post-show follow-up for a show where the client exhibits. Wigglewerk does not build booths. | Booked meetings, booth leads, pipeline. |
 | Field event | A roundtable, executive dinner or breakfast for 10 to 30 target accounts. | Meetings with buying committees of target accounts. |
 
 ## 3. Packages
@@ -28,7 +28,7 @@ The service is mainly a B2B pipeline driver. B2C clients use it for product laun
 | Pipeline Webinars | Mid-size B2B | Webinar series, paid promotion (through Service 11), ABM invites for target accounts (through Service 8), hot-lead hand-off to sales, repurpose into blog and email series, pipeline report at day 30 and day 90 | Up to 2, with a session per region |
 | Events Programme | Multi-country | Pipeline Webinars plus 1 virtual event per half-year, 2 to 4 trade shows per year, field events, a session per region in each market, localized follow-up | 3 to 5 |
 
-Pith sets the price per package. The client pays platform licences, booth space, venue and paid media direct to the supplier. Pith never holds client media or venue money. A person signs every venue, booth and speaker contract (governance rule).
+Wigglewerk sets the price per package. The client pays platform licences, booth space, venue and paid media direct to the supplier. Wigglewerk never holds client media or venue money. A person signs every venue, booth and speaker contract (governance rule).
 
 ## 4. B2B and B2C focus
 

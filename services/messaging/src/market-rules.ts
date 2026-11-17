@@ -103,7 +103,7 @@ const unique = (words: string[]) => [...new Set(words)];
 
 /**
  * Resolve the rules for a contact. country is ISO 3166-1 alpha-2. subdivision is ISO 3166-2,
- * for example "US-FL" or "CA-QC". Throws for a country that Pith does not serve.
+ * for example "US-FL" or "CA-QC". Throws for a country that Wigglewerk does not serve.
  */
 export function resolveMarket(country: string, subdivision?: string): ResolvedRules {
   const file = loadRulesFile();

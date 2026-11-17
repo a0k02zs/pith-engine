@@ -1,6 +1,6 @@
--- pith_service_roi: spend, Pith fees, results and ROI per Pith service for the monthly ROI report (prompts/report.md, rule 5).
+-- wigglewerk_service_roi: spend, Wigglewerk fees, results and ROI per Wigglewerk service for the monthly ROI report (prompts/report.md, rule 5).
 -- Dialect: BigQuery. Sources: engine.metrics_daily (media spend and service KPIs), attribution_summary-style credit from
--- fct_attribution, and pith_fees (client view from billing: service, month, fee, currency).
+-- fct_attribution, and wigglewerk_fees (client view from billing: service, month, fee, currency).
 -- Params: @client_id, @month (first day of the month), @model (attribution model for credited revenue, default 'position_based').
 
 WITH m AS (
@@ -14,8 +14,8 @@ media AS (
   GROUP BY 1
 ),
 fees AS (
-  SELECT service, SUM(fee) AS pith_fee
-  FROM pith_fees
+  SELECT service, SUM(fee) AS wigglewerk_fee
+  FROM wigglewerk_fees
   WHERE month = @month
   GROUP BY 1
 ),
@@ -32,11 +32,11 @@ credit AS (                                         -- credited revenue per serv
 SELECT
   s.service,
   COALESCE(media.media_spend, 0) AS media_spend,
-  COALESCE(fees.pith_fee, 0)     AS pith_fee,
-  COALESCE(media.media_spend, 0) + COALESCE(fees.pith_fee, 0) AS total_cost,
+  COALESCE(fees.wigglewerk_fee, 0)     AS wigglewerk_fee,
+  COALESCE(media.media_spend, 0) + COALESCE(fees.wigglewerk_fee, 0) AS total_cost,
   COALESCE(credit.conversions, 0) AS credited_conversions,
   COALESCE(credit.revenue, 0)     AS credited_revenue,
-  SAFE_DIVIDE(COALESCE(credit.revenue, 0), COALESCE(media.media_spend, 0) + COALESCE(fees.pith_fee, 0)) AS roi,
+  SAFE_DIVIDE(COALESCE(credit.revenue, 0), COALESCE(media.media_spend, 0) + COALESCE(fees.wigglewerk_fee, 0)) AS roi,
   @model AS model,
   'estimated' AS label             -- credited revenue is model output; the report says which model
 FROM (SELECT service FROM media UNION DISTINCT SELECT service FROM fees UNION DISTINCT SELECT service FROM credit) s

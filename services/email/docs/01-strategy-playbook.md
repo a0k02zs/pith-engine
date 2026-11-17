@@ -1,7 +1,7 @@
 # Email marketing: strategy playbook
 
-Service 1 of the Pith M plan. Version 0.1, 21 Oct 2026. Owner: the "Email marketing" thread.
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Service 1 · Email marketing".
+Service 1 of the Wigglewerk plan. Version 0.1, 21 Oct 2026. Owner: the "Email marketing" thread.
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Service 1 · Email marketing".
 Engine: builds on the shared engine contracts v0.1.0 in `engine/` in this repository (codes from `contracts/enums.json`).
 
 ## 1. What the client buys
@@ -16,7 +16,7 @@ Email marketing grows revenue per contact with flows that run without daily work
 
 ## 2. Service packages
 
-These are planning packages. Pith sets the prices.
+These are planning packages. Wigglewerk sets the prices.
 
 | Package | Scope | Flows at launch | Campaign sends per month | Markets |
 |---|---|---|---|---|
@@ -42,7 +42,7 @@ This is the pipeline from the plan, with engine calls added. Steps marked GATE s
 | 1 | Ingest: sync contacts, events and consent | Engine data layer | `POST /audiences/resolve` (channel `email`) |
 | 2 | Segment by lifecycle stage, value and intent | Segment agent | Reads events; writes segment definitions |
 | 3 | Plan the monthly calendar and flow changes | Planner agent | `GET /clients/{id}/brain` |
-| 4 | GATE: approve the plan | Account lead (Pith) | Approval kind `calendar` |
+| 4 | GATE: approve the plan | Account lead (Wigglewerk) | Approval kind `calendar` |
 | 5 | Write 3 subject lines and 2 bodies per send | Copywriter agent | `GET /clients/{id}/brain` |
 | 6 | Check: brand score, spam score, links, compliance | QA agent and engine | `POST /compliance/check` |
 | 7 | GATE: approve copy (new templates and new claims only) | Client | Approval kind `copy` |

@@ -10,7 +10,7 @@ import { Workspace } from "../server/workspace.js";
 
 const NOW = Date.UTC(2026, 10, 1, 12);
 const REPO = join(__dirname, "..", "..", "..");
-const H = (user = "u-boss") => ({ "content-type": "application/json", "x-pith-user": user });
+const H = (user = "u-boss") => ({ "content-type": "application/json", "x-wigglewerk-user": user });
 
 function setup(opts: ConstructorParameters<typeof Workspace>[1] = {}) {
   const store = new Store({ now: NOW, seed: 5 });

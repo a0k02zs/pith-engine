@@ -44,10 +44,10 @@ describe("SMS template checks", () => {
 
 describe("link checks", () => {
   it("refuses public shorteners and links off the branded domain", () => {
-    expect(checkLinks("Shop: https://bit.ly/abc", ["pithcoffee.com"])).toContainEqual(expect.objectContaining({ rule: "branded_link" }));
-    expect(checkLinks("Shop: go.pithcoffee.com/abc", ["pithcoffee.com"])).toEqual([]);
-    expect(checkLinks("Shop: go.other.com/abc", ["pithcoffee.com"])).toContainEqual(expect.objectContaining({ rule: "branded_link" }));
-    expect(rules(checkLinks("a go.pithcoffee.com/1 b go.pithcoffee.com/2"))).toEqual(["one_link"]);
+    expect(checkLinks("Shop: https://bit.ly/abc", ["wigglewerkcoffee.com"])).toContainEqual(expect.objectContaining({ rule: "branded_link" }));
+    expect(checkLinks("Shop: go.wigglewerkcoffee.com/abc", ["wigglewerkcoffee.com"])).toEqual([]);
+    expect(checkLinks("Shop: go.other.com/abc", ["wigglewerkcoffee.com"])).toContainEqual(expect.objectContaining({ rule: "branded_link" }));
+    expect(rules(checkLinks("a go.wigglewerkcoffee.com/1 b go.wigglewerkcoffee.com/2"))).toEqual(["one_link"]);
   });
 });
 

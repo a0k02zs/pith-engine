@@ -1,5 +1,5 @@
 {
-  "$comment": "Pith M shared codes, contract v0.1.2. Services add values only through the engine thread.",
+  "$comment": "Wigglewerk shared codes, contract v0.1.2. Services add values only through the engine thread.",
   "contract_version": "0.1.2",
   "services": {
     "email": 1,
@@ -132,7 +132,7 @@
     "unknown"
   ],
   "roles": [
-    "pith_admin",
+    "wigglewerk_admin",
     "head_of_growth",
     "account_lead",
     "strategist",
@@ -442,7 +442,7 @@
   ],
   "tool_risk_meaning": {
     "read": "reads only",
-    "write_internal": "changes data in a client or Pith tool that no recipient or public sees (CRM fields, ESP list sync, drafts, audiences)",
+    "write_internal": "changes data in a client or Wigglewerk tool that no recipient or public sees (CRM fields, ESP list sync, drafts, audiences)",
     "write_external": "publishes or changes something the public or recipients can see (post, page, site change)",
     "remove": "stops, hides, pauses, suppresses or unpublishes; never blocked (G10)",
     "spend": "commits or changes ad spend",

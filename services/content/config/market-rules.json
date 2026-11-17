@@ -1,5 +1,5 @@
 {
-  "$comment": "Content marketing market rules v0.1 (2026-10-21). Source: Pith M Automation Plan, market sections. Planning summary, not legal advice. Agents read this file; market-rules.md is the human copy.",
+  "$comment": "Content marketing market rules v0.1 (2026-10-21). Source: Wigglewerk Automation Plan, market sections. Planning summary, not legal advice. Agents read this file; market-rules.md is the human copy.",
   "version": "0.1.0",
   "launch_order": ["UK", "SG", "US", "CA", "AE", "SA", "QA", "KW", "BH", "OM", "EU"],
   "all_markets": {

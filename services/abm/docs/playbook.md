@@ -2,7 +2,7 @@
 
 ## 1. Goal
 
-Win named target accounts for each B2B client. Grow pipeline value, win rate and deal size on those accounts. ABM is the B2B service with the highest deal value in the Pith M plan.
+Win named target accounts for each B2B client. Grow pipeline value, win rate and deal size on those accounts. ABM is the B2B service with the highest deal value in the Wigglewerk plan.
 
 ## 2. When a client is a fit for ABM
 
@@ -23,7 +23,7 @@ The ICP agent (`agents/01-icp-account-scorer.md`) builds the ICP from the client
 |------|------------------------|
 | Firmographic | Industry, employee count, revenue band, ownership (private, listed, government-linked), growth rate |
 | Technographic | Tools in the account's stack that the client integrates with or replaces |
-| Market | Country and region from the 5 Pith markets; language; public or private sector |
+| Market | Country and region from the 5 Wigglewerk markets; language; public or private sector |
 | Situation | Recent funding, new executive, expansion into a new country, a regulation that creates a need |
 
 The account owner approves the ICP once a quarter (gate G1).
@@ -49,7 +49,7 @@ Each account has 3 scores from 0 to 100. The engine stores them on the account r
 | Industry match | 25 |
 | Size match (employees or revenue) | 20 |
 | Technographic match | 20 |
-| Market match (Pith market, language, sector) | 15 |
+| Market match (Wigglewerk market, language, sector) | 15 |
 | Situation trigger present | 10 |
 | Existing relationship (past customer, partner, warm contact) | 10 |
 
@@ -136,7 +136,7 @@ Market changes to plays are in `markets/rules.md`. Example: in the GCC, P4 (even
 
 ## 9. Team roles (RACI)
 
-| Activity | Agent | Pith account owner | Client sales lead | Client marketing lead | Client executive |
+| Activity | Agent | Wigglewerk account owner | Client sales lead | Client marketing lead | Client executive |
 |----------|-------|--------------------|-------------------|-----------------------|------------------|
 | ICP and scoring | R (drafts) | A | C | C | I |
 | Account list and tiers | R (drafts) | A | A (joint) | C | I |

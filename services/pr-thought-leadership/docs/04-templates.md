@@ -57,9 +57,9 @@ Stored as an engine party (`party.json`, kind `journalist`, `client_id` null so 
 | `recent_articles` | list of 3 | Title, URL, date; refreshed every 30 days |
 | `tier` | 1, 2, 3 | With `tier_reason` |
 | `pitch_preferences` | text | From their bio or past replies (for example "no attachments", "exclusives only") |
-| `last_pitched_at`, `last_reply_at` | date | Across all Pith clients |
+| `last_pitched_at`, `last_reply_at` | date | Across all Wigglewerk clients |
 | `do_not_pitch` | boolean | Set on any opt-out; global across all clients |
-| `relationship_owner` | user | The Pith person who owns the relationship |
+| `relationship_owner` | user | The Wigglewerk person who owns the relationship |
 | `consent_basis` | code | `legitimate_interest` (UK, EU, SG, GCC), `opt_out_regime` (US), `casl_business_exemption` (CA) |
 | `source` | text | For example `muckrack:2026-10-21`; needed for the GDPR Article 14 notice |
 

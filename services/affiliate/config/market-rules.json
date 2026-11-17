@@ -1,5 +1,5 @@
 {
-  "$comment": "Affiliate-specific market rules for Pith M service 15. Version 0.1, 2026-10-22. Source: docs/05-market-rules.md. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
+  "$comment": "Affiliate-specific market rules for Wigglewerk service 15. Version 0.1, 2026-10-22. Source: docs/05-market-rules.md. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
   "service": "affiliate",
   "contract_version": "0.1.0",
   "markets": {

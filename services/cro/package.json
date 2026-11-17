@@ -1,8 +1,8 @@
 {
-  "name": "@pith/cro",
+  "name": "@wigglewerk/cro",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M CRO and landing pages service (service 17): A/B test statistics, decision rules, page checks, workflows, agent prompts and output schemas.",
+  "description": "Wigglewerk CRO and landing pages service (service 17): A/B test statistics, decision rules, page checks, workflows, agent prompts and output schemas.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -78,7 +78,7 @@ cluster_id, market, language, cluster_name, main_keyword, supporting_keywords, v
 ## Forecast (range, with assumptions)
 
 ## Approval (gate G1)
-Pith SEO lead: ______  Date: ____
+Wigglewerk SEO lead: ______  Date: ____
 Client: ______  Date: ____
 ```
 

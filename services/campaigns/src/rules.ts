@@ -199,7 +199,7 @@ export interface UtmInput {
   term?: string;
 }
 
-/** Tags a landing URL with the shared Pith UTM standard (engine service-integration spec). */
+/** Tags a landing URL with the shared Wigglewerk UTM standard (engine service-integration spec). */
 export function utmUrl(url: string, u: UtmInput): string {
   if (!/^[a-z0-9-]+$/.test(u.slug)) throw new Error(`Campaign slug must be lowercase letters, digits and dashes: ${u.slug}`);
   const out = new URL(url);
@@ -209,7 +209,7 @@ export function utmUrl(url: string, u: UtmInput): string {
     utm_campaign: `${u.year}-${u.slug}`,
     utm_content: `${u.artifact_id.replace(/-/g, "").slice(0, 8)}-${u.variant}`,
     utm_term: u.term,
-    pith_mkt: u.market,
+    wigglewerk_mkt: u.market,
   };
   for (const [k, v] of Object.entries(params)) if (v) out.searchParams.set(k, v);
   return out.toString();

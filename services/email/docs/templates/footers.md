@@ -20,7 +20,7 @@ Base footer. For soft opt-in contacts, `{{consent_reason}}` is "you bought from 
 
 Base footer. For unsolicited bulk email:
 - Subject line starts with `<ADV> ` (the send workflow adds it).
-- Add the line: "To stop these emails, use the unsubscribe link. We act on your request within 10 business days." (Pith acts within 2 days.)
+- Add the line: "To stop these emails, use the unsubscribe link. We act on your request within 10 business days." (Wigglewerk acts within 2 days.)
 
 ## United States (US)
 
@@ -38,7 +38,7 @@ Base footer, and add 1 more contact method:
 Contact us: {{sender_contact_email}} or {{sender_website}}
 ```
 
-If Pith sends on behalf of the client, name the client as the sender.
+If Wigglewerk sends on behalf of the client, name the client as the sender.
 
 ## Quebec (CA-QC)
 

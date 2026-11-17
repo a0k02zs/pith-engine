@@ -14,7 +14,7 @@ Each KPI has its engine code. Shared codes come from `engine/contracts/enums.jso
 | B2B: pipeline created | `attributed_pipeline` | value of opportunities with creator source | Set per client | CRM |
 | B2B: cost per qualified lead | `cost_per_sql` | cost ÷ qualified leads from creator source | Set per client | CRM |
 
-## Process KPIs (Pith M runs on these)
+## Process KPIs (Wigglewerk runs on these)
 
 | KPI | Engine code | Formula | Target |
 |---|---|---|---|

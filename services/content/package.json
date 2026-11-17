@@ -1,8 +1,8 @@
 {
-  "name": "@pith/content",
+  "name": "@wigglewerk/content",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M content marketing service (service 7): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk content marketing service (service 7): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

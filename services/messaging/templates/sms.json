@@ -1,5 +1,5 @@
 {
-  "_about": "Pith M SMS template library, ported from the service design (draft 1, 21 Oct 2026). Variables use {{double_braces}}. {{brand}} comes from the client brain.",
+  "_about": "Wigglewerk SMS template library, ported from the service design (draft 1, 21 Oct 2026). Variables use {{double_braces}}. {{brand}} comes from the client brain.",
   "templates": [
     {
       "id": "S-OPTIN-US",

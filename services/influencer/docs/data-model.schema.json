@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "pithm/influencer.schema.json",
-  "title": "Pith M influencer service data model",
+  "$id": "wigglewerk/influencer.schema.json",
+  "title": "Wigglewerk influencer service data model",
   "description": "Service-owned records for Service 6. Creators are engine parties (engine/contracts/schemas/party.json, kind=creator). Usage, whitelisting, likeness and voice rights are engine rights_grants. Payouts are recorded as engine/outbound.recorded type=payout_sent. Engine contract v0.1.0.",
   "$defs": {
     "market": {

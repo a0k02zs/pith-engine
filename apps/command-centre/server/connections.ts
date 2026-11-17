@@ -100,7 +100,7 @@ const subtle = () => globalThis.crypto.subtle;
 const b64 = (u: Uint8Array) => btoa(String.fromCharCode(...u));
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 
-/** AES-GCM vault. The key comes from PITH_TOKEN_KEY (32 bytes, base64). Without it the key lives only in memory. */
+/** AES-GCM vault. The key comes from WIGGLEWERK_TOKEN_KEY (32 bytes, base64). Without it the key lives only in memory. */
 export class TokenVault {
   private key: Promise<CryptoKey>;
   private sealed = new Map<string, string>();
@@ -109,7 +109,7 @@ export class TokenVault {
   constructor(base64Key?: string | null) {
     this.persistentKey = Boolean(base64Key);
     const raw = base64Key ? unb64(base64Key) : globalThis.crypto.getRandomValues(new Uint8Array(32));
-    if (raw.length !== 32) throw new Error("PITH_TOKEN_KEY must be 32 bytes, base64 encoded");
+    if (raw.length !== 32) throw new Error("WIGGLEWERK_TOKEN_KEY must be 32 bytes, base64 encoded");
     this.key = subtle().importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]);
   }
 
@@ -181,7 +181,7 @@ export class MetaOAuth {
     return `https://graph.facebook.com/${this.cfg.graph_version}${path}`;
   }
 
-  /** The Facebook Login URL the user opens to grant Pith access to the client's assets. */
+  /** The Facebook Login URL the user opens to grant Wigglewerk access to the client's assets. */
   start(clientId: string, userId: string): string {
     if (!this.configured) throw new ApiError(503, "Meta sign-in is not set up on this server yet. An admin sets META_APP_ID, META_APP_SECRET and META_REDIRECT_URI. You can save the account IDs now.");
     const state = b64(globalThis.crypto.getRandomValues(new Uint8Array(18))).replace(/[+/=]/g, "x");

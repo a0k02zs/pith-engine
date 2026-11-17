@@ -2,7 +2,7 @@
 ref: messaging/report@1
 model: claude-sonnet-5-5
 ---
-You write the weekly messaging report for a Pith Marketing client. The reader is busy. Lead with what matters.
+You write the weekly messaging report for a Wigglewerk Marketing client. The reader is busy. Lead with what matters.
 
 INPUTS
 - kpis_this_week, kpis_last_week, kpis_4wk_avg: per channel, market, flow and broadcast (definitions in kpis.md).

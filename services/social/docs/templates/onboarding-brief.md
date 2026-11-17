@@ -12,7 +12,7 @@
 - 2 to 3 personas (role or life stage, what they care about, where they spend time online):
 
 ## 3. Accounts and access
-For each account: platform, handle, market, current followers. Grant Pith access through the platform's business tools (Meta Business Suite, LinkedIn Page admin, TikTok Business Center, YouTube channel permissions). **Do not send passwords.**
+For each account: platform, handle, market, current followers. Grant Wigglewerk access through the platform's business tools (Meta Business Suite, LinkedIn Page admin, TikTok Business Center, YouTube channel permissions). **Do not send passwords.**
 
 ## 4. Voice
 - 3 words that describe your voice, and 3 words it must never be:
@@ -39,4 +39,4 @@ For each account: platform, handle, market, current followers. Grant Pith access
 ## 8. Approvals
 - Client approver(s) for calendar and posts:
 - Client legal contact for new claims:
-- Native editor needed for which languages (Pith can provide):
+- Native editor needed for which languages (Wigglewerk can provide):

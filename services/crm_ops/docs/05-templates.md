@@ -56,7 +56,7 @@ Version 1 · 21 Oct 2026. Fields in `{{double braces}}` are filled by an agent o
 11. **Data residency:** {{region}}.
 12. **Open questions for the client:** {{list}}.
 
-**Approvals (G1):** Client head of sales ☐ · Client head of marketing ☐ · Pith ops lead ☐
+**Approvals (G1):** Client head of sales ☐ · Client head of marketing ☐ · Wigglewerk ops lead ☐
 
 ---
 
@@ -171,7 +171,7 @@ Minimum 40 test leads. Use test email addresses on a client-owned test domain. N
 - [ ] Daily monitor W10 turned on
 - [ ] Market rules for each live market confirmed by local counsel (from the master plan)
 
-**Sign-off:** Pith ops lead ☐ {{date}} · Client ops owner ☐ {{date}}
+**Sign-off:** Wigglewerk ops lead ☐ {{date}} · Client ops owner ☐ {{date}}
 
 ---
 

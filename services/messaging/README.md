@@ -1,6 +1,6 @@
 # Messaging service (service 10): SMS, WhatsApp and push
 
-Pith M service for SMS, WhatsApp and push messages in the UK, the EU, the US, Canada, the 6 GCC countries and Singapore. It is built on the shared engine contracts v0.1.0 (`engine/`). The design documents are in `docs/`.
+Wigglewerk service for SMS, WhatsApp and push messages in the UK, the EU, the US, Canada, the 6 GCC countries and Singapore. It is built on the shared engine contracts v0.1.0 (`engine/`). The design documents are in `docs/`.
 
 ## What is here
 

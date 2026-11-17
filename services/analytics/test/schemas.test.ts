@@ -5,7 +5,7 @@ import { rulesFor } from "../src/market-rules.js";
 
 const areas = ["consent", "conversion_definition", "match_rate", "campaign_tagging", "ad_platform_signals", "cross_domain", "crm_source", "retention_access"]
   .map((area) => ({ area, score: 3, evidence: "seen in crawl" }));
-const fix = { rank: 1, area: "consent", problem: "Meta pixel fires before consent", evidence: "crawl, reject_all", fix: "Gate the tag on ad_storage", effort: "S", value: "high", owner: "pith", labels: ["compliance"] };
+const fix = { rank: 1, area: "consent", problem: "Meta pixel fires before consent", evidence: "crawl, reject_all", fix: "Gate the tag on ad_storage", effort: "S", value: "high", owner: "wigglewerk", labels: ["compliance"] };
 
 describe("output schemas", () => {
   it("accepts an audit with 8 areas and rejects 7", () => {

@@ -7,7 +7,7 @@ Draft 1, 21 Oct 2026.
 - Title: max 40 characters. Body: max 120 characters. Longer text is cut on the lock screen.
 - 1 deep link per notification. It opens the exact screen, not the home screen.
 - iOS: the app must ask for permission. Android 13 and later: the app must ask for the `POST_NOTIFICATIONS` permission.
-- Apple App Review Guideline 4.5.4: do not send promotions or direct marketing by push unless the user opted in through consent wording in the app, and the app gives a way to opt out. Pith applies the same rule on Android.
+- Apple App Review Guideline 4.5.4: do not send promotions or direct marketing by push unless the user opted in through consent wording in the app, and the app gives a way to opt out. Wigglewerk applies the same rule on Android.
 
 ## In-app consent screen (ask before the OS prompt)
 

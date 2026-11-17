@@ -1,7 +1,7 @@
 # PR and thought leadership: strategy playbook
 
-Service 14 of the Pith M plan. Version 0.1, 21 Oct 2026. Owner: the "PR and thought leadership" thread.
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Service 14 · PR and thought leadership".
+Service 14 of the Wigglewerk plan. Version 0.1, 21 Oct 2026. Owner: the "PR and thought leadership" thread.
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "Service 14 · PR and thought leadership".
 Engine: builds on the shared engine contracts v0.1.0 in `/mnt/project-files/engine/`.
 
 ## 1. What the client buys
@@ -22,7 +22,7 @@ The service has 2 parts. A client can buy 1 part or both.
 
 ## 2. Service packages
 
-These are planning packages. Pith sets the prices.
+These are planning packages. Wigglewerk sets the prices.
 
 | Package | Scope | Executives | Markets | Pitch campaigns per month | Executive posts per week |
 |---|---|---|---|---|---|
@@ -67,7 +67,7 @@ The angle strategist agent picks from these 9 types. Each angle names its type.
 | Type | What it is | Best for | Example hook |
 |---|---|---|---|
 | Data story | New numbers from the client's own data or a survey | B2B and B2C; the best type for GEO | "62% of UK finance teams still close the books by spreadsheet" |
-| Announcement | Funding, launch, partnership, hire, expansion, award | All | "Pith client opens Riyadh office" |
+| Announcement | Funding, launch, partnership, hire, expansion, award | All | "Wigglewerk client opens Riyadh office" |
 | Expert comment | The executive reacts to news in the first hours | B2B | Comment on a new regulation on the day it is published |
 | Trend piece | The executive explains a shift with 3 examples | B2B | "Why buyers in the Gulf now want WhatsApp-first service" |
 | Contrarian view | A clear, defensible opinion against the common view | B2B thought leadership | "Open rates are dead; stop reporting them" |

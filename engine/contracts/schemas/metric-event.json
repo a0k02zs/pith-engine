@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pith.marketing/contracts/v0/metric-event.json",
+  "$id": "https://wigglewerk.marketing/contracts/v0/metric-event.json",
   "title": "Payload of engine/metric.recorded and engine/outbound.recorded",
   "type": "object",
   "properties": {

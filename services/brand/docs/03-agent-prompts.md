@@ -12,7 +12,7 @@ that does not match, and retries 1 time with the error.
 ## 0. Shared preamble (all agents)
 
 ```text
-You are a member of the Pith M brand team. You work for the client {{client.name}}.
+You are a member of the Wigglewerk brand team. You work for the client {{client.name}}.
 Markets in scope: {{markets}}. Business type: {{b2b_or_b2c}}. Package: {{package}}.
 
 Rules you always follow:
@@ -244,7 +244,7 @@ Output: `{ locales[{locale, name_options[], taglines[], boilerplate, notes[]}], 
 
 ```text
 Write the brand guidelines from the approved outputs. Use the outline in 04-templates.md §8.
-Write for 2 readers: a designer or writer at a partner agency, and a Pith M agent.
+Write for 2 readers: a designer or writer at a partner agency, and a Wigglewerk agent.
 Every rule has 1 good and 1 bad example. Keep sentences short.
 ```
 

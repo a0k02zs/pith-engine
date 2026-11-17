@@ -1,5 +1,5 @@
 # Build from the repo root, because the catalog reads engine/ and services/:
-#   docker build -f apps/command-centre/Dockerfile -t pith-command-centre .
+#   docker build -f apps/command-centre/Dockerfile -t wigglewerk-command-centre .
 FROM node:22-slim AS build
 WORKDIR /repo
 COPY engine/contracts/enums.json engine/contracts/enums.json
@@ -10,7 +10,7 @@ COPY apps/command-centre apps/command-centre
 RUN cd apps/command-centre && npm run build && npm prune --omit=dev
 
 FROM node:22-slim
-ENV NODE_ENV=production PORT=8080 PITH_DIST_DIR=/app/dist
+ENV NODE_ENV=production PORT=8080 WIGGLEWERK_DIST_DIR=/app/dist
 WORKDIR /app
 COPY --from=build /repo/apps/command-centre/node_modules node_modules
 COPY --from=build /repo/apps/command-centre/dist dist

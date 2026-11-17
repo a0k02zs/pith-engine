@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pith.marketing/contracts/v0/party.json",
+  "$id": "https://wigglewerk.marketing/contracts/v0/party.json",
   "title": "A person who is not a customer contact: creator, talent, journalist, partner, affiliate, expert, vendor",
   "type": "object",
   "properties": {
@@ -79,7 +79,7 @@
     },
     "do_not_contact": {
       "type": "boolean",
-      "description": "Global opt-out across all Pith clients when client_id is null (journalist 'do not pitch')"
+      "description": "Global opt-out across all Wigglewerk clients when client_id is null (journalist 'do not pitch')"
     },
     "consent_basis": {
       "type": [

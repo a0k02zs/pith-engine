@@ -35,6 +35,6 @@ Some threads wrote against assumed names before v0.1.0 existed. Map them like th
 | creator entity | `party.json` with `kind=creator`, `licences[]` |
 | likeness and voice consent | `rights-grant.json` (`scope`: likeness, voice_clone, avatar, ...) |
 | `content.plan`, `content.final_copy`, `content.new_claim` | `kind=plan`, `copy`, `claim` with `service=content` |
-| `pith.content_lead`, `client.subject_expert`, `external.customer_contact` | `content_lead`, `subject_expert`, `external_contact` |
+| `wigglewerk.content_lead`, `client.subject_expert`, `external.customer_contact` | `content_lead`, `subject_expert`, `external_contact` |
 | `geo.citation_share` | `ai_citation_share` |
 | `content.*` KPIs | allowed as service-only KPIs |

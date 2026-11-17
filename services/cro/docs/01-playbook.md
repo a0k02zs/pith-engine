@@ -1,6 +1,6 @@
 # CRO and Landing Pages: Strategy Playbook
 
-Service 17 of the [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67). Owner: CRO lead (role `cro_lead`). Status: v1, 21 Oct 2026.
+Service 17 of the [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67). Owner: CRO lead (role `cro_lead`). Status: v1, 21 Oct 2026.
 
 ## 1. What this service is
 
@@ -17,7 +17,7 @@ A new page from track A enters track B after 2 weeks of live data.
 
 ## 2. Packages we sell
 
-These are volume tiers, not prices. Pith sets the prices.
+These are volume tiers, not prices. Wigglewerk sets the prices.
 
 | Package | Fit | Tests per month | New landing pages per month | Includes |
 |---|---|---|---|---|

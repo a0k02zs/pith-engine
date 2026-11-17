@@ -1,8 +1,8 @@
 {
-  "name": "@pith/influencer",
+  "name": "@wigglewerk/influencer",
   "version": "0.1.0",
   "private": true,
-  "description": "Pith M influencer marketing service (service 6): workflows, agent prompts, output schemas and rule functions.",
+  "description": "Wigglewerk influencer marketing service (service 6): workflows, agent prompts, output schemas and rule functions.",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",

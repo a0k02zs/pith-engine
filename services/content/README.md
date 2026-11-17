@@ -1,6 +1,6 @@
-# @pith/content — content marketing service (service 7)
+# @wigglewerk/content — content marketing service (service 7)
 
-Blogs, whitepapers, ebooks and case studies for Pith M clients in the UK, Singapore, North America, the GCC and the EU.
+Blogs, whitepapers, ebooks and case studies for Wigglewerk clients in the UK, Singapore, North America, the GCC and the EU.
 It builds against the shared engine contracts v0.1.0 (service code `content`).
 
 ## What is here

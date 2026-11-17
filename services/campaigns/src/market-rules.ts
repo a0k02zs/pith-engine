@@ -38,7 +38,7 @@ export const LAUNCH_ORDER: MarketGroup[] = enums.market_launch_order;
 
 export function marketGroup(country: string): MarketGroup {
   const group = (Object.keys(enums.market_groups) as MarketGroup[]).find((g) => enums.market_groups[g].includes(country));
-  if (!group) throw new Error(`Market ${country} is not in a Pith market group`);
+  if (!group) throw new Error(`Market ${country} is not in a Wigglewerk market group`);
   return group;
 }
 

@@ -1,7 +1,7 @@
 # Content marketing — strategy playbook
 
 Service 7 of 18. Version 0.1. Date: 2026-10-21.
-Source: [Pith M Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "7 · Content marketing".
+Source: [Wigglewerk Automation Plan](https://claude.ai/artifact/5mM1UebZQizfeEsfa2Ca67), section "7 · Content marketing".
 Engine: builds against engine contracts v0.1.0 (`/mnt/project-files/engine/`). Service code: `content`. See `engine-integration.md`.
 
 ## 1. Goal
@@ -52,10 +52,10 @@ Gates are marked **[GATE]**. The machine specs are `workflows/content.plan.json`
 |---|---|---|---|---|
 | 1 | Gap analysis | Agent `cm.gap_analyst` | Gap report: questions with no good answer on the client site | 1 hour, monthly |
 | 2 | Plan | Agent `cm.planner` | Quarterly calendar with briefs | 1 hour |
-| 3 | **[GATE] Approve plan** | Content lead (Pith), client marketing lead | Approved calendar | 3 working days |
+| 3 | **[GATE] Approve plan** | Content lead (Wigglewerk), client marketing lead | Approved calendar | 3 working days |
 | 4 | Interview | Agent `cm.interviewer` writes questions; a person records 20 minutes with a client expert | Transcript | 5 working days to book |
 | 5 | Draft | Agent `cm.drafter`, then `cm.fact_checker` and brand check | Draft with citations and a claims list | 1 working day |
-| 6 | **[GATE] Edit and fact-check** | Pith editor; client expert signs off | Final copy | 3 working days |
+| 6 | **[GATE] Edit and fact-check** | Wigglewerk editor; client expert signs off | Final copy | 3 working days |
 | 6b | **[GATE] New claim approval** (only when the draft has a claim that is not in the client brain) | Client approver | Approved or removed claim | 2 working days |
 | 7 | Repurpose | Agent `cm.repurposer` | Repurpose pack | 2 hours |
 | 7b | **[GATE] Case study release** (case studies only) | The named customer gives written approval | Signed release | 10 working days |

@@ -1,5 +1,5 @@
 // Runs only with DATABASE_URL: a Postgres 16 database in which this test can replace the schema 'engine'.
-// CI gives it a pgvector image. For a local database with no pgvector, set PITH_DB_NO_VECTOR=1.
+// CI gives it a pgvector image. For a local database with no pgvector, set WIGGLEWERK_DB_NO_VECTOR=1.
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { mockHandlers } from "../src/mock.ts";
@@ -28,10 +28,10 @@ describe.skipIf(!url)("PgStore", () => {
   beforeAll(async () => {
     const admin = PgStore.pool(url!);
     await admin.query("drop schema if exists engine cascade");
-    await applySchema(admin, { withoutVector: process.env.PITH_DB_NO_VECTOR === "1" });
+    await applySchema(admin, { withoutVector: process.env.WIGGLEWERK_DB_NO_VECTOR === "1" });
     await applySchema(admin); // The second time changes nothing.
     for (const id of [CLIENT, OTHER]) await admin.query("insert into clients (id, name, segment, home_market) values ($1, $2, 'b2b', 'GB')", [id, `Test ${id.slice(0, 4)}`]);
-    for (const [i, id] of users.entries()) await admin.query("insert into users (id, email, name, org) values ($1, $2, $3, 'pith')", [id, `u${i}@example.test`, `User ${i}`]);
+    for (const [i, id] of users.entries()) await admin.query("insert into users (id, email, name, org) values ($1, $2, $3, 'wigglewerk')", [id, `u${i}@example.test`, `User ${i}`]);
     await admin.end();
     store = await PgStore.connect(url!);
   });

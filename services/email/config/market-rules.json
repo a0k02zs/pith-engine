@@ -1,5 +1,5 @@
 {
-  "$comment": "Email-specific market rules for Pith M service 1 (email). Version 0.1, 2026-10-21. Codes follow engine contracts v0.1.0 enums.json. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
+  "$comment": "Email-specific market rules for Wigglewerk service 1 (email). Version 0.1, 2026-10-21. Codes follow engine contracts v0.1.0 enums.json. The engine compliance gate is the final check. Planning summary, not legal advice: a local lawyer confirms each market before launch.",
   "service": "email",
   "contract_version": "0.1.0",
   "global": {

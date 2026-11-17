@@ -4,7 +4,7 @@ These rules add ABM-specific points to the plan's market sections and to the eng
 
 **Not legal advice.** This is a planning summary. A local lawyer confirms each market before launch. Points that need a lawyer check are marked "Confirm".
 
-The gift limits in `rules.json` are Pith policy start values, not legal limits. The client and the target account can set lower limits.
+The gift limits in `rules.json` are Wigglewerk policy start values, not legal limits. The client and the target account can set lower limits.
 
 ## Summary table
 

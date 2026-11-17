@@ -1,4 +1,4 @@
--- Pith M shared engine: tables and columns that the runtime (engine/runtime) needs. Postgres 16.
+-- Wigglewerk shared engine: tables and columns that the runtime (engine/runtime) needs. Postgres 16.
 -- Additive. Apply after 001_core.sql. You can apply this file 2 times; the second time changes nothing.
 
 set search_path = engine, public;

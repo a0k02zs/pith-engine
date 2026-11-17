@@ -1,6 +1,6 @@
 # KPIs
 
-Shared KPI codes come from the engine (`engine/contracts/enums.json`): `revenue`, `cpa`, `roas`, `cpl`, `sqls`, `pipeline_value`, `cost_per_opportunity`, `incremental_lift`, `ctr`, `cvr`, `reach`. Ratios are stored 0 to 1. Service-only codes start with `campaigns.`. Targets come from the brief at G2. The numbers below are Pith service targets (how well Pith runs campaigns), not client results. They are planning targets, not measured data.
+Shared KPI codes come from the engine (`engine/contracts/enums.json`): `revenue`, `cpa`, `roas`, `cpl`, `sqls`, `pipeline_value`, `cost_per_opportunity`, `incremental_lift`, `ctr`, `cvr`, `reach`. Ratios are stored 0 to 1. Service-only codes start with `campaigns.`. Targets come from the brief at G2. The numbers below are Wigglewerk service targets (how well Wigglewerk runs campaigns), not client results. They are planning targets, not measured data.
 
 ## Client result KPIs (per campaign, per market)
 
@@ -12,7 +12,7 @@ Shared KPI codes come from the engine (`engine/contracts/enums.json`): `revenue`
 | Reach in target audience | Yes | Account coverage (ABM) | Platform reach; accounts engaged ÷ target accounts |
 | Channel efficiency | CTR, CVR, cost per result by channel | Same | Dashboard |
 
-## Pith service KPIs (for every campaign)
+## Wigglewerk service KPIs (for every campaign)
 
 | KPI | Target |
 |---|---|

@@ -95,13 +95,13 @@
     },
     {
       "id": "services",
-      "title": "Pith services",
+      "title": "Wigglewerk services",
       "charts": [
         {
           "id": "service_roi",
           "type": "bar",
-          "title": "Credited revenue per unit of cost, by Pith service",
-          "source": "pith_service_roi",
+          "title": "Credited revenue per unit of cost, by Wigglewerk service",
+          "source": "wigglewerk_service_roi",
           "kpis": [
             "attributed_revenue",
             "spend"

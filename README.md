@@ -1,6 +1,8 @@
-# pith-engine
+# Wigglewerk engine
 
-The code for Pith Marketing: 18 marketing services that run as agent workflows on 1 shared engine, and the Command Centre web app that operates them.
+The company was renamed from Pith to Wigglewerk on 2026-11-15. The GitHub repository is still named `pith-engine` until its owner renames it.
+
+The code for Wigglewerk Marketing: 18 marketing services that run as agent workflows on 1 shared engine, and the Command Centre web app that operates them.
 
 ## Layout
 

@@ -58,7 +58,7 @@ describe("market rules", () => {
     expect(resolveMarket("GB").optout_keywords).toEqual(expect.arrayContaining(["STOP", "UNSUBSCRIBE", "REVOKE"]));
   });
 
-  it("refuses a country Pith does not serve and a subdivision of another country", () => {
+  it("refuses a country Wigglewerk does not serve and a subdivision of another country", () => {
     expect(() => resolveMarket("JP")).toThrow(/No messaging rules/);
     expect(() => resolveMarket("US", "CA-QC")).toThrow(/not in US/);
   });

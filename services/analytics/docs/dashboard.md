@@ -18,8 +18,8 @@ Each client gets 1 dashboard. Every client has the same pages, charts and KPI co
 | Overview | Daily revenue against the forecast, with the 90% band | line | `daily_kpi_forecast` | `revenue` |
 | Channels | Attributed revenue by channel | bar | `attribution_summary` | `attributed_revenue` |
 | Channels | ROAS by channel | bar | `attribution_summary` | `roas` |
-| Pith services | Credited revenue per unit of cost, by Pith service | bar | `pith_service_roi` | `attributed_revenue`, `spend` |
-| Pith services | Payback and LTV to CAC by acquisition month | table | `cohort_payback` | `payback_months`, `ltv_cac` |
+| Wigglewerk services | Credited revenue per unit of cost, by Wigglewerk service | bar | `wigglewerk_service_roi` | `attributed_revenue`, `spend` |
+| Wigglewerk services | Payback and LTV to CAC by acquisition month | table | `cohort_payback` | `payback_months`, `ltv_cac` |
 | Data health | Warehouse orders as a share of order-system orders, with the 95% to 102% target | line | `qa_metrics` | `tracking_match_rate` |
 
 ## Rules
@@ -35,7 +35,7 @@ Each client gets 1 dashboard. Every client has the same pages, charts and KPI co
 ## Render
 
 ```ts
-import { loadDashboard, renderDashboard } from "@pith/analytics";
+import { loadDashboard, renderDashboard } from "@wigglewerk/analytics";
 
 const html = renderDashboard(loadDashboard(), rowsByModel, {
   client: "Client name", period: "1 to 31 Oct 2026", market: "GB", currency: "GBP", model: "position_based", locale: "en-GB",

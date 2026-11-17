@@ -48,7 +48,7 @@ platform, placement and market.
 Per job, the `production-planner` records: agent and model cost, AI tool credits (video, avatar,
 voice), stock and music fees, creator fees, crew day rates, editor hours, native reviewer hours,
 and project management hours. The weekly report shows actual against estimate. After 20 jobs per
-track, Pith sets package prices from the median cost plus target margin.
+track, Wigglewerk sets package prices from the median cost plus target margin.
 
 ## 5. Weekly video report (written by `performance-analyst`, checked by the strategist)
 

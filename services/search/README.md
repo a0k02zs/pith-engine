@@ -1,6 +1,6 @@
 # Search service (SEO, SEM and GEO)
 
-Service 5 of Pith Marketing, engine code `search`. It builds on the shared engine contracts v0.1.0 in `engine/`.
+Service 5 of Wigglewerk Marketing, engine code `search`. It builds on the shared engine contracts v0.1.0 in `engine/`.
 
 ## What is here
 
